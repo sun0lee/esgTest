@@ -1,0 +1,332 @@
+2023-02-26 22:33:08.925 [main] ERROR com.gof.process.Main - Argument Error: [-Dtime]
+2023-02-26 22:34:08.551 [main] INFO  com.gof.process.Main - Input Arguments : -Dtime=2021-01-31
+2023-02-26 22:34:08.552 [main] INFO  com.gof.process.Main - Input Arguments : -Dproperties=/Users/sunyoung/eclipse-workspace/NESG/properties/gesg.properties
+2023-02-26 22:34:08.552 [main] ERROR com.gof.process.Main - Error in Properties Loading : {}
+java.io.FileNotFoundException: /Users/sunyoung/eclipse-workspace/NESG/properties/gesg.properties (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method) ~[?:?]
+	at java.io.FileInputStream.open(FileInputStream.java:216) ~[?:?]
+	at java.io.FileInputStream.<init>(FileInputStream.java:157) ~[?:?]
+	at java.io.FileInputStream.<init>(FileInputStream.java:111) ~[?:?]
+	at com.gof.process.Main.init(Main.java:230) [bin/:?]
+	at com.gof.process.Main.main(Main.java:124) [bin/:?]
+2023-02-26 22:35:51.486 [main] INFO  com.gof.process.Main - Input Arguments : -Dtime=2021-01-31
+2023-02-26 22:35:51.487 [main] INFO  com.gof.process.Main - Input Arguments : -Dproperties=/Users/sunyoung/eclipse-workspace/NESG/properties/gesg.properties
+2023-02-26 22:35:51.489 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:35:51.530 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:35:51.531 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:37:11.841 [main] INFO  com.gof.process.Main - Input Arguments : -Dtime=2021-01-31
+2023-02-26 22:37:11.842 [main] INFO  com.gof.process.Main - Input Arguments : -Dproperties=/Users/sunyoung/eclipse-workspace/NESG/gesg.properties
+2023-02-26 22:37:11.844 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:37:11.872 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:37:11.873 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:38:27.084 [main] INFO  com.gof.process.Main - Input Arguments : -Dtime=2021-01-31
+2023-02-26 22:38:27.086 [main] INFO  com.gof.process.Main - Input Arguments : -Dproperties=/Users/sunyoung/eclipse-workspace/NESG/gesg.properties
+2023-02-26 22:38:27.089 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:38:27.130 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:38:27.131 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:38:27.308 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.3.Final}
+2023-02-26 22:38:27.357 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH010002: C3P0 using driver: oracle.jdbc.driver.OracleDriver at URL: jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB
+2023-02-26 22:38:27.357 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001001: Connection properties: {password=****, user=NESG}
+2023-02-26 22:38:27.358 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001003: Autocommit mode: false
+2023-02-26 22:38:27.397 [MLog-Init-Reporter] INFO  com.mchange.v2.log.MLog - MLog clients using slf4j logging.
+2023-02-26 22:38:27.422 [main] INFO  com.mchange.v2.c3p0.C3P0Registry - Initializing c3p0-0.9.5.2 [built 08-December-2015 22:06:04 -0800; debug? true; trace: 10]
+2023-02-26 22:38:27.435 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001007: JDBC isolation level: <unknown>
+2023-02-26 22:38:27.442 [main] INFO  com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource - Initializing c3p0 pool... com.mchange.v2.c3p0.PoolBackedDataSource@e8be9573 [ connectionPoolDataSource -> com.mchange.v2.c3p0.WrapperConnectionPoolDataSource@dcaa86db [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, debugUnreturnedConnectionStackTraces -> false, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, identityToken -> z8kfltau13duztcu73363|4a0df195, idleConnectionTestPeriod -> 0, initialPoolSize -> 10, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 50, maxStatements -> 50, maxStatementsPerConnection -> 0, minPoolSize -> 10, nestedDataSource -> com.mchange.v2.c3p0.DriverManagerDataSource@9df61ef2 [ description -> null, driverClass -> null, factoryClassLocation -> null, forceUseNamedDriverClass -> false, identityToken -> z8kfltau13duztcu73363|74ad8d05, jdbcUrl -> jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, properties -> {password=******, user=******} ], preferredTestQuery -> null, privilegeSpawnedThreads -> false, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, usesTraditionalReflectiveProxies -> false; userOverrides: {} ], dataSourceName -> null, extensions -> {}, factoryClassLocation -> null, identityToken -> z8kfltau13duztcu73363|7cb2651f, numHelperThreads -> 3 ]
+2023-02-26 22:38:30.266 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect
+2023-02-26 22:38:30.268 [main] WARN  org.hibernate.dialect.Oracle9Dialect - HHH000063: The Oracle9Dialect dialect has been deprecated; use either Oracle9iDialect or Oracle10gDialect instead
+2023-02-26 22:38:30.269 [main] WARN  org.hibernate.dialect.OracleDialect - HHH000064: The OracleDialect dialect has been deprecated; use Oracle8iDialect instead
+2023-02-26 22:38:31.281 [main] INFO  com.gof.util.HibernateUtil - Generate Session : new Session is generated with [URL:jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, USER:NESG]
+2023-02-26 22:38:31.315 [main] INFO  com.gof.process.Main - End of session call
+2023-02-26 22:38:31.323 [main] INFO  org.hibernate.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2023-02-26 22:38:31.545 [main] INFO  com.gof.process.Main - argInDBMap: {AFNS_CONF_INTERVAL=0.995, AFNS_MODE=AFNS, SIGNIFICANCE_LEVEL=0.05, BOND_YIELD_TGT_DURATION=3, IR_HIS_START_DATE=20100101, HW_SIGMA_AVG_NUM=120, HW_ALPHA_AVG_NUM=120, CIR_PROJECTION_YEAR=30, HW1F_SIGMA_INIT=0.007, LP_CURVE_ID=5010110, CIR_AVG_MONTH=36, HW1F_ALPHA_INIT=0.05, PROJECTION_YEAR=120, AFNS_WEEK_DAY=5}
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 110, Set Smith-Wilson Attribute
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 120, Set Swaption Volatility
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 130, Set YTM TermStructure
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 150, YTM to SPOT by Smith-Wilson Method
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 210, AFNS Weekly Input TermStructure Setup
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 220, AFNS Shock Spread
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 230, Biz Applied AFNS Shock Spread
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 240, Set Liquidity Premium
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 250, Biz Applied Liquidity Premium
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 260, BottomUp Risk Free TermStructure with Liquidity Premium
+2023-02-26 22:38:31.576 [main] INFO  com.gof.process.Main - JOB LIST: 270, Interpolated TermStructure by SW
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 280, Biz Applied TermStructure by SW
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 310, Calibration and Validation of HW1F Model Parameter
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 320, Calibration Stress Test of HW1F Model Parameter
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 330, Biz Applied HW1F Model Parameter
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 340, HW1F Discount Rate Scenario of Biz TermStructure
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 360, Validation for Random number of HW1F Scenario
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 370, Validation for Market Consistency of HW1F Scenario
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 810, Set Transition Matrix
+2023-02-26 22:38:31.577 [main] INFO  com.gof.process.Main - JOB LIST: 820, Corporate PD from Transition Matrix
+2023-02-26 22:38:31.644 [main] INFO  com.gof.process.Main - ESG110(Set Smith-Wilson Attribute): Job Start !!! 
+2023-02-26 22:38:31.862 [main] INFO  com.gof.process.Main - Active Interest Rate Curve: [[1010000, RF_EUR, RF_AUD, RF_NZD, RF_SEK, RF_JPY, RF_GBP, RF_USD, RF_CAD]]
+2023-02-26 22:38:31.899 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1031, SQLState: 42000
+2023-02-26 22:38:31.899 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-01031: 권한이 불충분합니다
+
+2023-02-26 22:38:31.900 [main] ERROR com.gof.process.Main - ERROR: {}
+org.hibernate.exception.SQLGrammarException: could not execute statement
+	at org.hibernate.exception.internal.SQLExceptionTypeDelegate.convert(SQLExceptionTypeDelegate.java:63) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:42) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:111) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:97) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:178) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.exec.BasicExecutor.doExecute(BasicExecutor.java:100) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.exec.BasicExecutor.execute(BasicExecutor.java:59) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.exec.DeleteExecutor.execute(DeleteExecutor.java:109) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.executeUpdate(QueryTranslatorImpl.java:453) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.query.spi.HQLQueryPlan.performExecuteUpdate(HQLQueryPlan.java:379) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.internal.SessionImpl.executeUpdate(SessionImpl.java:1532) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.doExecuteUpdate(AbstractProducedQuery.java:1618) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.executeUpdate(AbstractProducedQuery.java:1595) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at com.gof.process.Main.job110(Main.java:316) [classes/:?]
+	at com.gof.process.Main.main(Main.java:128) [classes/:?]
+Caused by: java.sql.SQLSyntaxErrorException: ORA-01031: 권한이 불충분합니다
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:509) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:461) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1104) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:553) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:269) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:655) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:270) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:91) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:970) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1205) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3666) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeInternal(T4CPreparedStatement.java:1426) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeLargeUpdate(OraclePreparedStatement.java:3756) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3736) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(OraclePreparedStatementWrapper.java:1063) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at com.mchange.v2.c3p0.impl.NewProxyPreparedStatement.executeUpdate(NewProxyPreparedStatement.java:384) ~[c3p0-0.9.5.2.jar:0.9.5.2]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:175) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	... 10 more
+Caused by: oracle.jdbc.OracleDatabaseException: ORA-01031: 권한이 불충분합니다
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:513) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:461) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1104) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:553) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:269) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:655) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:270) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:91) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:970) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1205) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3666) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeInternal(T4CPreparedStatement.java:1426) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeLargeUpdate(OraclePreparedStatement.java:3756) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3736) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(OraclePreparedStatementWrapper.java:1063) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at com.mchange.v2.c3p0.impl.NewProxyPreparedStatement.executeUpdate(NewProxyPreparedStatement.java:384) ~[c3p0-0.9.5.2.jar:0.9.5.2]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:175) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	... 10 more
+2023-02-26 22:38:31.904 [main] INFO  com.gof.process.Main - ESG110(Set Smith-Wilson Attribute): Job Completed with ERROR !!!
+2023-02-26 22:38:32.205 [main] INFO  org.hibernate.engine.jdbc.batch.internal.AbstractBatchImpl - HHH000010: On release of batch it still contained JDBC statements
+2023-02-26 22:38:32.206 [main] ERROR org.hibernate.engine.jdbc.batch.internal.BatchingBatch - HHH000315: Exception executing batch [java.sql.BatchUpdateException: ORA-01031: 권한이 불충분합니다
+], SQL: insert into GESG.E_CO_JOB_INFO (CALC_ELPS, CALC_END, CALC_SCD, JOB_NM, LAST_MODIFIED_BY, LAST_UPDATE_DATE, JOB_ID, CALC_START, CALC_DATE, BASE_YYMM) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2023-02-26 22:38:32.206 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1031, SQLState: 42000
+2023-02-26 22:38:32.206 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-01031: 권한이 불충분합니다
+
+2023-02-26 22:38:32.206 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1031, SQLState: 42000
+2023-02-26 22:38:32.206 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-01031: 권한이 불충분합니다
+
+2023-02-26 22:38:32.207 [main] ERROR org.hibernate.internal.ExceptionMapperStandardImpl - HHH000346: Error during managed flush [org.hibernate.exception.SQLGrammarException: could not execute batch]
+2023-02-26 22:38:37.337 [main] INFO  com.gof.process.Main - Input Arguments : -Dtime=2021-01-31
+2023-02-26 22:38:37.339 [main] INFO  com.gof.process.Main - Input Arguments : -Dproperties=/Users/sunyoung/eclipse-workspace/NESG/gesg.properties
+2023-02-26 22:38:37.341 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:38:37.379 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:38:37.380 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:38:37.532 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.3.Final}
+2023-02-26 22:38:37.579 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH010002: C3P0 using driver: oracle.jdbc.driver.OracleDriver at URL: jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB
+2023-02-26 22:38:37.579 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001001: Connection properties: {password=****, user=NESG}
+2023-02-26 22:38:37.579 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001003: Autocommit mode: false
+2023-02-26 22:38:37.613 [MLog-Init-Reporter] INFO  com.mchange.v2.log.MLog - MLog clients using slf4j logging.
+2023-02-26 22:38:37.642 [main] INFO  com.mchange.v2.c3p0.C3P0Registry - Initializing c3p0-0.9.5.2 [built 08-December-2015 22:06:04 -0800; debug? true; trace: 10]
+2023-02-26 22:38:37.656 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001007: JDBC isolation level: <unknown>
+2023-02-26 22:38:37.664 [main] INFO  com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource - Initializing c3p0 pool... com.mchange.v2.c3p0.PoolBackedDataSource@8fc614c0 [ connectionPoolDataSource -> com.mchange.v2.c3p0.WrapperConnectionPoolDataSource@83b20628 [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, debugUnreturnedConnectionStackTraces -> false, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, identityToken -> z8kfltau13dv7p8zi3gvj|4a0df195, idleConnectionTestPeriod -> 0, initialPoolSize -> 10, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 50, maxStatements -> 50, maxStatementsPerConnection -> 0, minPoolSize -> 10, nestedDataSource -> com.mchange.v2.c3p0.DriverManagerDataSource@44fd9e3f [ description -> null, driverClass -> null, factoryClassLocation -> null, forceUseNamedDriverClass -> false, identityToken -> z8kfltau13dv7p8zi3gvj|74ad8d05, jdbcUrl -> jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, properties -> {password=******, user=******} ], preferredTestQuery -> null, privilegeSpawnedThreads -> false, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, usesTraditionalReflectiveProxies -> false; userOverrides: {} ], dataSourceName -> null, extensions -> {}, factoryClassLocation -> null, identityToken -> z8kfltau13dv7p8zi3gvj|7cb2651f, numHelperThreads -> 3 ]
+2023-02-26 22:38:38.733 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect
+2023-02-26 22:38:38.735 [main] WARN  org.hibernate.dialect.Oracle9Dialect - HHH000063: The Oracle9Dialect dialect has been deprecated; use either Oracle9iDialect or Oracle10gDialect instead
+2023-02-26 22:38:38.735 [main] WARN  org.hibernate.dialect.OracleDialect - HHH000064: The OracleDialect dialect has been deprecated; use Oracle8iDialect instead
+2023-02-26 22:38:39.675 [main] INFO  com.gof.util.HibernateUtil - Generate Session : new Session is generated with [URL:jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, USER:NESG]
+2023-02-26 22:38:39.708 [main] INFO  com.gof.process.Main - End of session call
+2023-02-26 22:38:39.716 [main] INFO  org.hibernate.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2023-02-26 22:38:39.846 [main] INFO  com.gof.process.Main - argInDBMap: {AFNS_CONF_INTERVAL=0.995, AFNS_MODE=AFNS, SIGNIFICANCE_LEVEL=0.05, BOND_YIELD_TGT_DURATION=3, IR_HIS_START_DATE=20100101, HW_SIGMA_AVG_NUM=120, HW_ALPHA_AVG_NUM=120, CIR_PROJECTION_YEAR=30, HW1F_SIGMA_INIT=0.007, LP_CURVE_ID=5010110, CIR_AVG_MONTH=36, HW1F_ALPHA_INIT=0.05, PROJECTION_YEAR=120, AFNS_WEEK_DAY=5}
+2023-02-26 22:38:39.883 [main] INFO  com.gof.process.Main - JOB LIST: 110, Set Smith-Wilson Attribute
+2023-02-26 22:38:39.883 [main] INFO  com.gof.process.Main - JOB LIST: 120, Set Swaption Volatility
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 130, Set YTM TermStructure
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 150, YTM to SPOT by Smith-Wilson Method
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 210, AFNS Weekly Input TermStructure Setup
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 220, AFNS Shock Spread
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 230, Biz Applied AFNS Shock Spread
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 240, Set Liquidity Premium
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 250, Biz Applied Liquidity Premium
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 260, BottomUp Risk Free TermStructure with Liquidity Premium
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 270, Interpolated TermStructure by SW
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 280, Biz Applied TermStructure by SW
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 310, Calibration and Validation of HW1F Model Parameter
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 320, Calibration Stress Test of HW1F Model Parameter
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 330, Biz Applied HW1F Model Parameter
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 340, HW1F Discount Rate Scenario of Biz TermStructure
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 360, Validation for Random number of HW1F Scenario
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 370, Validation for Market Consistency of HW1F Scenario
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 810, Set Transition Matrix
+2023-02-26 22:38:39.884 [main] INFO  com.gof.process.Main - JOB LIST: 820, Corporate PD from Transition Matrix
+2023-02-26 22:38:39.955 [main] INFO  com.gof.process.Main - ESG110(Set Smith-Wilson Attribute): Job Start !!! 
+2023-02-26 22:38:40.003 [main] INFO  com.gof.process.Main - Active Interest Rate Curve: [[1010000, RF_EUR, RF_AUD, RF_NZD, RF_SEK, RF_JPY, RF_GBP, RF_USD, RF_CAD]]
+2023-02-26 22:38:40.193 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1031, SQLState: 42000
+2023-02-26 22:38:40.193 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-01031: 권한이 불충분합니다
+
+2023-02-26 22:38:40.194 [main] ERROR com.gof.process.Main - ERROR: {}
+org.hibernate.exception.SQLGrammarException: could not execute statement
+	at org.hibernate.exception.internal.SQLExceptionTypeDelegate.convert(SQLExceptionTypeDelegate.java:63) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:42) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:111) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:97) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:178) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.exec.BasicExecutor.doExecute(BasicExecutor.java:100) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.exec.BasicExecutor.execute(BasicExecutor.java:59) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.exec.DeleteExecutor.execute(DeleteExecutor.java:109) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.hql.internal.ast.QueryTranslatorImpl.executeUpdate(QueryTranslatorImpl.java:453) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.engine.query.spi.HQLQueryPlan.performExecuteUpdate(HQLQueryPlan.java:379) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.internal.SessionImpl.executeUpdate(SessionImpl.java:1532) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.doExecuteUpdate(AbstractProducedQuery.java:1618) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at org.hibernate.query.internal.AbstractProducedQuery.executeUpdate(AbstractProducedQuery.java:1595) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	at com.gof.process.Main.job110(Main.java:316) [classes/:?]
+	at com.gof.process.Main.main(Main.java:128) [classes/:?]
+Caused by: java.sql.SQLSyntaxErrorException: ORA-01031: 권한이 불충분합니다
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:509) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:461) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1104) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:553) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:269) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:655) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:270) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:91) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:970) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1205) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3666) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeInternal(T4CPreparedStatement.java:1426) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeLargeUpdate(OraclePreparedStatement.java:3756) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3736) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(OraclePreparedStatementWrapper.java:1063) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at com.mchange.v2.c3p0.impl.NewProxyPreparedStatement.executeUpdate(NewProxyPreparedStatement.java:384) ~[c3p0-0.9.5.2.jar:0.9.5.2]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:175) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	... 10 more
+Caused by: oracle.jdbc.OracleDatabaseException: ORA-01031: 권한이 불충분합니다
+
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:513) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIoer11.processError(T4CTTIoer11.java:461) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1104) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:553) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:269) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:655) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:270) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:91) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:970) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1205) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3666) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.T4CPreparedStatement.executeInternal(T4CPreparedStatement.java:1426) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeLargeUpdate(OraclePreparedStatement.java:3756) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3736) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(OraclePreparedStatementWrapper.java:1063) ~[ojdbc8-19.8.0.0.jar:19.8.0.0.0]
+	at com.mchange.v2.c3p0.impl.NewProxyPreparedStatement.executeUpdate(NewProxyPreparedStatement.java:384) ~[c3p0-0.9.5.2.jar:0.9.5.2]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:175) ~[hibernate-core-5.3.1.Final.jar:5.3.1.Final]
+	... 10 more
+2023-02-26 22:38:40.203 [main] INFO  com.gof.process.Main - ESG110(Set Smith-Wilson Attribute): Job Completed with ERROR !!!
+2023-02-26 22:38:40.310 [main] INFO  org.hibernate.engine.jdbc.batch.internal.AbstractBatchImpl - HHH000010: On release of batch it still contained JDBC statements
+2023-02-26 22:38:40.310 [main] ERROR org.hibernate.engine.jdbc.batch.internal.BatchingBatch - HHH000315: Exception executing batch [java.sql.BatchUpdateException: ORA-01031: 권한이 불충분합니다
+], SQL: insert into GESG.E_CO_JOB_INFO (CALC_ELPS, CALC_END, CALC_SCD, JOB_NM, LAST_MODIFIED_BY, LAST_UPDATE_DATE, JOB_ID, CALC_START, CALC_DATE, BASE_YYMM) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2023-02-26 22:38:40.310 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1031, SQLState: 42000
+2023-02-26 22:38:40.310 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-01031: 권한이 불충분합니다
+
+2023-02-26 22:38:40.310 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1031, SQLState: 42000
+2023-02-26 22:38:40.310 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-01031: 권한이 불충분합니다
+
+2023-02-26 22:38:40.311 [main] ERROR org.hibernate.internal.ExceptionMapperStandardImpl - HHH000346: Error during managed flush [org.hibernate.exception.SQLGrammarException: could not execute batch]
+2023-02-26 22:41:10.339 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:41:10.414 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:41:10.415 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:41:10.666 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.3.Final}
+2023-02-26 22:41:10.752 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH010002: C3P0 using driver: oracle.jdbc.driver.OracleDriver at URL: jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB
+2023-02-26 22:41:10.752 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001001: Connection properties: {password=****, user=NESG}
+2023-02-26 22:41:10.753 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001003: Autocommit mode: false
+2023-02-26 22:41:10.803 [MLog-Init-Reporter] INFO  com.mchange.v2.log.MLog - MLog clients using slf4j logging.
+2023-02-26 22:41:10.840 [main] INFO  com.mchange.v2.c3p0.C3P0Registry - Initializing c3p0-0.9.5.2 [built 08-December-2015 22:06:04 -0800; debug? true; trace: 10]
+2023-02-26 22:41:10.858 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001007: JDBC isolation level: <unknown>
+2023-02-26 22:41:10.868 [main] INFO  com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource - Initializing c3p0 pool... com.mchange.v2.c3p0.PoolBackedDataSource@79f9a0eb [ connectionPoolDataSource -> com.mchange.v2.c3p0.WrapperConnectionPoolDataSource@e4a6c450 [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, debugUnreturnedConnectionStackTraces -> false, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, identityToken -> z8kfltau13dyhwk1yx83zj|1f193686, idleConnectionTestPeriod -> 0, initialPoolSize -> 10, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 50, maxStatements -> 50, maxStatementsPerConnection -> 0, minPoolSize -> 10, nestedDataSource -> com.mchange.v2.c3p0.DriverManagerDataSource@af25aa42 [ description -> null, driverClass -> null, factoryClassLocation -> null, forceUseNamedDriverClass -> false, identityToken -> z8kfltau13dyhwk1yx83zj|60d1b21f, jdbcUrl -> jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, properties -> {password=******, user=******} ], preferredTestQuery -> null, privilegeSpawnedThreads -> false, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, usesTraditionalReflectiveProxies -> false; userOverrides: {} ], dataSourceName -> null, extensions -> {}, factoryClassLocation -> null, identityToken -> z8kfltau13dyhwk1yx83zj|4b54af3d, numHelperThreads -> 3 ]
+2023-02-26 22:41:11.960 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect
+2023-02-26 22:41:11.963 [main] WARN  org.hibernate.dialect.Oracle9Dialect - HHH000063: The Oracle9Dialect dialect has been deprecated; use either Oracle9iDialect or Oracle10gDialect instead
+2023-02-26 22:41:11.964 [main] WARN  org.hibernate.dialect.OracleDialect - HHH000064: The OracleDialect dialect has been deprecated; use Oracle8iDialect instead
+2023-02-26 22:41:13.172 [main] INFO  com.gof.util.HibernateUtil - Generate Session : new Session is generated with [URL:jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, USER:NESG]
+2023-02-26 22:41:13.239 [main] INFO  org.hibernate.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2023-02-26 22:41:13.356 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 942, SQLState: 42000
+2023-02-26 22:41:13.357 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-00942: 테이블 또는 뷰가 존재하지 않습니다
+
+2023-02-26 22:44:16.361 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:44:16.434 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:44:16.436 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:45:16.295 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:45:16.370 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:45:16.371 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:45:16.636 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.3.Final}
+2023-02-26 22:45:16.718 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH010002: C3P0 using driver: oracle.jdbc.driver.OracleDriver at URL: jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB
+2023-02-26 22:45:16.718 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001001: Connection properties: {password=****, user=NESG}
+2023-02-26 22:45:16.718 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001003: Autocommit mode: false
+2023-02-26 22:45:16.779 [MLog-Init-Reporter] INFO  com.mchange.v2.log.MLog - MLog clients using slf4j logging.
+2023-02-26 22:45:16.816 [main] INFO  com.mchange.v2.c3p0.C3P0Registry - Initializing c3p0-0.9.5.2 [built 08-December-2015 22:06:04 -0800; debug? true; trace: 10]
+2023-02-26 22:45:16.836 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001007: JDBC isolation level: <unknown>
+2023-02-26 22:45:16.847 [main] INFO  com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource - Initializing c3p0 pool... com.mchange.v2.c3p0.PoolBackedDataSource@5ac51aa0 [ connectionPoolDataSource -> com.mchange.v2.c3p0.WrapperConnectionPoolDataSource@c5723e05 [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, debugUnreturnedConnectionStackTraces -> false, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, identityToken -> z8kfltau13e3rp8hv5kbi|1f193686, idleConnectionTestPeriod -> 0, initialPoolSize -> 10, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 50, maxStatements -> 50, maxStatementsPerConnection -> 0, minPoolSize -> 10, nestedDataSource -> com.mchange.v2.c3p0.DriverManagerDataSource@8ff123f7 [ description -> null, driverClass -> null, factoryClassLocation -> null, forceUseNamedDriverClass -> false, identityToken -> z8kfltau13e3rp8hv5kbi|60d1b21f, jdbcUrl -> jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, properties -> {password=******, user=******} ], preferredTestQuery -> null, privilegeSpawnedThreads -> false, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, usesTraditionalReflectiveProxies -> false; userOverrides: {} ], dataSourceName -> null, extensions -> {}, factoryClassLocation -> null, identityToken -> z8kfltau13e3rp8hv5kbi|4b54af3d, numHelperThreads -> 3 ]
+2023-02-26 22:45:17.929 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect
+2023-02-26 22:45:17.933 [main] WARN  org.hibernate.dialect.Oracle9Dialect - HHH000063: The Oracle9Dialect dialect has been deprecated; use either Oracle9iDialect or Oracle10gDialect instead
+2023-02-26 22:45:17.933 [main] WARN  org.hibernate.dialect.OracleDialect - HHH000064: The OracleDialect dialect has been deprecated; use Oracle8iDialect instead
+2023-02-26 22:45:19.227 [main] INFO  com.gof.util.HibernateUtil - Generate Session : new Session is generated with [URL:jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, USER:NESG]
+2023-02-26 22:45:19.290 [main] INFO  org.hibernate.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2023-02-26 22:45:19.410 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 942, SQLState: 42000
+2023-02-26 22:45:19.411 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-00942: 테이블 또는 뷰가 존재하지 않습니다
+
+2023-02-26 22:46:27.235 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 22:46:27.305 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 22:46:27.306 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 22:46:27.574 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.3.Final}
+2023-02-26 22:46:27.653 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH010002: C3P0 using driver: oracle.jdbc.driver.OracleDriver at URL: jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB
+2023-02-26 22:46:27.653 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001001: Connection properties: {password=****, user=NESG}
+2023-02-26 22:46:27.654 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001003: Autocommit mode: false
+2023-02-26 22:46:27.704 [MLog-Init-Reporter] INFO  com.mchange.v2.log.MLog - MLog clients using slf4j logging.
+2023-02-26 22:46:27.745 [main] INFO  com.mchange.v2.c3p0.C3P0Registry - Initializing c3p0-0.9.5.2 [built 08-December-2015 22:06:04 -0800; debug? true; trace: 10]
+2023-02-26 22:46:27.763 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001007: JDBC isolation level: <unknown>
+2023-02-26 22:46:27.773 [main] INFO  com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource - Initializing c3p0 pool... com.mchange.v2.c3p0.PoolBackedDataSource@50c06045 [ connectionPoolDataSource -> com.mchange.v2.c3p0.WrapperConnectionPoolDataSource@bb6d83aa [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, debugUnreturnedConnectionStackTraces -> false, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, identityToken -> z8kfltau13e5afc141h9y6|1f193686, idleConnectionTestPeriod -> 0, initialPoolSize -> 10, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 50, maxStatements -> 50, maxStatementsPerConnection -> 0, minPoolSize -> 10, nestedDataSource -> com.mchange.v2.c3p0.DriverManagerDataSource@85ec699c [ description -> null, driverClass -> null, factoryClassLocation -> null, forceUseNamedDriverClass -> false, identityToken -> z8kfltau13e5afc141h9y6|60d1b21f, jdbcUrl -> jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, properties -> {password=******, user=******} ], preferredTestQuery -> null, privilegeSpawnedThreads -> false, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, usesTraditionalReflectiveProxies -> false; userOverrides: {} ], dataSourceName -> null, extensions -> {}, factoryClassLocation -> null, identityToken -> z8kfltau13e5afc141h9y6|4b54af3d, numHelperThreads -> 3 ]
+2023-02-26 22:46:28.905 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect
+2023-02-26 22:46:28.908 [main] WARN  org.hibernate.dialect.Oracle9Dialect - HHH000063: The Oracle9Dialect dialect has been deprecated; use either Oracle9iDialect or Oracle10gDialect instead
+2023-02-26 22:46:28.909 [main] WARN  org.hibernate.dialect.OracleDialect - HHH000064: The OracleDialect dialect has been deprecated; use Oracle8iDialect instead
+2023-02-26 22:46:30.149 [main] INFO  com.gof.util.HibernateUtil - Generate Session : new Session is generated with [URL:jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, USER:NESG]
+2023-02-26 22:46:30.211 [main] INFO  org.hibernate.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2023-02-26 22:46:30.349 [main] WARN  org.hibernate.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 904, SQLState: 42000
+2023-02-26 22:46:30.349 [main] ERROR org.hibernate.engine.jdbc.spi.SqlExceptionHelper - ORA-00904: "IRCURVE0_"."IR_CURVE_ID": 부적합한 식별자
+
+2023-02-26 23:51:08.806 [main] INFO  com.gof.util.HibernateUtil - getSesson Factory no Arg
+2023-02-26 23:51:08.880 [main] INFO  org.hibernate.Version - HHH000412: Hibernate Core {5.3.1.Final}
+2023-02-26 23:51:08.881 [main] INFO  org.hibernate.cfg.Environment - HHH000206: hibernate.properties not found
+2023-02-26 23:51:09.149 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.0.3.Final}
+2023-02-26 23:51:09.230 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH010002: C3P0 using driver: oracle.jdbc.driver.OracleDriver at URL: jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB
+2023-02-26 23:51:09.230 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001001: Connection properties: {password=****, user=NESG}
+2023-02-26 23:51:09.231 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001003: Autocommit mode: false
+2023-02-26 23:51:09.287 [MLog-Init-Reporter] INFO  com.mchange.v2.log.MLog - MLog clients using slf4j logging.
+2023-02-26 23:51:09.324 [main] INFO  com.mchange.v2.c3p0.C3P0Registry - Initializing c3p0-0.9.5.2 [built 08-December-2015 22:06:04 -0800; debug? true; trace: 10]
+2023-02-26 23:51:09.343 [main] INFO  org.hibernate.c3p0.internal.C3P0ConnectionProvider - HHH10001007: JDBC isolation level: <unknown>
+2023-02-26 23:51:09.353 [main] INFO  com.mchange.v2.c3p0.impl.AbstractPoolBackedDataSource - Initializing c3p0 pool... com.mchange.v2.c3p0.PoolBackedDataSource@e1be5b34 [ connectionPoolDataSource -> com.mchange.v2.c3p0.WrapperConnectionPoolDataSource@4c6b7e99 [ acquireIncrement -> 3, acquireRetryAttempts -> 30, acquireRetryDelay -> 1000, autoCommitOnClose -> false, automaticTestTable -> null, breakAfterAcquireFailure -> false, checkoutTimeout -> 0, connectionCustomizerClassName -> null, connectionTesterClassName -> com.mchange.v2.c3p0.impl.DefaultConnectionTester, contextClassLoaderSource -> caller, debugUnreturnedConnectionStackTraces -> false, factoryClassLocation -> null, forceIgnoreUnresolvedTransactions -> false, forceSynchronousCheckins -> false, identityToken -> z8kfltau13gghh4hqv2gy|1f193686, idleConnectionTestPeriod -> 0, initialPoolSize -> 10, maxAdministrativeTaskTime -> 0, maxConnectionAge -> 0, maxIdleTime -> 0, maxIdleTimeExcessConnections -> 0, maxPoolSize -> 50, maxStatements -> 50, maxStatementsPerConnection -> 0, minPoolSize -> 10, nestedDataSource -> com.mchange.v2.c3p0.DriverManagerDataSource@16ea648b [ description -> null, driverClass -> null, factoryClassLocation -> null, forceUseNamedDriverClass -> false, identityToken -> z8kfltau13gghh4hqv2gy|60d1b21f, jdbcUrl -> jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, properties -> {password=******, user=******} ], preferredTestQuery -> null, privilegeSpawnedThreads -> false, propertyCycle -> 0, statementCacheNumDeferredCloseThreads -> 0, testConnectionOnCheckin -> false, testConnectionOnCheckout -> false, unreturnedConnectionTimeout -> 0, usesTraditionalReflectiveProxies -> false; userOverrides: {} ], dataSourceName -> null, extensions -> {}, factoryClassLocation -> null, identityToken -> z8kfltau13gghh4hqv2gy|4b54af3d, numHelperThreads -> 3 ]
+2023-02-26 23:51:10.490 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.OracleDialect
+2023-02-26 23:51:10.494 [main] WARN  org.hibernate.dialect.Oracle9Dialect - HHH000063: The Oracle9Dialect dialect has been deprecated; use either Oracle9iDialect or Oracle10gDialect instead
+2023-02-26 23:51:10.495 [main] WARN  org.hibernate.dialect.OracleDialect - HHH000064: The OracleDialect dialect has been deprecated; use Oracle8iDialect instead
+2023-02-26 23:51:11.838 [main] INFO  com.gof.util.HibernateUtil - Generate Session : new Session is generated with [URL:jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB, USER:NESG]
+2023-02-26 23:51:11.905 [main] INFO  org.hibernate.hql.internal.QueryTranslatorFactoryInitiator - HHH000397: Using ASTQueryTranslatorFactory
+2023-02-26 23:51:12.191 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
+2023-02-26 23:51:12.192 [main] INFO  test.dbtest - aaa : 
