@@ -42,6 +42,7 @@ public class Esg250_BizLpSprd extends Process {
 					sprdLpBiz.setBaseYymm(bssd);						
 					sprdLpBiz.setApplBizDv(applBizDv);
 					sprdLpBiz.setIrCurveNm(curveSwMap.getKey());
+					sprdLpBiz.setIrCurve(swSce.getValue().getIrCurve());
 					sprdLpBiz.setIrCurveSceNo(swSce.getKey());
 					sprdLpBiz.setMatCd(sprdLp.getMatCd());
 					sprdLpBiz.setLiqPrem(sprdLp.getLiqPrem());

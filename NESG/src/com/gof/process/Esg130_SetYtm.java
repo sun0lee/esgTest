@@ -38,6 +38,7 @@ public class Esg130_SetYtm extends Process {
 				
 				ytm.setBaseDate(usr.getBaseDate());				
 				ytm.setIrCurveNm(irCurveNm);				
+				ytm.setIrCurve(usr.getIrCurve());				
 				
 				if(i==0) { 
 					ytm.setMatCd(ytmTen.get(i));
@@ -117,10 +118,10 @@ public class Esg130_SetYtm extends Process {
 	}	
 	
 	
-	public static List<IrCurveYtm> createYtmFromUsr(String bssd, String irCurveId) {
+	public static List<IrCurveYtm> createYtmFromUsr(String bssd, String irCurveNm) {
 		
 		List<IrCurveYtm>    ytmList    = new ArrayList<IrCurveYtm>();		
-		List<IrCurveYtmUsr> ytmUsrList = IrCurveYtmDao.getIrCurveYtmUsr(bssd, irCurveId);
+		List<IrCurveYtmUsr> ytmUsrList = IrCurveYtmDao.getIrCurveYtmUsr(bssd, irCurveNm);
 		
 		//Using Round Method: for avoiding truncation error in converting toReal Dimension
 		double toReal = 1;

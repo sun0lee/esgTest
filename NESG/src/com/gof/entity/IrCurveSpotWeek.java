@@ -26,7 +26,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
+@ToString(exclude="irCurve")
 @SequenceGenerator (name = "IR_CURVE_SPOT_WEEK_SEQ_GEN",sequenceName = "IR_CURVE_SPOT_WEEK_SEQ",initialValue = 1, allocationSize = 1)
 public class IrCurveSpotWeek implements Serializable {
 	
@@ -38,6 +38,7 @@ public class IrCurveSpotWeek implements Serializable {
 	private long id;
 
 	private String baseDate;	
+//	private long irCurveSid;	
 	private String irCurveNm;	
 	private String matCd;	
 	
@@ -63,6 +64,8 @@ public class IrCurveSpotWeek implements Serializable {
 		
 		this.baseDate = curveHis.getBaseDate();
 		this.irCurveNm = curveHis.getIrCurveNm();
+//		this.irCurveSid = curveHis.getIrCurveSid();
+		this.irCurve = curveHis.getIrCurve();
 		this.matCd = curveHis.getMatCd();
 		this.spotRate = curveHis.getSpotRate();				
 	}
@@ -71,6 +74,8 @@ public class IrCurveSpotWeek implements Serializable {
 		
 		this.baseDate = curveHis.baseDate;
 		this.irCurveNm = curveHis.irCurveNm;
+//		this.irCurveSid = curveHis.irCurveSid;
+		this.irCurve = curveHis.irCurve;
 		this.matCd = curveHis.matCd;		
 		this.spotRate = curveHis.spotRate;
 		this.dayOfWeek = curveHis.dayOfWeek;
@@ -84,6 +89,7 @@ public class IrCurveSpotWeek implements Serializable {
 		
 		rst.setBaseDate(this.baseDate);
 		rst.setIrCurveNm(this.irCurveNm);
+		rst.setIrCurve(this.irCurve);
 		rst.setMatCd(this.matCd);
 		rst.setSpotRate(this.spotRate);
 		rst.setModifiedBy("GESG_" + this.getClass().getSimpleName());

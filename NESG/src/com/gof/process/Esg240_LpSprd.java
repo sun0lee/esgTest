@@ -49,6 +49,7 @@ public class Esg240_LpSprd extends Process {
 						lp1.setDcntApplModelCd("BU1");
 						lp1.setApplBizDv(applBizDv);
 						lp1.setIrCurveNm(curveSwMap.getKey());
+						lp1.setIrCurve(swSce.getValue().getIrCurve());
 						lp1.setIrCurveSceNo(swSce.getKey());
 						lp1.setMatCd(tenor);
 						lp1.setLiqPrem(swSce.getValue().getLiqPrem());
@@ -90,6 +91,7 @@ public class Esg240_LpSprd extends Process {
 						lp2.setDcntApplModelCd("BU2");
 						lp2.setApplBizDv(applBizDv);
 						lp2.setIrCurveNm(curveSwMap.getKey());
+						lp2.setIrCurve(swSce.getValue().getIrCurve());
 						lp2.setIrCurveSceNo(swSce.getKey());
 						lp2.setMatCd(lpCrv.getMatCd());
 						lp2.setLiqPrem(lpCrv.getCrdSprd());
@@ -127,6 +129,7 @@ public class Esg240_LpSprd extends Process {
 						lp3.setDcntApplModelCd("BU3");
 						lp3.setApplBizDv(applBizDv);
 						lp3.setIrCurveNm(curveSwMap.getKey());
+						lp3.setIrCurve(swSce.getValue().getIrCurve());
 						lp3.setIrCurveSceNo(swSce.getKey());
 						lp3.setMatCd(usr.getMatCd());
 						lp3.setLiqPrem(usr.getLiqPrem());

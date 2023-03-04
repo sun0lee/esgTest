@@ -17,6 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.ejml.data.Complex_F64;
 import org.ejml.simple.SimpleEVD;
@@ -45,11 +51,12 @@ public abstract class IrModel implements Constant {
 	public static final int                    DECIMAL_DIGIT        = 17;
 	public static final int                    RANDOM_SEED          = 470;
 	public static final int                    SCEN_NUM             = 200;
-                                        
+                                       
+	
 	protected LocalDate                        baseDate;
 //	protected String                           irCurveId;
 	protected String                           irCurveNm;
-//	protected IrCurve                          irCurve;  // add
+	protected IrCurve                          irCurve;  // add
 	protected int                              modelType;
 	protected char                             cmpdType             = CMPD_MTD_DISC;
 	protected char                             timeUnit             = TIME_UNIT_YEAR;

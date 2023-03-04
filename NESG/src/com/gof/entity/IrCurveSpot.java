@@ -177,7 +177,7 @@ public class IrCurveSpot implements Serializable {
 		rst.setSpotRate(this.spotRate);
 		rst.setDayOfWeek(dayOfWeek);
 		rst.setBizDayType("Y");
-//		rst.setIrCurve(this.irCurve);
+		rst.setIrCurve(this.irCurve);
 		rst.setModifiedBy("ESG");
 		rst.setUpdateDate(LocalDateTime.now());
 		

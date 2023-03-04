@@ -83,6 +83,7 @@ public class IrParamSwUsr implements Serializable {
 		paramSw.setLlp(this.llp);
 		paramSw.setLtfr(this.ltfr);
 		paramSw.setLtfrCp(this.ltfrCp);
+		paramSw.setLiqPrem(this.liqPrem); //23.03.03 add  맞나 확인!
 		paramSw.setLiqPremApplDv(this.liqPremApplDv);
 		paramSw.setShkSprdSceNo(this.shkSprdSceNo);
 		paramSw.setSwAlphaYtm(this.swAlphaYtm);

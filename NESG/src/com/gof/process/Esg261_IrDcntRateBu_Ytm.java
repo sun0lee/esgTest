@@ -40,7 +40,8 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				List<IrCurveYtm> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
 //				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
-				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(bssd, curveSwMap.getKey(), ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
+//				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(bssd, curveSwMap.getKey(), ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
+				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(bssd, curveSwMap.getValue().get(swSce).getIrCurve(), ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
 													.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
 				
 				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));

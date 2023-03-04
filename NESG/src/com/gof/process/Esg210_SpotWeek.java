@@ -38,7 +38,7 @@ public class Esg210_SpotWeek extends Process {
 			log.warn("IR Curve History of {} Data is not found at from {} to {}", irCurveId, stBssd, bssd);
 			return rstList;
 		}	
-		
+//		23.03.03 1000개의 의미 ? 
 		if(curveHisList.size() < 1000) {
 			log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] from {} to {}", irCurveId, curveHisList.size(), stBssd, FinUtils.toEndOfMonth(bssd));			
 			return rstList;

@@ -295,7 +295,12 @@ public class Main {
 		
 		jobList.clear();
 		jobList.add("110");
-		jobList.add("150");
+//		jobList.add("130");		
+//		jobList.add("150");
+		
+//		jobList.add("210");
+		jobList.add("220");
+//		jobList.add("230");
 //		jobList.add("240");
 //		jobList.add("250");
 //		jobList.add("260");
@@ -719,7 +724,7 @@ public class Main {
 					log.info("weekHisList: [{}], [TOTAL: {}, BIZDAY: {}], [from {} to {}, weekDay:{}]", irCrv.getKey(), weekHisList.size(), weekHisBizList.size(), iRateHisStBaseDate.substring(0,6), bssd, weekDay);			
 
 					//for ensuring enough input size
-					if(weekHisList.size() < 1000) {
+					if(weekHisList.size() < 700) {
 						log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] for [{}]", irCrv.getKey(), weekHisList.size(), bssd);
 						continue;
 					}					
