@@ -1,8 +1,10 @@
 package com.gof.dao;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrCurveYtmUsr;
@@ -158,21 +160,49 @@ public class IrCurveYtmDao extends DaoUtil {
 					  ;
 	}	
 
+	// 23.03.06 기준일자로만 가져오기 List -> Stream 으로 타입변경 
+	public static Stream<IrCurveYtmUsrHis> getIrCurveYtmUsrHis(String bssd) {
+		
+		String query = " select a from IrCurveYtmUsrHis a      " 
+					 + "  where 1=1                            "
+					 + "    and substr(a.baseDate,1,6) = :bssd "
+					 + "  order by a.baseDate                  "				
+		 		 	 ;
+		
+		Query<IrCurveYtmUsrHis> q =session.createQuery(query, IrCurveYtmUsrHis.class);
+		q.setParameter("bssd",bssd) ;
+		
+		return q.stream();
+	}	
 	
-	public static List<IrCurveYtmUsr> getIrCurveYtmUsr(String bssd, String irCurveNm) {
+//	public static List<IrCurveYtmUsr> getIrCurveYtmUsr(String bssd, String irCurveNm) {
+//		
+//		String query = " select a from IrCurveYtmUsr a         " 
+//					 + "  where 1=1                            "
+//					 + "    and substr(a.baseDate,1,6) = :bssd "
+//					 + "    and a.irCurveNm = :irCurveNm       "
+//					 + "  order by a.baseDate                  "				
+//		 		 	 ;
+//		
+//		return session.createQuery(query, IrCurveYtmUsr.class)
+//					  .setParameter("bssd", bssd)
+//					  .setParameter("irCurveNm", irCurveNm)
+//					  .getResultList()
+//					  ;
+//	}	// 2023.03.06 삭제 검토 =>filter 이용하면 사용할때에 조건을 추가로 주는건 문제가 안됨. 성능땜에 조건별로 조회하는 것인가 ??
+
+	// 23.03.06 기준일자로만 가져오기 List -> Stream 으로 타입변경 
+	public static Stream<IrCurveYtmUsr> getIrCurveYtmUsr(String bssd) {
 		
 		String query = " select a from IrCurveYtmUsr a         " 
 					 + "  where 1=1                            "
 					 + "    and substr(a.baseDate,1,6) = :bssd "
-					 + "    and a.irCurveNm = :irCurveNm       "
 					 + "  order by a.baseDate                  "				
 		 		 	 ;
-		
-		return session.createQuery(query, IrCurveYtmUsr.class)
-					  .setParameter("bssd", bssd)
-					  .setParameter("irCurveNm", irCurveNm)
-					  .getResultList()
-					  ;
+		Query<IrCurveYtmUsr> q =session.createQuery(query, IrCurveYtmUsr.class);
+			q.setParameter("bssd",bssd) ;
+			
+		return q.stream();
 	}	
 	
 }

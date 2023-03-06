@@ -13,7 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,8 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
+//@AllArgsConstructor // add 23.03.06 
+//@Builder            // add 23.03.06 
 @SequenceGenerator (name = "IR_CURVE_YTM_SEQ_GEN",sequenceName = "IR_CURVE_YTM_SEQ",initialValue = 1, allocationSize = 1)
 public class IrCurveYtm implements Serializable {	
 	
@@ -79,5 +82,19 @@ public class IrCurveYtm implements Serializable {
 		addYtm.setUpdateDate(LocalDateTime.now());
 		
 		return addYtm;
+	}
+
+@Builder // add 23.03.06 
+	public IrCurveYtm(long id, String baseDate, String irCurveNm, String matCd, Double ytm, String modifiedBy,
+			LocalDateTime updateDate, IrCurve irCurve) {
+			super();
+			this.id = id;
+			this.baseDate = baseDate;
+			this.irCurveNm = irCurveNm;
+			this.matCd = matCd;
+			this.ytm = ytm;
+			this.modifiedBy = modifiedBy;
+			this.updateDate = updateDate;
+			this.irCurve = irCurve;
 	}		
 }

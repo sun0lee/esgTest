@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.hibernate.Session;
 
@@ -296,10 +297,10 @@ public class Main {
 		jobList.clear();
 		jobList.add("110");
 //		jobList.add("130");		
-//		jobList.add("150");
+		jobList.add("150");
 		
 //		jobList.add("210");
-		jobList.add("220");
+//		jobList.add("220");
 //		jobList.add("230");
 //		jobList.add("240");
 //		jobList.add("250");
@@ -311,12 +312,10 @@ public class Main {
 	//TODO: Start from E_IR_PARAM_SW_USR
 	private static void job110() {
 		if(jobList.contains("110")) {
-//		if(true) {
 			session.beginTransaction();		
 			CoJobInfo jobLog = startJogLog(EJob.ESG110);
 			
 			try {
-//				irCurveMap    = IrCurveDao.getIrCurveList().stream().collect(Collectors.toMap(s->s.getirCurveNm(), Function.identity()));
 				irCurveMap    = IrCurveDao.getIrCurveList().stream()
 										  .collect(Collectors.toMap(s->s.getIrCurveNm(), Function.identity()));
 				irCurveNmList = irCurveMap.keySet().stream().collect(Collectors.toList());				
@@ -332,33 +331,27 @@ public class Main {
 				int delNum = session.createQuery("delete IrParamSw a where a.baseYymm=:param").setParameter("param", bssd).executeUpdate();
 				log.info("[{}] has been Deleted in Job:[{}] [BASE_YYMM: {}, COUNT: {}]", Process.toPhysicalName(IrParamSw.class.getSimpleName()), jobLog.getJobId(), bssd, delNum);				
 
-//				List<IrParamSwUsr> paramSwUsrList = IrParamSwDao.getIrParamSwUsrList(bssd, irCurveNmList);				
 				List<IrParamSwUsr> paramSwUsrList = IrParamSwDao.getIrParamSwUsrList(bssd, irCurveNmList);				
 //				paramSwUsrList.forEach(s -> log.info("paramSwUsrList: {}", s));
 				log.info("Active PARAM_SW_USR SIZE in [{}]: [{}]", bssd, paramSwUsrList.size());
 				
-				Set<String>  applBizDvSet    = paramSwUsrList.stream().map(s -> s.getApplBizDv())   .collect(Collectors.toSet());
-				
+				Set<String>  applBizDvSet    = paramSwUsrList.stream().map(s -> s.getApplBizDv())   .collect(Collectors.toSet());				
 				Set<String>  irCurveNmSet    = paramSwUsrList.stream().map(s -> s.getIrCurveNm())   .collect(Collectors.toSet());
-//				irCurve를 통째로 가져오는set을 만들자 ! 
-//				근데 위에 irCurveNmLis가 있는데 왜 또 만든거지,, 테이블 구조상 중복될수도 없음 순서가 중요한가 ?
-//				Set<IrCurve> irCurveSet      = paramSwUsrList.stream().map(s -> s.getIrCurve())   .collect(Collectors.toSet());
-				
 				Set<Integer> irCurveSceNoSet = paramSwUsrList.stream().map(s -> s.getIrCurveSceNo()).collect(Collectors.toSet());
 //				irCurveSceNoSet.forEach(s -> log.info("irCurveSceNoSet: {}", s));
 				
 				List<IrParamSw> paramSwList = new ArrayList<IrParamSw>();
-				
+			
+				// TODO stream 의 grouping을 이용하면 for문을 없앨 수 있을것 같음.	
 				for(String biz : applBizDvSet) {
 					for(String curve : irCurveNmSet) {
-//					for(IrCurve curve : irCurveSet) {
 						for(Integer sceNo : irCurveSceNoSet) {
 							List<IrParamSw> sw = IrParamSwDao.getIrParamSwList(bssd, biz, curve, sceNo);
 							paramSwList.addAll(sw);
 						}
 					}
 				}				
-//				paramSwList.forEach(s -> log.info("paramSwList: {}", s));
+				paramSwList.forEach(s -> log.info("paramSwList: {}", s));
 				log.info("Active PARAM_SW     SIZE in [{}]: [{}]", bssd, paramSwList.size());
 				if(paramSwList.size() != paramSwUsrList.size()) {
 					log.warn("Check Smith-Wilson Attribute in [{}] Table for [{}]", Process.toPhysicalName(IrParamSwUsr.class.getSimpleName()), bssd);
@@ -458,13 +451,21 @@ public class Main {
 		}
 	}	
 	
-	
+	/** <p> insert into IR_CURVE_YTM 
+	 * <p> - 엔진에서 사용할 ytm정보를 저장함. ( 금리모형에 따라 달리질 이유가 없음. 금리코드에 따라 looping )</br> 
+	 * - 동일한 월의 ytm이 from 테이블에 둘 다 있을 경우 dup발생. </br> 
+	 * from 01 : IR_CURVE_YTM_USR_HIS : KOFIA BOND 와 동일한 layout, 만기를 컬럼으로 구분함. 입력단위 (% ; toReal 0.01)  </br>
+	 * from 02 : IR_CURVE_YTM_USR : 만기구분을 코드값으로 구분함. 입력단위 (number ; toReal 1) </br>
+	 * */
+//	TODO : delete 작업 / BIZ 작업 / insert 작업 분리 필요 
 	private static void job130() {
 		if(jobList.contains("130")) {
 			session.beginTransaction();		
 			CoJobInfo jobLog = startJogLog(EJob.ESG130);
 			
-			try {				
+			try {
+/*
+				// 23.03.06. 금리커브별로 루프 돌 필요 없이 기준일자별로 작업하면 안되려낭 ?
 				for(Map.Entry<String, IrCurve> irCrv : irCurveMap.entrySet()) {					
 				
 					if(!irCurveSwMap.containsKey(irCrv.getKey())) {
@@ -486,6 +487,35 @@ public class Main {
 					ytmUsr.stream().forEach(s -> session.save(s));
 //					ytmUsr.stream().forEach(s -> log.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa{}", s));					
 				}
+*/
+				
+				
+//			  23.03.06 수정 
+			    for (String irCurveNm : irCurveNmList) {
+					
+					if(!irCurveSwMap.containsKey(irCurveNm)) { 
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);						
+						continue;
+					}
+
+					int delNum = session.createQuery("delete IrCurveYtm a where a.baseDate like :param1 and a.irCurveNm = :param2")
+										.setParameter("param1", bssd+"%")				
+										.setParameter("param2", irCurveNm).executeUpdate();
+		
+					log.info("[{}] has been Deleted in Job:[{}] [COUNT: {}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), jobLog.getJobId(), delNum);
+					
+					// 기존 코드 (setter 이용)
+					List<IrCurveYtm> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis(bssd, irCurveNm);
+					ytmUsrHis.stream().forEach(s -> session.save(s));
+					
+					// 수정 (builder 이용) 
+//					Stream<IrCurveYtm> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis2(bssd, irCurveNm);
+//					ytmUsrHis.forEach(s -> session.save(s));
+					
+					Stream<IrCurveYtm> ytmUsr    = Esg130_SetYtm.createYtmFromUsr(bssd, irCurveNm);
+					ytmUsr.forEach(s -> session.save(s)); 
+			    	
+			    }
 				
 				session.flush();
 				session.clear();
@@ -500,38 +530,45 @@ public class Main {
 		}
 	}	
 	
-
+	/** <p> insert into IR_CURVE_SPOT  
+	 * <p> - YTM to SPOT by Smith-Wilson 방법론</br>
+	 * - SW 방법론을 적용하기 때문에 ir_Curve 단위로 IR_PARAM_SW 에 설정여부를 체크함.  </br> 
+	 * from : IR_CURVE_YTM  </br>
+	 * @See SmithWilsonKicsBts
+	 * */
 	private static void job150() {
 		if(jobList.contains("150")) {
-//		if(true) {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG150);			
 			
 			try {
-				for(Map.Entry<String, IrCurve> irCrv : irCurveMap.entrySet()) {
-					if(!irCurveSwMap.containsKey(irCrv.getKey())) {
-						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCrv.getKey(), bssd);						
+			    for(String irCurveNm : irCurveNmList) {
+			    	
+			    	// IR_PARAM_SW 설정여부 확인 
+					if(!irCurveSwMap.containsKey(irCurveNm)) {
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);						
 						continue;
 					}					
 
-					IrCurveSpotDao.deleteIrCurveSpotMonth(bssd, irCrv.getKey());
-					List<IrCurveYtm> ytmRstList = IrCurveYtmDao.getIrCurveYtmMonth(bssd, irCrv.getKey());					
+					// 기준일자의 이전 작업 결과 delete 
+					IrCurveSpotDao.deleteIrCurveSpotMonth(bssd, irCurveNm);
+					List<IrCurveYtm> ytmRstList = IrCurveYtmDao.getIrCurveYtmMonth(bssd, irCurveNm);					
 					if(ytmRstList.size()==0) {
-						log.warn("No Historical YTM Data exist for [{}, {}]", bssd, irCrv.getKey());
+						log.warn("No Historical YTM Data exist for [{}, {}]", bssd, irCurveNm);
 						continue;
 					}					
 					
+					// (이미 irCurve 기준으로 loop돌고 있음) TreeMap : 기준일자별, (만기별 ytm) 생성   
 					TreeMap<String, List<IrCurveYtm>> ytmRstMap = new TreeMap<String, List<IrCurveYtm>>();
 					ytmRstMap = ytmRstList.stream().collect(Collectors.groupingBy(s -> s.getBaseDate(), TreeMap::new, Collectors.toList()));					
 					
 					for(Map.Entry<String, List<IrCurveYtm>> ytmRst : ytmRstMap.entrySet()) {						
 						
 //						log.info("ytmRst: {}, {}, {}, {}, {}, {}", ytmRst.getKey(), irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getSwAlphaYtm(), irCurveSwMap.get(irCrv.getKey()).getFreq(), ytmRst.getValue(), ytmRst);
-						
+						// spot rate 만들어서 담을 통 
 						List<IrCurveSpot> rst = new ArrayList<IrCurveSpot>();
-						
-//						rst = Esg150_YtmToSpotSw.createIrCurveSpot(ytmRst.getKey(), irCrv.getKey(),   ytmRst.getValue(),irCurveSwMap.get(irCrv.getKey()).getSwAlphaYtm(), irCurveSwMap.get(irCrv.getKey()).getFreq());
-						rst = Esg150_YtmToSpotSw.createIrCurveSpot(ytmRst.getKey(), irCrv.getValue(), ytmRst.getValue(),irCurveSwMap.get(irCrv.getKey()).getSwAlphaYtm(), irCurveSwMap.get(irCrv.getKey()).getFreq());
+						// biz : SW 방식으로 ytm -> spot 전환해서 return 
+						rst = Esg150_YtmToSpotSw.createIrCurveSpot(ytmRst.getKey(), irCurveMap.get(irCurveNm), ytmRst.getValue(),irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
 						
 						if(rst.isEmpty()) throw new Exception();
 						rst.forEach(s -> session.save(s));

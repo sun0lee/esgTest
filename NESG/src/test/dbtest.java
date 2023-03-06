@@ -47,11 +47,11 @@ public class dbtest {
 //			System.out.println("aaa :" + aa.getJobNm() + " : " + aa.getJobName());
 //		}
 		
-		List<CoEsgMeta> CoEsgMetaInfo = CoEsgMetaDao.getCoEsgMeta("PROPERTIES");
-		
-		for( CoEsgMeta aa : CoEsgMetaInfo) {
-			System.out.println("aaa :" + aa.getGroupId() + " : " + aa.getParamKey() + aa.getParamValue());
-		}
+//		List<CoEsgMeta> CoEsgMetaInfo = CoEsgMetaDao.getCoEsgMeta("PROPERTIES");
+//		
+//		for( CoEsgMeta aa : CoEsgMetaInfo) {
+//			System.out.println("aaa :" + aa.getGroupId() + " : " + aa.getParamKey() + aa.getParamValue());
+//		}
 		
 		azaz = CoEsgMetaDao.getCoEsgMeta("PROPERTIES")
 				           .stream()

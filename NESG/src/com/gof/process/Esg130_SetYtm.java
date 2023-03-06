@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.gof.dao.IrCurveYtmDao;
 import com.gof.entity.IrCurveYtm;
@@ -39,73 +40,25 @@ public class Esg130_SetYtm extends Process {
 				ytm.setBaseDate(usr.getBaseDate());				
 				ytm.setIrCurveNm(irCurveNm);				
 				ytm.setIrCurve(usr.getIrCurve());				
-				
-				if(i==0) { 
-					ytm.setMatCd(ytmTen.get(i));
+				ytm.setMatCd(ytmTen.get(i));
 					
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0003(), 0.0) * toReal, digit));
-				}
-				else if(i==1) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0006(), 0.0) * toReal, digit));
-				}
-				else if(i==2) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0009(), 0.0) * toReal, digit));
-				}
-				else if(i==3) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0012(), 0.0) * toReal, digit));
-				}
-				else if(i==4) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0018(), 0.0) * toReal, digit));
-				}
-				else if(i==5) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0024(), 0.0) * toReal, digit));
-				}
-				else if(i==6) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0030(), 0.0) * toReal, digit));
-				}
-				else if(i==7) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0036(), 0.0) * toReal, digit));
-				}
-				else if(i==8) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0048(), 0.0) * toReal, digit));
-				}
-				else if(i==9) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0060(), 0.0) * toReal, digit));
-				}
-				else if(i==10) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0084(), 0.0) * toReal, digit));
-				}
-				else if(i==11) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0120(), 0.0) * toReal, digit));
-				}
-				else if(i==12) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0180(), 0.0) * toReal, digit));
-				}
-				else if(i==13) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0240(), 0.0) * toReal, digit));
-				}
-				else if(i==14) {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0360(), 0.0) * toReal, digit));
-				}
-				else {
-					ytm.setMatCd(ytmTen.get(i));
-					ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0600(), 0.0) * toReal, digit));
-				}
-
+				if     (i==0) { ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0003(), 0.0) * toReal, digit)); }
+				else if(i==1) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0006(), 0.0) * toReal, digit)); }
+				else if(i==2) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0009(), 0.0) * toReal, digit)); }
+				else if(i==3) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0012(), 0.0) * toReal, digit)); }
+				else if(i==4) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0018(), 0.0) * toReal, digit)); }
+				else if(i==5) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0024(), 0.0) * toReal, digit)); }
+				else if(i==6) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0030(), 0.0) * toReal, digit)); }
+				else if(i==7) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0036(), 0.0) * toReal, digit)); }
+				else if(i==8) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0048(), 0.0) * toReal, digit)); }
+				else if(i==9) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0060(), 0.0) * toReal, digit)); }
+				else if(i==10) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0084(), 0.0) * toReal, digit)); }
+				else if(i==11) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0120(), 0.0) * toReal, digit)); }
+				else if(i==12) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0180(), 0.0) * toReal, digit)); }
+				else if(i==13) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0240(), 0.0) * toReal, digit)); }
+				else if(i==14) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0360(), 0.0) * toReal, digit)); }
+				else {			ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0600(), 0.0) * toReal, digit)); }
+				
 				ytm.setModifiedBy(jobId);
 				ytm.setUpdateDate(LocalDateTime.now());
 									
@@ -117,7 +70,7 @@ public class Esg130_SetYtm extends Process {
 		return ytmList;
 	}	
 	
-	
+/* 23.03.06 test : setter 대신 builder 이용 
 	public static List<IrCurveYtm> createYtmFromUsr(String bssd, String irCurveNm) {
 		
 		List<IrCurveYtm>    ytmList    = new ArrayList<IrCurveYtm>();		
@@ -146,5 +99,79 @@ public class Esg130_SetYtm extends Process {
 		
 		return ytmList;
 	}		
+*/
+	// 23.03.06 builder test
+	public static Stream<IrCurveYtm> createYtmFromUsrHis2(String bssd, String irCurveNm) {
+		
+		return IrCurveYtmDao.getIrCurveYtmUsrHis(bssd).filter(s->s.getIrCurveNm().equals(irCurveNm))
+				.map(s->Esg130_SetYtm.buildFromYtmUsrHis(s));
+	}
 	
+	// 23.03.06 builder test
+	public static Stream<IrCurveYtm> createYtmFromUsr(String bssd, String irCurveNm) {
+
+		return IrCurveYtmDao.getIrCurveYtmUsr(bssd).filter(s->s.getIrCurveNm().equals(irCurveNm))
+												   .map(s->Esg130_SetYtm.buildFromYtmUsr(s));
+	}
+
+	private static IrCurveYtm buildFromYtmUsrHis (IrCurveYtmUsrHis ytmUsrHis) {
+		
+		List<String> ytmTen = Arrays.asList("M0003", "M0006", "M0009", "M0012", "M0018", "M0024", "M0030", "M0036", "M0048", "M0060", "M0084", "M0120", "M0180", "M0240", "M0360", "M0600");		
+		List<String> TenList = new ArrayList<>() ; 
+		List<Double> ytmList = new ArrayList<>() ;  
+
+		//Using Round Method: for avoiding truncation error in converting toReal Dimension
+		double toReal = 0.01;
+		int    digit  = 7;    
+		
+		// TODO : List로 처리한 값을 순서대로 builder에 찍어주는 방법 찾기 .
+		for (int i = 0 ; i < ytmTen.size(); i++) {
+			TenList.add (ytmTen.get(i));
+			
+			if      (i==0)  { ytmList.add (ytmUsrHis.getYtmM0003()); }
+			else if (i==1)  { ytmList.add (ytmUsrHis.getYtmM0006()); }
+			else if (i==2)  { ytmList.add (ytmUsrHis.getYtmM0009()); }
+			else if (i==3)  { ytmList.add (ytmUsrHis.getYtmM0012()); }
+			else if (i==4)  { ytmList.add (ytmUsrHis.getYtmM0018()); }
+			else if (i==5)  { ytmList.add (ytmUsrHis.getYtmM0024()); }
+			else if (i==6)  { ytmList.add (ytmUsrHis.getYtmM0030()); }
+			else if (i==7)  { ytmList.add (ytmUsrHis.getYtmM0036()); }
+			else if (i==8)  { ytmList.add (ytmUsrHis.getYtmM0048()); }
+			else if (i==9)  { ytmList.add (ytmUsrHis.getYtmM0060()); }
+			else if (i==10) { ytmList.add (ytmUsrHis.getYtmM0084()); }
+			else if (i==11) { ytmList.add (ytmUsrHis.getYtmM0120()); }
+			else if (i==12) { ytmList.add (ytmUsrHis.getYtmM0180()); }
+			else if (i==13) { ytmList.add (ytmUsrHis.getYtmM0240()); }
+			else if (i==14) { ytmList.add (ytmUsrHis.getYtmM0360()); }
+			else {            ytmList.add (ytmUsrHis.getYtmM0600()); }
+		}
+			
+		return IrCurveYtm.builder()
+				.baseDate(ytmUsrHis.getBaseDate())
+                .irCurve(ytmUsrHis.getIrCurve())
+                .irCurveNm(ytmUsrHis.getIrCurveNm())
+                .matCd(TenList.get(0)) // 0~14 까지 반복 ?? 
+                .ytm(round(StringUtil.objectToPrimitive(ytmList.get(0), 0.0) * toReal, digit))
+                .modifiedBy(jobId + "Builder")
+                .updateDate(LocalDateTime.now())
+				.build();
+	}
+	
+	
+	private static IrCurveYtm buildFromYtmUsr(IrCurveYtmUsr ytmUsr) {
+
+		double toReal = 1;
+		int    digit  = 7;    
+
+		return IrCurveYtm.builder()
+                .baseDate(ytmUsr.getBaseDate())
+                .irCurve(ytmUsr.getIrCurve())
+                .irCurveNm(ytmUsr.getIrCurveNm())
+                .matCd(ytmUsr.getMatCd())
+                .ytm(round(StringUtil.objectToPrimitive(ytmUsr.getYtm(), 0.0) * toReal, digit))
+                .modifiedBy(jobId + "Builder")
+                .updateDate(LocalDateTime.now())
+				.build();
+
+	}
 }
