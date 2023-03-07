@@ -34,12 +34,16 @@ public class HibernateUtil {
 			
 			
 			
-			settings.put(Environment.DRIVER,  "oracle.jdbc.driver.OracleDriver");
-			settings.put(Environment.DIALECT, "org.hibernate.dialect.OracleDialect");
-			settings.put(Environment.URL,     "jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB");			
+//			settings.put(Environment.DRIVER,  "oracle.jdbc.driver.OracleDriver");
+//			settings.put(Environment.DIALECT, "org.hibernate.dialect.OracleDialect");
+//			settings.put(Environment.URL,     "jdbc:oracle:thin:@ARAZORDB_high?TNS_ADMIN=/Users/sunyoung/Applications/OCI/Wallet_ARAZORDB");			
+			settings.put(Environment.DRIVER,  "org.h2.Driver");
+			settings.put(Environment.DIALECT, "org.hibernate.dialect.H2Dialect");
+			settings.put(Environment.URL,     "jdbc:h2:tcp://localhost/~/H2DB/db/ESG");			
 			settings.put(Environment.USER,    "NESG");			
 //			settings.put(Environment.USER,    "ARAZOR");			
-			settings.put(Environment.PASS,    "Dull6078!1234");	
+//			settings.put(Environment.PASS,    "Dull6078!1234");	
+			settings.put(Environment.PASS,    "test");	
 			
 			
 			log.info("getSesson Factory no Arg");			

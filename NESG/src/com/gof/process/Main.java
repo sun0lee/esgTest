@@ -234,7 +234,7 @@ public class Main {
 		try {
 			FileInputStream fis = new FileInputStream(argInputMap.get(ERunArgument.properties));
 			properties.load(new BufferedInputStream(fis));			
-			EsgConstant.TABLE_SCHEMA = properties.getOrDefault("schema", "NESG").toString().trim().toUpperCase();
+			EsgConstant.TABLE_SCHEMA = properties.getOrDefault("schema", "PUBLIC").toString().trim().toUpperCase();
 			
 			if(properties.containsKey("encrypt") && properties.getProperty("encrypt").toString().trim().toUpperCase().equals("Y")) {
 				
@@ -294,10 +294,10 @@ public class Main {
 			System.exit(0);
 		}
 		
-		jobList.clear();
-		jobList.add("110");
+//		jobList.clear();
+//		jobList.add("110");
 //		jobList.add("130");		
-		jobList.add("150");
+//		jobList.add("150");
 		
 //		jobList.add("210");
 //		jobList.add("220");

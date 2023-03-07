@@ -15,7 +15,7 @@ public class PhysicalNamingStrategyImpl extends PhysicalNamingStrategyStandardIm
 	public static final PhysicalNamingStrategyImpl INSTANCE = new PhysicalNamingStrategyImpl();
 	
 //	private static String prefix = EsgConstant.TABLE_PREFIX == null ? "E" : EsgConstant.TABLE_PREFIX;
-	private static String schema = EsgConstant.TABLE_SCHEMA == null ? "NESG" : EsgConstant.TABLE_SCHEMA;
+	private static String schema = EsgConstant.TABLE_SCHEMA == null ? "PUBLIC" : EsgConstant.TABLE_SCHEMA;
 
 	 
     @Override

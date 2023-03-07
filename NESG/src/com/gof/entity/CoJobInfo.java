@@ -36,7 +36,9 @@ public class CoJobInfo  extends BaseEntity implements Serializable {
 	@Id 
 	private long id;
 
-	private String jobId;	
+	@Column (name ="JOB_NM")
+	private String jobId;
+	@Column (name = "JOB_NAME")
 	private String jobNm;
 	
 	private String baseYymm;
