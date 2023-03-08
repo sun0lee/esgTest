@@ -146,6 +146,7 @@ public class Esg270_IrDcntRate extends Process {
 					rslt.setBaseYymm(bssd);
 					rslt.setApplBizDv(applBizDv);
 					rslt.setIrCurveNm(curveSwMap.getKey());
+					rslt.setIrCurve(swSce.getValue().getIrCurve()); //add 03.08 
 					rslt.setIrCurveSceNo(swSce.getKey());
 					rslt.setModifiedBy(jobId);
 					rslt.setUpdateDate(LocalDateTime.now());

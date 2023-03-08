@@ -294,8 +294,8 @@ public class Main {
 			System.exit(0);
 		}
 		
-//		jobList.clear();
-//		jobList.add("110");
+		jobList.clear();
+		jobList.add("110");
 //		jobList.add("130");		
 //		jobList.add("150");
 		
@@ -306,7 +306,7 @@ public class Main {
 //		jobList.add("250");
 //		jobList.add("260");
 //		jobList.add("270");
-//		jobList.add("280");
+		jobList.add("280");
 	}		
 	
 	//TODO: Start from E_IR_PARAM_SW_USR
@@ -335,6 +335,7 @@ public class Main {
 //				paramSwUsrList.forEach(s -> log.info("paramSwUsrList: {}", s));
 				log.info("Active PARAM_SW_USR SIZE in [{}]: [{}]", bssd, paramSwUsrList.size());
 				
+				// dao 조회조건에 들어갈 대상 : 순서 상관없고 중복없어야 하므로 set으로 구성함. 
 				Set<String>  applBizDvSet    = paramSwUsrList.stream().map(s -> s.getApplBizDv())   .collect(Collectors.toSet());				
 				Set<String>  irCurveNmSet    = paramSwUsrList.stream().map(s -> s.getIrCurveNm())   .collect(Collectors.toSet());
 				Set<Integer> irCurveSceNoSet = paramSwUsrList.stream().map(s -> s.getIrCurveSceNo()).collect(Collectors.toSet());
@@ -342,7 +343,7 @@ public class Main {
 				
 				List<IrParamSw> paramSwList = new ArrayList<IrParamSw>();
 			
-				// TODO stream 의 grouping을 이용하면 for문을 없앨 수 있을것 같음.	
+				// TODO 목적별로 따로 돌것도 아닌데 왜 굳이 조건을 나눠서 가져올까 ? 어차피 아래에서 biz별로 구분해서 grouping 함 
 				for(String biz : applBizDvSet) {
 					for(String curve : irCurveNmSet) {
 						for(Integer sceNo : irCurveSceNoSet) {
@@ -351,45 +352,41 @@ public class Main {
 						}
 					}
 				}				
-				paramSwList.forEach(s -> log.info("paramSwList: {}", s));
+//				paramSwList.forEach(s -> log.info("paramSwList: {}", s));
 				log.info("Active PARAM_SW     SIZE in [{}]: [{}]", bssd, paramSwList.size());
+				
+				// 작업 전 기존 설정과 건수가 다른지 check 
 				if(paramSwList.size() != paramSwUsrList.size()) {
 					log.warn("Check Smith-Wilson Attribute in [{}] Table for [{}]", Process.toPhysicalName(IrParamSwUsr.class.getSimpleName()), bssd);
 				}
 
+				// save
 				paramSwList.stream().forEach(s -> session.save(s));
 				log.info("[{}] has been Created from [{}] in Job:[{}] [BASE_YYMM: {}, COUNT: {}]", Process.toPhysicalName(IrParamSw.class.getSimpleName()), Process.toPhysicalName(IrParamSwUsr.class.getSimpleName()), jobLog.getJobId(), bssd, paramSwList.size());
 
+				// 1.KICS 일 때 : irCurveSwMap
 				irCurveSwMap  = paramSwList.stream().filter(s -> s.getIrCurveSceNo().equals(1) && s.getApplBizDv().equals("KICS"))
-//						                            .collect(Collectors.toMap(IrParamSw::getirCurveNm, Function.identity()));
 				                                    .collect(Collectors.toMap(IrParamSw::getIrCurveNm, Function.identity()));
 
+				// 2.KICS가 아닐 때 : irCurveSwMap
 				for(IrParamSw irParamSw : paramSwList.stream().filter(s -> s.getIrCurveSceNo().equals(1) && !s.getApplBizDv().equals("KICS")).collect(Collectors.toList())) {
-//					irCurveSwMap.putIfAbsent(irParamSw.getirCurveNm(), irParamSw);
 					irCurveSwMap.putIfAbsent(irParamSw.getIrCurveNm(), irParamSw);
 				}
 				
+				// 3.비었을 때 => 종료 
 				if(irCurveSwMap.isEmpty()) {
 					log.error("Check Smith-Wilson Attribute in [{}] Table for [{}]", Process.toPhysicalName(IrParamSw.class.getSimpleName()), bssd);
 					throw new Exception();
 				}
 				
-				kicsSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("KICS"))
-												.collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
-//				                                .collect(Collectors.groupingBy(IrParamSw::getIrCurve, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
-				
-				ifrsSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("IFRS"))
-	                                            .collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
-//				                                .collect(Collectors.groupingBy(IrParamSw::getIrCurve, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
-				
-				ibizSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("IBIZ"))
-												.collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
-//				                                .collect(Collectors.groupingBy(IrParamSw::getIrCurve, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
-				
-				saasSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("SAAS"))
-												.collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
-//				                                .collect(Collectors.groupingBy(IrParamSw::getIrCurve, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
+				// BIZ 목적에 따라 별도의 map을 구성하여 이후 작업에서 map 단위로 처리함. 
+				//=> map 단위로 하는 일이 같다면 궅이 맵을 구분하기 보다는 동일 맵에 구분자를 두는게 더 좋을 듯 -> 이건 뒤쪽 내용을 보고,,, 
+				kicsSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("KICS")).collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
+				ifrsSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("IFRS")).collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
+				ibizSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("IBIZ")).collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
+				saasSwMap = paramSwList.stream().filter(s -> s.getApplBizDv().equals("SAAS")).collect(Collectors.groupingBy(IrParamSw::getIrCurveNm, TreeMap::new, Collectors.toMap(IrParamSw::getIrCurveSceNo, Function.identity(), (k, v) -> k, TreeMap::new)));
 
+				// log
 				for(Map.Entry<String, Map<Integer, IrParamSw>> crv : kicsSwMap.entrySet()) log.info("SW Input Set: [KICS], [IR_CURVE_NM: {}, Num of SCENARIO: {}]", crv.getKey(), crv.getValue().size());	
 				for(Map.Entry<String, Map<Integer, IrParamSw>> crv : ifrsSwMap.entrySet()) log.info("SW Input Set: [IFRS], [IR_CURVE_NM: {}, Num of SCENARIO: {}]", crv.getKey(), crv.getValue().size());
 				for(Map.Entry<String, Map<Integer, IrParamSw>> crv : ibizSwMap.entrySet()) log.info("SW Input Set: [IBIZ], [IR_CURVE_NM: {}, Num of SCENARIO: {}]", crv.getKey(), crv.getValue().size());
@@ -415,26 +412,31 @@ public class Main {
 	
 	private static void job120() {
 		if(jobList.contains("120")) {
-//			if(false) {
 			session.beginTransaction();		
 			CoJobInfo jobLog = startJogLog(EJob.ESG120);
 			
 			try {				
-				for(Map.Entry<String, IrCurve> irCrv : irCurveMap.entrySet()) {					
+//				for(Map.Entry<String, IrCurve> irCrv : irCurveMap.entrySet()) {					
+				for(String irCurveNm : irCurveNmList) {					
 				
-					if(!irCurveSwMap.containsKey(irCrv.getKey())) {
-						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCrv.getKey(), bssd);						
+//					if(!irCurveSwMap.containsKey(irCrv.getKey())) {
+					if(!irCurveSwMap.containsKey(irCurveNm)) {
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);						
 						continue;
 					}
 
+					// delete 
 					int delNum = session.createQuery("delete IrVolSwpn a where a.baseYymm = :param1 and a.irCurveNm = :param2")
 										.setParameter("param1", bssd)				
-										.setParameter("param2", irCrv.getKey()).executeUpdate();
+										.setParameter("param2", irCurveNm).executeUpdate();
 		
 					log.info("[{}] has been Deleted in Job:[{}] [COUNT: {}]", Process.toPhysicalName(IrVolSwpn.class.getSimpleName()), jobLog.getJobId(), delNum);
 					
-//					23.02.27 여기서 멈춰있음 !!
-					List<IrVolSwpn> swpnVol = Esg120_SetVolSwpn.createVolSwpnFromUsr(bssd, irCrv.getKey());
+					// biz : 컬럼으로 구분된 tenor별 변동성을 unpivot  
+//					List<IrVolSwpn> swpnVol = Esg120_SetVolSwpn.createVolSwpnFromUsr(bssd, irCrv.getKey());
+					List<IrVolSwpn> swpnVol = Esg120_SetVolSwpn.createVolSwpnFromUsr(bssd, irCurveNm);
+					
+					//save
 					swpnVol.stream().forEach(s -> session.save(s));
 				}
 				
@@ -457,7 +459,7 @@ public class Main {
 	 * from 01 : IR_CURVE_YTM_USR_HIS : KOFIA BOND 와 동일한 layout, 만기를 컬럼으로 구분함. 입력단위 (% ; toReal 0.01)  </br>
 	 * from 02 : IR_CURVE_YTM_USR : 만기구분을 코드값으로 구분함. 입력단위 (number ; toReal 1) </br>
 	 * */
-//	TODO : delete 작업 / BIZ 작업 / insert 작업 분리 필요 
+//	TODO : 사전 setting check / delete / BIZ / insert 분리 필요 
 	private static void job130() {
 		if(jobList.contains("130")) {
 			session.beginTransaction();		
@@ -508,8 +510,14 @@ public class Main {
 					List<IrCurveYtm> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis(bssd, irCurveNm);
 					ytmUsrHis.stream().forEach(s -> session.save(s));
 					
-					// 수정 (builder 이용) 
-//					Stream<IrCurveYtm> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis2(bssd, irCurveNm);
+//					// 수정 (builder 이용) -_-... 이건아닌듯. 
+//					Stream<IrCurveYtm> ytmUsrHis0 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 0);
+//					Stream<IrCurveYtm> ytmUsrHis1 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 1);
+//					Stream<IrCurveYtm> ytmUsrHis2 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 2);
+//					Stream<IrCurveYtm> ytmUsrHis3 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 3);
+//					Stream<IrCurveYtm> ytmUsrHis = 	Stream.concat(ytmUsrHis0
+//												  , Stream.concat(ytmUsrHis1
+//												  , Stream.concat(ytmUsrHis2,ytmUsrHis3)));
 //					ytmUsrHis.forEach(s -> session.save(s));
 					
 					Stream<IrCurveYtm> ytmUsr    = Esg130_SetYtm.createYtmFromUsr(bssd, irCurveNm);

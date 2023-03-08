@@ -105,6 +105,7 @@ public class Esg260_IrDcntRateBu extends Process {
 						dcntRateBu.setBaseYymm(bssd);
 						dcntRateBu.setApplBizDv(applBizDv);
 						dcntRateBu.setIrCurveNm(curveSwMap.getKey());
+						dcntRateBu.setIrCurve(spot.getIrCurve()); // add 23.03.08
 						dcntRateBu.setIrCurveSceNo(swSce.getKey());
 						dcntRateBu.setMatCd(spot.getMatCd());						
 						dcntRateBu.setSpotRateDisc(spotDisc);

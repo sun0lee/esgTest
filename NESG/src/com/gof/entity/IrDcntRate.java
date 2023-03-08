@@ -63,6 +63,7 @@ public class IrDcntRate implements Serializable {
 		adjDcnt.setBaseYymm(this.baseYymm);		
 		adjDcnt.setApplBizDv(this.applBizDv  + "_L");
 		adjDcnt.setIrCurveNm(this.irCurveNm);
+		adjDcnt.setIrCurve(this.irCurve);
 		adjDcnt.setIrCurveSceNo(this.irCurveSceNo);
 		adjDcnt.setMatCd(this.matCd);			
 		adjDcnt.setSpotRate(this.adjSpotRate);
@@ -81,6 +82,7 @@ public class IrDcntRate implements Serializable {
 		baseDcnt.setBaseYymm(this.baseYymm);		
 		baseDcnt.setApplBizDv(this.applBizDv + "_A");
 		baseDcnt.setIrCurveNm(this.irCurveNm);
+		baseDcnt.setIrCurve(this.irCurve);
 		baseDcnt.setIrCurveSceNo(this.irCurveSceNo);		
 		baseDcnt.setMatCd(this.matCd);			
 		baseDcnt.setSpotRate(this.spotRate);

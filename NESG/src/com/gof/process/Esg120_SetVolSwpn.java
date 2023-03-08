@@ -37,34 +37,30 @@ public class Esg120_SetVolSwpn extends Process {
 				vol.setBaseYymm(bssd);				
 //				vol.setIrCurveId(irCurveId);				
 				vol.setIrCurveNm(irCurveNm);				
+				vol.setIrCurve(volUsr.getIrCurve());				
+				vol.setSwpnMatNum(Integer.valueOf(volUsr.getSwpnMat().substring(1)) / MONTH_IN_YEAR);
 				
 				if(i==0) { 
-					vol.setSwpnMatNum(Integer.valueOf(volUsr.getSwpnMat().substring(1)) / MONTH_IN_YEAR);
 					vol.setSwapTenNum(Integer.valueOf(1));
 					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY1(), 25.0) * toReal, digit));
 				}
 				else if(i==1) {
-					vol.setSwpnMatNum(Integer.valueOf(volUsr.getSwpnMat().substring(1)) / MONTH_IN_YEAR);
 					vol.setSwapTenNum(Integer.valueOf(2));
 					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY2(), 25.0) * toReal, digit));
 				}
 				else if(i==2) {
-					vol.setSwpnMatNum(Integer.valueOf(volUsr.getSwpnMat().substring(1)) / MONTH_IN_YEAR);
 					vol.setSwapTenNum(Integer.valueOf(3));
 					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY3(), 25.0) * toReal, digit));
 				}
 				else if(i==3) {
-					vol.setSwpnMatNum(Integer.valueOf(volUsr.getSwpnMat().substring(1)) / MONTH_IN_YEAR);
 					vol.setSwapTenNum(Integer.valueOf(5));
 					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY5(), 25.0) * toReal, digit));					
 				}
 				else if(i==4) {
-					vol.setSwpnMatNum(Integer.valueOf(volUsr.getSwpnMat().substring(1)) / MONTH_IN_YEAR);
 					vol.setSwapTenNum(Integer.valueOf(7));
 					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY7(), 25.0) * toReal, digit));
 				}
 				else {
-					vol.setSwpnMatNum(Integer.valueOf(volUsr.getSwpnMat().substring(1)) / MONTH_IN_YEAR);
 					vol.setSwapTenNum(Integer.valueOf(10));
 					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY10(), 25.0) * toReal, digit));
 				}

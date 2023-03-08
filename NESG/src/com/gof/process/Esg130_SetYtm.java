@@ -42,16 +42,16 @@ public class Esg130_SetYtm extends Process {
 				ytm.setIrCurve(usr.getIrCurve());				
 				ytm.setMatCd(ytmTen.get(i));
 					
-				if     (i==0) { ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0003(), 0.0) * toReal, digit)); }
-				else if(i==1) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0006(), 0.0) * toReal, digit)); }
-				else if(i==2) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0009(), 0.0) * toReal, digit)); }
-				else if(i==3) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0012(), 0.0) * toReal, digit)); }
-				else if(i==4) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0018(), 0.0) * toReal, digit)); }
-				else if(i==5) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0024(), 0.0) * toReal, digit)); }
-				else if(i==6) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0030(), 0.0) * toReal, digit)); }
-				else if(i==7) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0036(), 0.0) * toReal, digit)); }
-				else if(i==8) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0048(), 0.0) * toReal, digit)); }
-				else if(i==9) {	ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0060(), 0.0) * toReal, digit)); }
+				if     (i==0)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0003(), 0.0) * toReal, digit)); }
+				else if(i==1)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0006(), 0.0) * toReal, digit)); }
+				else if(i==2)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0009(), 0.0) * toReal, digit)); }
+				else if(i==3)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0012(), 0.0) * toReal, digit)); }
+				else if(i==4)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0018(), 0.0) * toReal, digit)); }
+				else if(i==5)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0024(), 0.0) * toReal, digit)); }
+				else if(i==6)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0030(), 0.0) * toReal, digit)); }
+				else if(i==7)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0036(), 0.0) * toReal, digit)); }
+				else if(i==8)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0048(), 0.0) * toReal, digit)); }
+				else if(i==9)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0060(), 0.0) * toReal, digit)); }
 				else if(i==10) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0084(), 0.0) * toReal, digit)); }
 				else if(i==11) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0120(), 0.0) * toReal, digit)); }
 				else if(i==12) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0180(), 0.0) * toReal, digit)); }
@@ -70,7 +70,7 @@ public class Esg130_SetYtm extends Process {
 		return ytmList;
 	}	
 	
-/* 23.03.06 test : setter 대신 builder 이용 
+/* 23.03.06 기존로직 주석 처리 :setter 처리  
 	public static List<IrCurveYtm> createYtmFromUsr(String bssd, String irCurveNm) {
 		
 		List<IrCurveYtm>    ytmList    = new ArrayList<IrCurveYtm>();		
@@ -100,12 +100,14 @@ public class Esg130_SetYtm extends Process {
 		return ytmList;
 	}		
 */
-	// 23.03.06 builder test
-	public static Stream<IrCurveYtm> createYtmFromUsrHis2(String bssd, String irCurveNm) {
+	// 23.03.06 builder test -> loop 처리를 어떻게 할것인가 ??
+	public static Stream<IrCurveYtm> createYtmFromUsrHisIdx(String bssd, String irCurveNm, int idx) {
 		
-		return IrCurveYtmDao.getIrCurveYtmUsrHis(bssd).filter(s->s.getIrCurveNm().equals(irCurveNm))
-				.map(s->Esg130_SetYtm.buildFromYtmUsrHis(s));
+		 return IrCurveYtmDao.getIrCurveYtmUsrHis(bssd)
+				  .filter(s->s.getIrCurveNm().equals(irCurveNm))
+				  .map(s->Esg130_SetYtm.buildFromYtmUsrHis(s, idx));
 	}
+
 	
 	// 23.03.06 builder test
 	public static Stream<IrCurveYtm> createYtmFromUsr(String bssd, String irCurveNm) {
@@ -114,7 +116,7 @@ public class Esg130_SetYtm extends Process {
 												   .map(s->Esg130_SetYtm.buildFromYtmUsr(s));
 	}
 
-	private static IrCurveYtm buildFromYtmUsrHis (IrCurveYtmUsrHis ytmUsrHis) {
+	private static IrCurveYtm buildFromYtmUsrHis (IrCurveYtmUsrHis ytmUsrHis, int idx) {
 		
 		List<String> ytmTen = Arrays.asList("M0003", "M0006", "M0009", "M0012", "M0018", "M0024", "M0030", "M0036", "M0048", "M0060", "M0084", "M0120", "M0180", "M0240", "M0360", "M0600");		
 		List<String> TenList = new ArrayList<>() ; 
@@ -150,8 +152,8 @@ public class Esg130_SetYtm extends Process {
 				.baseDate(ytmUsrHis.getBaseDate())
                 .irCurve(ytmUsrHis.getIrCurve())
                 .irCurveNm(ytmUsrHis.getIrCurveNm())
-                .matCd(TenList.get(0)) // 0~14 까지 반복 ?? 
-                .ytm(round(StringUtil.objectToPrimitive(ytmList.get(0), 0.0) * toReal, digit))
+                .matCd(TenList.get(idx)) // 0~14 까지 반복 ?? 
+                .ytm(round(StringUtil.objectToPrimitive(ytmList.get(idx), 0.0) * toReal, digit))
                 .modifiedBy(jobId + "Builder")
                 .updateDate(LocalDateTime.now())
 				.build();

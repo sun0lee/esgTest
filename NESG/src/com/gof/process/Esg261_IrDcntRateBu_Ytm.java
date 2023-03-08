@@ -40,9 +40,11 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				List<IrCurveYtm> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
 //				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
-//				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(bssd, curveSwMap.getKey(), ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
-				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(bssd, curveSwMap.getValue().get(swSce).getIrCurve(), ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
-													.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
+				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(bssd, curveSwMap.getKey(), ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
+						.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
+		
+				//23.03.08 add spotList에 irCurve를 넘겨줄 방법이 없어서 산출한 뒤에 넘겨줌 .
+				spotList.forEach(s-> s.setIrCurve(swSce.getValue().getIrCurve()));
 				
 				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));
 				TreeMap<String, Double> spotMap = spotList.stream().collect(Collectors.toMap(IrCurveSpot::getMatCd, IrCurveSpot::getSpotRate, (k, v) -> k, TreeMap::new));
@@ -93,6 +95,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 						dcntRateBu.setBaseYymm(bssd);
 						dcntRateBu.setApplBizDv(applBizDv);
 						dcntRateBu.setIrCurveNm(curveSwMap.getKey());
+						dcntRateBu.setIrCurve(spot.getIrCurve()); // add 03.08
 						dcntRateBu.setIrCurveSceNo(swSce.getKey());
 						dcntRateBu.setMatCd(spot.getMatCd());						
 						dcntRateBu.setSpotRateDisc(spotDisc);
