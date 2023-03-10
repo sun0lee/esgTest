@@ -655,7 +655,11 @@ public class Main {
 		}
 	}	
 	
-
+	/** <p> insert into IR_CURVE_SPOT_WEEK  </br> 
+	 * <p>- Spot rate 에서 영업일 구분 후 week 테이블에 적재. 모수추정용으로 충분성 확보 필요.  </br> 
+	 * from : IR_CURVE_SPOT  </br>
+	 * @See convertToWeek
+	 * */
 	private static void job210() {
 		if(jobList.contains("210")) {
 			session.beginTransaction();
@@ -701,7 +705,11 @@ public class Main {
 		}		
 	}		
 
-
+	/** <p> insert into IR_SPRD_AFNS_CALC  </br> 
+	 * <p>- 자체 데이터를 기반으로 금리충격시나리오 생성   </br> 
+	 * from : IR_CURVE_SPOT_WEEK (충분해야 함)  </br>
+	 * @See convertToWeek
+	 * */
 	private static void job220() {
 		if(jobList.contains("220")) {
 			session.beginTransaction();
@@ -769,7 +777,7 @@ public class Main {
 					log.info("weekHisList: [{}], [TOTAL: {}, BIZDAY: {}], [from {} to {}, weekDay:{}]", irCrv.getKey(), weekHisList.size(), weekHisBizList.size(), iRateHisStBaseDate.substring(0,6), bssd, weekDay);			
 
 					//for ensuring enough input size
-					if(weekHisList.size() < 700) {
+					if(weekHisList.size() < 1000) {
 						log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] for [{}]", irCrv.getKey(), weekHisList.size(), bssd);
 						continue;
 					}					
@@ -826,44 +834,11 @@ public class Main {
 		}
 	}	
 	
-	
-	private static void job230() {
-		if(jobList.contains("230")) {
-			session.beginTransaction();
-			CoJobInfo jobLog = startJogLog(EJob.ESG230);			
-
-			String irModelNm = argInDBMap.getOrDefault("AFNS_MODE", "AFNS").trim().toUpperCase();						
-			
-			try {
-				for(Map.Entry<String, IrCurve> irCrv : irCurveMap.entrySet()) {
-					if(!irCurveSwMap.containsKey(irCrv.getKey())) {
-						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCrv.getKey(), bssd);
-						continue;
-					}
-					
-					int delNum = session.createQuery("delete IrSprdAfnsBiz a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
-		                     			.setParameter("param1", bssd) 
-		                     			.setParameter("param2", irModelNm)
-		                     			.setParameter("param3", irCrv.getKey())
-		                     			.executeUpdate();					
-
-					log.info("[{}] has been Deleted in Job:[{}] [IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsBiz.class.getSimpleName()), jobLog.getJobId(), irCrv.getKey(), delNum);
-					
-					List<IrSprdAfnsBiz> afnsBizList = Esg230_BizSprdAfns.createBizAfnsShockScenario(bssd, irModelNm, irCrv.getKey());
-					afnsBizList.stream().forEach(s -> session.save(s));					
-				}
-				completeJob("SUCCESS", jobLog);
-				
-			} catch (Exception e) {
-				log.error("ERROR: {}", e);
-				completeJob("ERROR", jobLog);
-			}			
-			session.saveOrUpdate(jobLog);
-			session.getTransaction().commit();
-		}
-	}	
-	
-
+	/** <p> insert into IR_SPRD_LP  </br> 
+	 * <p>- 적용할 유동성 프리미엄 가져오기   </br> 
+	 * - 적용 요건 및 방식에 따라 3가지 방식으로 가져옴 (회사별 적용 요건 확인!) </br> 
+	 * from : IR_PARAM_SW / IR_SPRD_CURVE / IR_SPRD_LP_USR </br>
+	 * */
 	private static void job240() {
 		if(jobList.contains("240")) {
 			session.beginTransaction();
@@ -928,6 +903,53 @@ public class Main {
 	}	
 		
 
+	/** <p> insert into IR_SPRD_AFNS_BIZ  </br> 
+	 * <p>- 금감원 제공 금리충격시나리오 적용   </br> 
+	 * - 자체 산출데이터보다 우선 적용   </br> 
+	 * from : IR_SPRD_AFNS_USR  </br>
+	 * @See createBizAfnsShockScenario
+	 * */
+	private static void job230() {
+		if(jobList.contains("230")) {
+			session.beginTransaction();
+			CoJobInfo jobLog = startJogLog(EJob.ESG230);			
+	
+			String irModelNm = argInDBMap.getOrDefault("AFNS_MODE", "AFNS").trim().toUpperCase();						
+			
+			try {
+				for(Map.Entry<String, IrCurve> irCrv : irCurveMap.entrySet()) {
+					if(!irCurveSwMap.containsKey(irCrv.getKey())) {
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCrv.getKey(), bssd);
+						continue;
+					}
+					
+					int delNum = session.createQuery("delete IrSprdAfnsBiz a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
+		                     			.setParameter("param1", bssd) 
+		                     			.setParameter("param2", irModelNm)
+		                     			.setParameter("param3", irCrv.getKey())
+		                     			.executeUpdate();					
+	
+					log.info("[{}] has been Deleted in Job:[{}] [IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsBiz.class.getSimpleName()), jobLog.getJobId(), irCrv.getKey(), delNum);
+					
+					List<IrSprdAfnsBiz> afnsBizList = Esg230_BizSprdAfns.createBizAfnsShockScenario(bssd, irModelNm, irCrv.getKey());
+					afnsBizList.stream().forEach(s -> session.save(s));					
+				}
+				completeJob("SUCCESS", jobLog);
+				
+			} catch (Exception e) {
+				log.error("ERROR: {}", e);
+				completeJob("ERROR", jobLog);
+			}			
+			session.saveOrUpdate(jobLog);
+			session.getTransaction().commit();
+		}
+	}
+
+	/** <p> insert into IR_SPRD_LP_BIZ  </br> 
+	 * <p>- 적용할 유동성 프리미엄 적재    </br> 
+	 * - 최종 적용 기준 : IR_PARAM_SW 의 DCNT_APPL_MODEL_CD (할인율적용모형코드) 설정에 따라 결정함 </br> 
+	 * from : IR_SPRD_LP </br>
+	 * */
 	private static void job250() {
 		if(jobList.contains("250")) {
 			session.beginTransaction();
@@ -979,7 +1001,6 @@ public class Main {
 				kicsDcntRateBu.stream().forEach(s -> session.save(s));
 				
 				List<IrDcntRateBu> ifrsDcntRateBu = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, "IFRS", ifrsSwMap);
-//				List<IrDcntRateBu> ifrsDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm, "IFRS", ifrsSwMap);
 				ifrsDcntRateBu.stream().forEach(s -> session.save(s));
 				
 				List<IrDcntRateBu> ibizDcntRateBu = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, "IBIZ", ibizSwMap);

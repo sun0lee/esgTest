@@ -399,12 +399,18 @@ public class AFNelsonSiegel extends IrModel {
 		this.initParas = new double[14];
 		
 		this.initParas[0]  = this.lambda;
-		this.initParas[1]  = this.thetaL;  this.initParas[2]  = this.thetaS;  this.initParas[3]  = this.thetaC;
+		this.initParas[1]  = this.thetaL;  
+		this.initParas[2]  = this.thetaS;  
+		this.initParas[3]  = this.thetaC;
 		this.initParas[4]  = Math.max(this.kappaL, 1e-4); 
 		this.initParas[5]  = Math.max(this.kappaS, 1e-4);		
 		this.initParas[6]  = Math.max(this.kappaC, 1e-4);		
-		this.initParas[7]  = this.initSigma; this.initParas[8]  = 0.0; this.initParas[9]  = this.initSigma;
-		this.initParas[10] = 0.0;            this.initParas[11] = 0.0; this.initParas[12] = this.initSigma;
+		this.initParas[7]  = this.initSigma; 
+		this.initParas[8]  = 0.0; 
+		this.initParas[9]  = this.initSigma;
+		this.initParas[10] = 0.0;            
+		this.initParas[11] = 0.0; 
+		this.initParas[12] = this.initSigma;
 		this.initParas[13] = this.epsilon * 1000;
 	}	
 	

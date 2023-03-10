@@ -44,12 +44,13 @@ public class Esg260_IrDcntRateBu extends Process {
 
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 				
+				// (biz, irCurveNm) 만기별 유동성프리미엄 
 				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream()
 						                                   .collect(Collectors.toMap(IrSprdLpBiz::getMatCd, IrSprdLpBiz::getLiqPrem));
 
 //				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelId, curveSwMap.getKey(), swSce.getKey()).stream()
 //															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
-				
+				// (biz, irCurveNm) 만기별 충격스프레드 
 				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, curveSwMap.getKey(), StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
 															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 				

@@ -68,7 +68,7 @@ public class IrCurveYtm implements Serializable {
 		return spot;
 	}		
 	
-	
+	// 나머지 IrCurveYtm 정보는 그대로 전달하되 ytm 에 스프레드만 가산해서 return 
 	public IrCurveYtm addSpread(double spread) {
 		
 		IrCurveYtm addYtm = new IrCurveYtm();

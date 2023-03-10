@@ -45,7 +45,6 @@ public class Esg150_YtmToSpotSw extends Process {
 			}
 		}
 		rst.stream().forEach(s -> s.setIrCurveNm(irCurveNm));
-//		rst.stream().forEach(s -> s.setIrCurve(irCurve));
 		rst.stream().forEach(s -> s.setBaseDate(baseYmd));
 		rst.stream().forEach(s -> s.setModifiedBy(jobId));
 		rst.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));
@@ -58,7 +57,7 @@ public class Esg150_YtmToSpotSw extends Process {
 	// Method 재생성 irCurve 객체를 통째로 받는 경우 
 	public static List<IrCurveSpot> createIrCurveSpot(String baseYmd, IrCurve irCurve, List<IrCurveYtm> ytmRst, Double alphaApplied, Integer freq) {		
 		
-		// SW bootstrapping 객체 통째로 넘겨줌 ! 
+		// SW bootstrapping : 보간법에 필요한 항목을 넘겨준다 (알파, 이자지급주기, ytm등) 
 		SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 									 .baseDate(DateUtil.convertFrom(baseYmd))
 									 .ytmCurveHisList(ytmRst)
@@ -77,7 +76,7 @@ public class Esg150_YtmToSpotSw extends Process {
 				return new ArrayList<IrCurveSpot>();
 			}
 		}
-		// 왜 각각 set 해줄까 ??
+		// swBts.getSpotBtsRslt() 에서는 기준일자별 spot rate 값만 setting 했고 그외 나머지 정보는 여기에서 setting
 		rst.stream().forEach(s -> s.setIrCurveNm(irCurve.getIrCurveNm()));
 		rst.stream().forEach(s -> s.setIrCurve(irCurve));
 		rst.stream().forEach(s -> s.setBaseDate(baseYmd));

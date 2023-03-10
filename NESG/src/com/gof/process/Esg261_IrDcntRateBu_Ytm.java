@@ -37,6 +37,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 //			ytmList.forEach(s-> log.info("ytm : {},{}", s.toString()));
 
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+	// 1. ytm -> spot 변환 ytm에 직접 스프레드를 반영 후 spot rate으로 변환함 8.0 추가된 up down 시나리오 산출 부분 확인 
 				List<IrCurveYtm> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
 //				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
@@ -53,18 +54,21 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 					log.warn("No IR Curve Spot Data [BIZ: {}, IR_CURVE_NM: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), toPhysicalName(IrCurveSpot.class.getSimpleName()), bssd);
 					continue;
 				}
-				
+	// 2. 유동성 프리미엄 가져오기 			
 				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream()
 						                                   .collect(Collectors.toMap(IrSprdLpBiz::getMatCd, IrSprdLpBiz::getLiqPrem));
-
+	// 3. 금리 충격스프레드 가져오기 
 				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelId, curveSwMap.getKey(), StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
 															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
-				
+	// 4. 시나리오 적용할 준비 : spotSceList copy 			
 				List<IrCurveSpot> spotSceList = spotList.stream().map(s -> s.deepCopy(s)).collect(Collectors.toList());
 				
+				
 				String fwdMatCd = StringUtil.objectToPrimitive(swSce.getValue().getFwdMatCd(), "M0000");				
-				if(!fwdMatCd.equals("M0000")) {					
-					Map<String, Double> fwdSpotMap = irSpotDiscToFwdMap(bssd, spotMap, fwdMatCd);					
+				if(!fwdMatCd.equals("M0000")) {
+					// spot -> fwd 변환 
+					Map<String, Double> fwdSpotMap = irSpotDiscToFwdMap(bssd, spotMap, fwdMatCd);
+					// spotSceList : 변환한 fwd로 대체  
 					spotSceList.stream().forEach(s -> s.setSpotRate(fwdSpotMap.get(s.getMatCd())));					
 				}				
 
@@ -80,7 +84,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 						
 						IrDcntRateBu dcntRateBu = new IrDcntRateBu();						
 						
-						
+					// 충격 시나리오 적용은 fwd로 변환해서 적용해야 하는지 확인하기 !!	
 						double baseSpot = pvtMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
 						double baseSpotCont = baseSpot;	
 						

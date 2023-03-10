@@ -96,6 +96,8 @@ public class SmithWilsonKicsBts extends IrModel {
 	 * m : YTM Price </br>
 	 * C : YTM Cashflow </br>
 	 * p : ZCB Price(i.e. SPOT) </br>
+	 * 
+	 * @param alpha
 	 */	
 	private void smithWilsonZeta(double alpha) {		
 		
@@ -170,6 +172,11 @@ public class SmithWilsonKicsBts extends IrModel {
 	}
 	
 	//TODO:
+	/**
+	 * @param alpha, prjTenor
+	 * @return swResultlList
+	 * @see smithWilsonZeta
+*/
 	private List<SmithWilsonRslt> swProjectionList(double alpha, double[] prjTenor) {
 		
 		List<SmithWilsonRslt> swResultlList = new ArrayList<SmithWilsonRslt>();			
@@ -210,7 +217,11 @@ public class SmithWilsonKicsBts extends IrModel {
 		return swResultlList;
 	}	
 	
-	
+	/**
+	 * @param prjYearFrac, tenorYearFrac, alpha, ltfrCont
+	 * @return weight matrix
+	 * @see swProjectionList
+*/
 	private double[][] smithWilsonWeight(double[] prjYearFrac, double[] tenorYearFrac, double alpha, double ltfrCont) {
 		
 		double[][] weight = new double[prjYearFrac.length][tenorYearFrac.length];
