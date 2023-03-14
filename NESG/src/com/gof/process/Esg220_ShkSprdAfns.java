@@ -10,6 +10,7 @@ import com.gof.entity.IrSprdAfnsCalc;
 import com.gof.enums.EJob;
 import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamAfnsCalc;
+import com.gof.entity.IrParamModel;
 import com.gof.entity.IrDcntSceDetBiz;
 import com.gof.model.AFNelsonSiegel;
 import com.gof.model.IrModel;
@@ -26,15 +27,22 @@ public class Esg220_ShkSprdAfns extends Process {
 	 * @param bssd, mode, curveHisList, curveBaseList, tenorList, dt, initSigma, ltfr, ltfrT, prjYear, errorTolerance, itrMax, confInterval, epsilon
 	 * @See getAfnsResultList
 	 * */
-	public static Map<String, List<?>> createAfnsShockScenario(String bssd, String mode, List<IrCurveSpot> curveHisList, List<IrCurveSpot> curveBaseList, List<String> tenorList, 
-													           double dt, double initSigma, double ltfr, double ltfrT, int prjYear, double errorTolerance, int itrMax, double confInterval, double epsilon)	
+//	public static Map<String, List<?>> createAfnsShockScenario(String bssd, String mode, List<IrCurveSpot> curveHisList, List<IrCurveSpot> curveBaseList, List<String> tenorList, 
+//													           double dt, double initSigma, double ltfr, double ltfrT, int prjYear, double errorTolerance, int itrMax, double confInterval, double epsilon)	
+	public static Map<String, List<?>> createAfnsShockScenario(String bssd
+//														 	 , String mode // 23.03.14 modelNm 대신 modelMst 가져옴 
+														 	 , List<IrCurveSpot> curveHisList
+														 	 , List<IrCurveSpot> curveBaseList
+														 	 , List<String> tenorList
+														 	 , List<IrParamModel> modelMst // add 
+														 	 , double dt, double initSigma, double ltfr, double ltfrT, int prjYear, double errorTolerance, int itrMax, double confInterval, double epsilon)	
 	{		
 		Map<String, List<?>>  irShockSenario  = new TreeMap<String, List<?>>();
 		List<IrParamAfnsCalc> irShockParam    = new ArrayList<IrParamAfnsCalc>();
 		List<IrSprdAfnsCalc>  irShock         = new ArrayList<IrSprdAfnsCalc>();		
-		List<IrDcntSceDetBiz> irScenarioList  = new ArrayList<IrDcntSceDetBiz>();				
+		List<IrDcntSceDetBiz> irScenarioList  = new ArrayList<IrDcntSceDetBiz>();			
 
-		AFNelsonSiegel afns = new AFNelsonSiegel(IrModel.stringToDate(bssd), mode, null, curveHisList, curveBaseList,
+		AFNelsonSiegel afns = new AFNelsonSiegel(IrModel.stringToDate(bssd), modelMst.get(0).getIrModelNm() , null, curveHisList, curveBaseList,
 				                                 true, 'D', dt, initSigma, DCB_MON_DIF, ltfr, 0, (int) ltfrT, 0.0, 1.0 / 12, 
 				                                 0.05, 2.0, 3, prjYear, errorTolerance, itrMax, confInterval, epsilon);
 
@@ -46,6 +54,11 @@ public class Esg220_ShkSprdAfns extends Process {
 		irShockParam.  addAll(afns.getAfnsParamList());
 		irShock.       addAll(afns.getAfnsShockList());
 		
+		// fk 값 추가 
+		irShockParam.stream().forEach(s -> s.setIrParamModel(modelMst.get(0)));
+		irShock.     stream().forEach(s -> s.setIrParamModel(modelMst.get(0)));
+		irShockParam.stream().forEach(s -> s.setIrCurve(modelMst.get(0).getIrCurve()));
+		irShock.     stream().forEach(s -> s.setIrCurve(modelMst.get(0).getIrCurve()));
 		irShockParam.stream().forEach(s -> s.setModifiedBy(jobId));
 		irShock.     stream().forEach(s -> s.setModifiedBy(jobId));
 
@@ -60,21 +73,32 @@ public class Esg220_ShkSprdAfns extends Process {
 	}
 	
 	//for inputParas
-	public static Map<String, List<?>> createAfnsShockScenarioByParam(String bssd, String mode, List<IrParamAfnsBiz> inputParas, List<IrCurveSpot> curveBaseList, List<String> tenorList, 
-													           	      double dt, double initSigma, double ltfr, double ltfrT, int prjYear, double errorTolerance, int itrMax, double confInterval, double epsilon)	
+	public static Map<String, List<?>> createAfnsShockScenarioByParam(String bssd
+//			 														, String mode // 23.03.14 modelNm 대신 modelMst 가져옴 
+			 														, List<IrParamAfnsBiz> inputParas
+			 														, List<IrCurveSpot> curveBaseList
+			 														, List<String> tenorList
+			 														, List<IrParamModel> modelMst // add 
+													           	    ,  double dt, double initSigma, double ltfr, double ltfrT, int prjYear, double errorTolerance, int itrMax, double confInterval, double epsilon)	
 	{		
 		Map<String, List<?>>  irShockSenario  = new TreeMap<String, List<?>>();
 		List<IrParamAfnsCalc> irShockParam    = new ArrayList<IrParamAfnsCalc>();
 		List<IrSprdAfnsCalc>  irShock         = new ArrayList<IrSprdAfnsCalc>();		
 		List<IrDcntSceDetBiz> irScenarioList  = new ArrayList<IrDcntSceDetBiz>();				
 		
-		AFNelsonSiegel afns = new AFNelsonSiegel(IrModel.stringToDate(bssd), mode, inputParas, curveBaseList, 
+		AFNelsonSiegel afns = new AFNelsonSiegel(IrModel.stringToDate(bssd), modelMst.get(0).getIrModelNm(), inputParas, curveBaseList, 
 				                                 true, 'D', dt, initSigma, DCB_MON_DIF, ltfr, 0, (int) ltfrT, 0.0, 1.0 / 12, 
 				                                 0.05, 2.0, 3, prjYear, errorTolerance, itrMax, confInterval, epsilon);
 
 		irScenarioList.addAll(afns.getAfnsResultList());
 		irShockParam.  addAll(afns.getAfnsParamList());
 		irShock.       addAll(afns.getAfnsShockList());
+		
+		// fk 값 추가 
+		irShockParam.stream().forEach(s -> s.setIrParamModel(modelMst.get(0)));
+		irShock.     stream().forEach(s -> s.setIrParamModel(modelMst.get(0)));
+		irShockParam.stream().forEach(s -> s.setIrCurve(modelMst.get(0).getIrCurve()));
+		irShock.     stream().forEach(s -> s.setIrCurve(modelMst.get(0).getIrCurve()));
 		
 //		log.info("{}", irShockParam.toString());
 //		log.info("{}", irShock.toString());

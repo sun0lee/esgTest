@@ -296,16 +296,17 @@ public class Main {
 		
 		jobList.clear();
 		jobList.add("110");
+//		jobList.add("120");
 //		jobList.add("130");		
 //		jobList.add("150");
 		
 //		jobList.add("210");
-//		jobList.add("220");
-//		jobList.add("230");
-//		jobList.add("240");
-//		jobList.add("250");
-//		jobList.add("260");
-//		jobList.add("270");
+		jobList.add("220");
+		jobList.add("230");
+		jobList.add("240");
+		jobList.add("250");
+		jobList.add("260");
+		jobList.add("270");
 		jobList.add("280");
 	}		
 	
@@ -796,15 +797,19 @@ public class Main {
 					double errorTolerance = StringUtil.objectToPrimitive(modelMstMap.get(irCrv.getKey()).getItrTol(), 1E-8);
 					
 					Map<String, List<?>> irShockSenario = new TreeMap<String, List<?>>();
-					irShockSenario = Esg220_ShkSprdAfns.createAfnsShockScenario(FinUtils.toEndOfMonth(bssd), irModelNm, curveHisList, curveBaseList, tenorList, dt, sigmaInit
+					irShockSenario = Esg220_ShkSprdAfns.createAfnsShockScenario(FinUtils.toEndOfMonth(bssd)
+//																			  , irModelNm //
+																			  , curveHisList, curveBaseList, tenorList
+																			  , modelMst  // add 
+																			  , dt, sigmaInit
 													                          , irCurveSwMap.get(irCrv.getKey()).getLtfr()
-														                      , irCurveSwMap.get(irCrv.getKey()).getLtfrCp()
+														                      , irCurveSwMap.get(irCrv.getKey()).getLtfrCp() 
 														                      , projectionYear
 														                      , errorTolerance
 														                      , kalmanItrMax
 														                      , confInterval
-														                      , epsilonInit);				
-
+														                      , epsilonInit);	
+							
 //					//for input Paras(currently null)					
 //					irShockSenario = Esg220_AfnsShkSprd.createAfnsShockScenarioByParam(FinUtils.toEndOfMonth(bssd), irModelNm, null, curveBaseList, tenorList, dt, sigmaInit
 //																                       , irCurveSwMap.get(irCrv.getKey()).getLtfr()

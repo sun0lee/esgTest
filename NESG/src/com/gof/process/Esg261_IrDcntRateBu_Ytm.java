@@ -37,7 +37,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 //			ytmList.forEach(s-> log.info("ytm : {},{}", s.toString()));
 
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
-	// 1. ytm -> spot 변환 ytm에 직접 스프레드를 반영 후 spot rate으로 변환함 8.0 추가된 up down 시나리오 산출 부분 확인 
+	// 1. ytm -> spot 변환 ytm에 직접 스프레드를 반영 후 spot rate으로 변환함 10.0 추가된 up down 시나리오 산출 부분 확인 
 				List<IrCurveYtm> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
 //				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
