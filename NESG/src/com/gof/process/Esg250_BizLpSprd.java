@@ -28,7 +28,7 @@ public class Esg250_BizLpSprd extends Process {
 
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
 				
-				// 최종 적용 기준 : IR_PARAM_SW 의 DCNT_APPL_MODEL_CD (할인율적용모형코드) 설정에 따라 결정함.  
+				// 최종 적용 기준 : IR_PARAM_SW 의 liqPremApplDv (유동성프리미엄적용구분) 설정에 따라 결정함.  
 				String dcntApplModelCd = "BU" + StringUtil.objectToPrimitive(swSce.getValue().getLiqPremApplDv(), "1");
 				
 				List<IrSprdLp> sprdLpList = IrSprdDao.getIrSprdLpList(bssd, dcntApplModelCd, applBizDv, curveSwMap.getKey(), swSce.getKey());

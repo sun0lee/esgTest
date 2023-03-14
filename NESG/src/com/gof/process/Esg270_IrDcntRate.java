@@ -57,7 +57,8 @@ public class Esg270_IrDcntRate extends Process {
 				
 				LocalDate baseDate = DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth());
 //				log.info("{}, {}, {}", swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear);
-								
+
+				// 부채 할인용 : 조정 후 금리커브 =>smith-wilson 변환 결과  
 				SmithWilsonKics swKics = new SmithWilsonKics(baseDate, irCurveSpotList, CMPD_MTD_DISC, true, swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear, 1, 100, DCB_MON_DIF);				
 				List<IrDcntRate> adjRateList = swKics.getSmithWilsonResultList().stream().map(s -> s.convert()).collect(Collectors.toList());
 				
@@ -68,6 +69,7 @@ public class Esg270_IrDcntRate extends Process {
 				double[] prjTenor = tenorList.stream().mapToDouble(Double::doubleValue).toArray();				
 				
 				if(applBizDv.equals("KICS")) {
+	  // KICS 기준시나리오 1 or 기타 별도 정의 6,7,8,9 
 					if( swSce.getKey()==1 || swSce.getKey() > 6) {
 						adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));										
 						
@@ -76,7 +78,7 @@ public class Esg270_IrDcntRate extends Process {
 							log.warn("No Historical YTM Data exist for [{}, {}] in [{}]", bssd, curveSwMap.getKey(), jobId);
 							continue;
 						}				
-						
+						// 자산 할인율 산출을 위한 ytm smith-wilson 변환결과 
 						SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 								.baseDate(baseDate)					
 								.ytmCurveHisList(ytmList)
@@ -86,26 +88,33 @@ public class Esg270_IrDcntRate extends Process {
 						
 						baseRateSce1Map = swBts.getSmithWilsonResultList(prjTenor).stream().collect(Collectors.toMap(SmithWilsonRslt::getMatCd, Function.identity()));
 						
-						for(IrDcntRate rslt : adjRateList) {						
+						for(IrDcntRate rslt : adjRateList) {	
+							// 자산 할인율 보간결과 넣어주기 
 							rslt.setSpotRate(baseRateSce1Map.get(rslt.getMatCd()).getSpotDisc());
 							rslt.setFwdRate (baseRateSce1Map.get(rslt.getMatCd()).getFwdDisc());
 						}					
 						
 					}
-					
+	 // KICS 결정론적 시나리오 2~5 				
 					//for KICS: Asset Discount Rate Scenario after scen#1 is generated from Above Insurance Discount Rate + Difference Rate of Insurance - Asset at SCE#1
 					else if(swSce.getKey() <= 6) {
 						TreeMap<String, Double> spotRateMap = new TreeMap<String, Double>();
 						TreeMap<String, Double> fwdRateMap  = new TreeMap<String, Double>();
 						
+						//부채 할인용 : 조정 후 금리커브는 swKics에서 변환한값을 그대로 사용하고  
 						for(IrDcntRate rslt : adjRateList) {						
-							String matCd   = rslt.getMatCd();						
+							String matCd   = rslt.getMatCd();
+							// 조정 충격후 
 							double adjRate = adjRateMap.get(matCd).getAdjSpotRate();
+							// 기본 충격전 - 조정 충격전 
 							double adjDiff = baseRateSce1Map.get(matCd).getSpotDisc() - adjRateSce1Map.get(matCd).getAdjSpotRate();
 							
+							// 기본 충격후 : = (기본 충격전) + (조정 충격후 - 조정 충격전) => 엑셀 로직 (기본금리커브 + (충격 스프레드))
+							// 기본 충격후 : = (조정 충격후) + (기본 충격전 - 조정 충격전) => 코드 로직  
 							rslt.setSpotRate(adjRate + adjDiff);						
 							spotRateMap.put(matCd, adjRate + adjDiff);
-						}					
+						}	
+						// 기본 충격후 spot -> fwd 
 						fwdRateMap = irSpotDiscToFwdM1Map(spotRateMap);					
 
 						for(IrDcntRate rslt : adjRateList) {
@@ -114,10 +123,10 @@ public class Esg270_IrDcntRate extends Process {
 					}
 					
 				}
-				
+	//KICS 외 			
 //				else if(!applBizDv.equals("KICS")) {
 				else  {
-					
+					// 부채평가용 (조정 할인율 커브 :연속복리 spot rate사용 )
 					adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));		
 					
 					List<IrCurveYtm> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
@@ -126,6 +135,7 @@ public class Esg270_IrDcntRate extends Process {
 						continue;
 					}
 					
+					// 자산평가용 (기본 할인율 커브 : YTM 사용 ) 
 					SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 							 									 .baseDate(baseDate)					
 							 									 .ytmCurveHisList(ytmList)
@@ -134,6 +144,7 @@ public class Esg270_IrDcntRate extends Process {
 							 									 .build();						
 
 //				    swBts.getSmithWilsonResultList(prjTenor).stream().filter(s -> Double.parseDouble(s.getMatCd().substring(1, 5)) <= 240).forEach(s -> log.info("{}, {}, {}", s.getMatCd(), s.getSpotDisc(), s.getFwdDisc()));
+					// 자산평가용 (기본 할인율 커브 : YTM 사용 ) 
 					baseRateSce1Map = swBts.getSmithWilsonResultList(prjTenor).stream().collect(Collectors.toMap(SmithWilsonRslt::getMatCd, Function.identity()));
 
 					for(IrDcntRate rslt : adjRateList) {						

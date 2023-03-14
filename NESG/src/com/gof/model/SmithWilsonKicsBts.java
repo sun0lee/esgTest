@@ -34,6 +34,10 @@ public class SmithWilsonKicsBts extends IrModel {
 	private RealMatrix                    zetaHat;
 	
 
+	/**
+	 * 자산평가용 
+	 * @param IrCurveYtm 
+	 * @param ltfr = this.iRateBase[this.iRateBase.length-1] ; 마지막값  */
 	@Builder(builderClassName="of", builderMethodName="of")
 	public SmithWilsonKicsBts(LocalDate baseDate, List<IrCurveYtm> ytmCurveHisList, Double alphaApplied, Boolean isRealNumber, Integer freq, Double liqPrem) {				
 		super();		

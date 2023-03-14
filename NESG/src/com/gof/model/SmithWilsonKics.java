@@ -54,7 +54,10 @@ public class SmithWilsonKics extends IrModel {
 	public SmithWilsonKics(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int dayCountBasis) {
 		this(baseDate, irCurveHisList, cmpdType     , isRealNumber, ltfr, ltfrT, prjYear, 1, 100, dayCountBasis);		
 	}
-	
+	/**
+	 * 부채평가용 
+	 * @param IrCurveSpot 
+	 * @param ltfr ; 입력값  */
 	public SmithWilsonKics(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int prjInterval, int alphaItrNum, int dayCountBasis) {				
 		super();		
 		this.baseDate = baseDate;		

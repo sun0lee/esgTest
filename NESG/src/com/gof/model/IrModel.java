@@ -183,7 +183,7 @@ public abstract class IrModel implements Constant {
 		return fwdRateMap;
 	}
 	
-	/** spot -> fwd 왜 ?? */
+	// spot -> fwd 변환이 아니라, fwdMatCd 만큼 shift시키는 일 => 세팅 후 테스트 필요   
 	public static TreeMap<String, Double> irSpotDiscToFwdMap(String bssd, TreeMap<String, Double> spotRateMap, String fwdMatCd) {		
 		
 		TreeMap<String, Double> fwdRateMap = new TreeMap<String, Double>();
