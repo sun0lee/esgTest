@@ -25,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "CO_JOB_INFO_SEQ_GEN",sequenceName = "CO_JOB_INFO_SEQ",initialValue = 1, allocationSize = 1)
 public class CoJobInfo  extends BaseEntity implements Serializable {	
 	

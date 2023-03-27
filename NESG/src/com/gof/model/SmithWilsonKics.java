@@ -47,7 +47,7 @@ public class SmithWilsonKics extends IrModel {
 	private RealMatrix                    zetaColumn;
 	
 	
-	public SmithWilsonKics(LocalDate baseDate, List<IrCurveSpot> irCurveHisList,                boolean isRealNumber, double ltfr, int ltfrT, int prjYear) {
+	public SmithWilsonKics(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, boolean isRealNumber, double ltfr, int ltfrT, int prjYear) {
 		this(baseDate, irCurveHisList, CMPD_MTD_DISC, isRealNumber, ltfr, ltfrT, prjYear, 1, 100, 1);		
 	}	
 
@@ -58,25 +58,41 @@ public class SmithWilsonKics extends IrModel {
 	 * 부채평가용 
 	 * @param IrCurveSpot 
 	 * @param ltfr ; 입력값  */
-	public SmithWilsonKics(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int prjInterval, int alphaItrNum, int dayCountBasis) {				
+	public SmithWilsonKics(LocalDate baseDate
+					, List<IrCurveSpot> irCurveHisList
+					, char cmpdType
+					, boolean isRealNumber
+					, double ltfr
+					, int ltfrT
+					, int prjYear
+					, int prjInterval
+					, int alphaItrNum
+					, int dayCountBasis) 
+	{				
 		super();		
 		this.baseDate = baseDate;		
 		this.setTermStructureBase(irCurveHisList);
 		this.setLastLiquidPoint(this.tenor[this.tenor.length-1]);
-		this.cmpdType = cmpdType;
+		this.cmpdType = cmpdType; // D
 		this.isRealNumber = isRealNumber;
 		this.ltfr = ltfr;
-		this.ltfrT = ltfrT;
-		this.prjYear = prjYear;		
-		this.prjInterval = prjInterval;
-		this.alphaItrNum = alphaItrNum;
-		this.dayCountBasis = dayCountBasis;
+		this.ltfrT = ltfrT; // 60
+		this.prjYear = prjYear;	// 120	
+		this.prjInterval = prjInterval; // 1
+		this.alphaItrNum = alphaItrNum; // 100
+		this.dayCountBasis = dayCountBasis; // 9
 		this.setSwAttributes();
 		this.setProjectionTenor();
 	}		
 	
 	
-	public SmithWilsonKics(LocalDate baseDate, Map<Double, Double> termStructure,                boolean isRealNumber, double ltfr, int ltfrT, int prjYear) {
+	public SmithWilsonKics(LocalDate baseDate
+			, Map<Double, Double> termStructure
+			, boolean isRealNumber
+			, double ltfr
+			, int ltfrT
+			, int prjYear) 
+	{
 		this(baseDate, termStructure,  CMPD_MTD_DISC, isRealNumber, ltfr, ltfrT, prjYear, 1, 100, 1);		
 	}
 
@@ -121,6 +137,7 @@ public class SmithWilsonKics extends IrModel {
 		double toRealScale = this.isRealNumber ? 1.0 : 0.01;
 		this.ltfrCont = irDiscToCont(toRealScale * this.ltfr);
 		
+		//tenor별 실제 날짜 
 		for(int i=0; i<this.tenor.length; i++) {			
 			this.tenorDate[i] = this.baseDate.plusMonths((long) Math.round(this.tenor[i] * yearToMonth));
 			this.tenorYearFrac[i] = getTimeFactor(this.baseDate,  this.tenorDate[i],  this.dayCountBasis);
@@ -139,7 +156,7 @@ public class SmithWilsonKics extends IrModel {
 		
 		this.prjDate      = new LocalDate[prjNum + 1];
 		this.prjYearFrac  = new double[prjNum + 1];
-		
+		// projection 날짜 별 
 		for(int i=0; i<this.prjDate.length; i++) {
 			
 			this.prjDate[i] = this.baseDate.plusMonths((long) Math.round((i+1) * this.prjInterval * yearToMonth));
@@ -236,6 +253,7 @@ public class SmithWilsonKics extends IrModel {
 		this.smithWilsonAlphaFinding();
 		log.info("AlphaOpt: {}, Error: {}", this.alphaApplied, Math.abs(this.alphaFwd - this.ltfrCont));
 //		log.info("{}", this.zetaColumn);
+		
 		
 		double[] df = new double[this.prjYearFrac.length];
 		for(int i=0; i<df.length; i++) df[i] = zeroBondUnitPrice(this.ltfrCont,  this.prjYearFrac[i]);

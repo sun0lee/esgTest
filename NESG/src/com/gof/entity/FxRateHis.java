@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "FX_RATE_SEQ_GEN",sequenceName = "FX_RATE_SEQ",initialValue = 1, allocationSize = 1)
 public class FxRateHis  extends BaseEntity implements Serializable {	
 	

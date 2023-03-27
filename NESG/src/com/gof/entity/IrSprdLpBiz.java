@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,10 +30,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @SequenceGenerator (name = "IR_SPRD_LP_BIZ_SEQ_GEN",sequenceName = "IR_SPRD_LP_BIZ_SEQ",initialValue = 1, allocationSize = 1)
-public class IrSprdLpBiz implements Serializable {	
+public class IrSprdLpBiz extends BaseEntity implements Serializable {	
 	
 	private static final long serialVersionUID = -2721793562033729088L;
 
@@ -48,8 +49,8 @@ public class IrSprdLpBiz implements Serializable {
 	private String matCd;	
 	
 	private Double liqPrem;
-	private String modifiedBy;
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")

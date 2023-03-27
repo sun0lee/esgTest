@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +18,7 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,10 +33,10 @@ import lombok.ToString;
 @Filters( { @Filter(name ="IR_FILTER", condition="BASE_YYMM = :baseYymm"),  @Filter(name ="IR_FILTER", condition="IR_CURVE_ID like :irCurveId") } )
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "IR_DCNT_RATE_BU_SEQ_GEN",sequenceName = "IR_DCNT_RATE_BU_SEQ",initialValue = 1, allocationSize = 1)
-public class IrDcntRateBu implements Serializable {
+public class IrDcntRateBu extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = -4644199390958760035L;
 
@@ -56,8 +57,8 @@ public class IrDcntRateBu implements Serializable {
 	private Double adjSpotRateDisc;
 	private Double adjSpotRateCont;	
 	private Double addSprd;
-	private String modifiedBy;
-	private LocalDateTime updateDate;
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -73,8 +74,8 @@ public class IrDcntRateBu implements Serializable {
 		adjSpot.setIrCurveNm(this.irCurveNm);		
 		adjSpot.setMatCd(this.matCd);			
 		adjSpot.setSpotRate(this.adjSpotRateDisc);
-		adjSpot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		adjSpot.setUpdateDate(LocalDateTime.now());
+//		adjSpot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		adjSpot.setUpdateDate(LocalDateTime.now());
 		
 		return adjSpot;
 	}
@@ -89,8 +90,8 @@ public class IrDcntRateBu implements Serializable {
 		spot.setIrCurveNm(this.irCurveNm);		
 		spot.setMatCd(this.matCd);			
 		spot.setSpotRate(this.spotRateDisc);
-		spot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		spot.setUpdateDate(LocalDateTime.now());
+//		spot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		spot.setUpdateDate(LocalDateTime.now());
 		
 		return spot;
 	}	

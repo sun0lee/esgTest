@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +26,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "IR_CURVE_YTM_USR_SEQ_GEN",sequenceName = "IR_CURVE_YTM_USR_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurveYtmUsr implements Serializable {	
+public class IrCurveYtmUsr extends BaseEntity implements Serializable {	
 
 	private static final long serialVersionUID = 8728364358808498458L;
 
@@ -41,8 +43,8 @@ public class IrCurveYtmUsr implements Serializable {
 	private String matCd;
 	
 	private Double ytm;	
-	private String modifiedBy;	
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;	
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")

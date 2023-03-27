@@ -17,12 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.ejml.data.Complex_F64;
 import org.ejml.simple.SimpleEVD;

@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,11 +30,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @SequenceGenerator (name = "IR_SPRD_LP_USR_SEQ_GEN",sequenceName = "IR_SPRD_LP_USR_SEQ",initialValue = 1, allocationSize = 1)
 
-public class IrSprdLpUsr implements Serializable {	
+public class IrSprdLpUsr extends BaseEntity implements Serializable {	
 	
 	private static final long serialVersionUID = -5544681492762015145L;
 
@@ -50,8 +51,8 @@ public class IrSprdLpUsr implements Serializable {
 	private String matCd;
 	
 	private Double liqPrem;	
-	private String modifiedBy;
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")

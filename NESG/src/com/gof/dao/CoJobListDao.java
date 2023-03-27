@@ -12,7 +12,7 @@ public class CoJobListDao extends DaoUtil {
 	private static Session session = HibernateUtil.getSessionFactory().openSession();
 	
 	public static List<CoJobList> getCoJobList() {
-		
+		        // 반환타입        // 메서드  (arg)
 		String q = " select a from CoJobList a     "
 				+ "   where 1=1                    "				 
 				+ "     and upper(a.useYn) =:useYn "

@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +25,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "IR_CURVE_FWD_SEQ_GEN",sequenceName = "IR_CURVE_FWD_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurveFwd implements Serializable {
+public class IrCurveFwd extends BaseEntity  implements Serializable {
 	
 	private static final long serialVersionUID = -2709553445772419321L;
 
@@ -40,8 +42,8 @@ public class IrCurveFwd implements Serializable {
 	private String matCd;	
 	
 	private Double intRate;	
-	private String modifiedBy;	
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;	
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID")

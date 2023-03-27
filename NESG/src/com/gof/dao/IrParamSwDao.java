@@ -79,7 +79,9 @@ public class IrParamSwDao extends DaoUtil {
 	
 	
 	public static List<IrParamSw> getIrParamSwList(String bssd, String applBizDv, String irCurveNm, Integer irCurveSceNo) {
-		return getIrParamSwUsrList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream().map(s -> s.convert(bssd)).collect(Collectors.toList());		
+		return getIrParamSwUsrList(bssd, applBizDv, irCurveNm, irCurveSceNo)
+				.stream()
+				.map(s -> s.convert(bssd)).collect(Collectors.toList());		
 	}
 
 

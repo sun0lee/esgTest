@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
+import com.gof.abstracts.BaseEntity;
+
+//import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,12 +28,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @ToString
 //@AllArgsConstructor // add 23.03.06 
 //@Builder            // add 23.03.06 
 @SequenceGenerator (name = "IR_CURVE_YTM_SEQ_GEN",sequenceName = "IR_CURVE_YTM_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurveYtm implements Serializable {	
+public class IrCurveYtm extends BaseEntity implements Serializable {	
 	
 	private static final long serialVersionUID = 1340116167808300605L;
 
@@ -45,8 +47,8 @@ public class IrCurveYtm implements Serializable {
 	private String matCd;
 	
 	private Double ytm;	
-	private String modifiedBy;	
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;	
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -54,7 +56,7 @@ public class IrCurveYtm implements Serializable {
 
 	
 	public IrCurveSpot convertSimple() {
-		
+		 // 데이터 타입  // 메서드 
 		IrCurveSpot spot = new IrCurveSpot();
 		
 		spot.setBaseDate(this.baseDate);		
@@ -62,8 +64,8 @@ public class IrCurveYtm implements Serializable {
 		spot.setIrCurveNm(this.irCurveNm);		
 		spot.setMatCd(this.matCd);
 		spot.setSpotRate(this.ytm);		
-		spot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		spot.setUpdateDate(LocalDateTime.now());
+//		spot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		spot.setUpdateDate(LocalDateTime.now());
 		
 		return spot;
 	}		
@@ -78,23 +80,34 @@ public class IrCurveYtm implements Serializable {
 		addYtm.setIrCurveNm(this.irCurveNm);		
 		addYtm.setMatCd(this.matCd);
 		addYtm.setYtm(this.ytm+spread);		
-		addYtm.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		addYtm.setUpdateDate(LocalDateTime.now());
+//		addYtm.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		addYtm.setUpdateDate(LocalDateTime.now());
 		
 		return addYtm;
 	}
 
 @Builder // add 23.03.06 
-	public IrCurveYtm(long id, String baseDate, String irCurveNm, String matCd, Double ytm, String modifiedBy,
-			LocalDateTime updateDate, IrCurve irCurve) {
+	public IrCurveYtm(long id, String baseDate, String irCurveNm, String matCd, Double ytm
+//			, String modifiedBy,LocalDateTime updateDate
+			, IrCurve irCurve) {
 			super();
 			this.id = id;
 			this.baseDate = baseDate;
 			this.irCurveNm = irCurveNm;
 			this.matCd = matCd;
 			this.ytm = ytm;
-			this.modifiedBy = modifiedBy;
-			this.updateDate = updateDate;
+//			this.modifiedBy = modifiedBy;
+//			this.updateDate = updateDate;
 			this.irCurve = irCurve;
-	}		
+	}
+
+//@Override
+//public String toString() {
+//	StringBuilder builder = new StringBuilder();
+//	builder.append("IrCurveYtm [id=").append(id).append(", baseDate=").append(baseDate).append(", irCurveNm=")
+//			.append(irCurveNm).append(", matCd=").append(matCd).append(", ytm=").append(ytm).append(", modifiedBy=")
+//			.append(modifiedBy).append(", updateDate=").append(updateDate).append(", irCurve=").append(irCurve)
+//			.append("]");
+//	return builder.toString();
+//}		
 }

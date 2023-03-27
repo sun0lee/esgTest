@@ -108,17 +108,17 @@ public class SmithWilsonKicsBts extends IrModel {
 		if(this.freq > 0) {		
 			Set<Double> cfColSet = new TreeSet<Double>();	
 			
-			for(int i=0; i<this.tenor.length; i++) {
+			for(int i=0; i<this.tenor.length; i++) { // 0~15 : 16개 base tenor 단위로 
 				int jMax = (int) Math.ceil(this.tenor[i] * this.freq);
 				
 				for(int j=0; j<jMax; j++) {
 					cfColSet.add(this.tenor[i] - 1.0 * j / this.freq);
 				}
 			}
-			this.cfCol = cfColSet.stream().mapToDouble(Double::doubleValue).toArray();
+			this.cfCol = cfColSet.stream().mapToDouble(Double::doubleValue).toArray(); //102개 이자지급주기단위(freq:2)로 cf tenor 생성 
 			
-	//		Constructing C matrix
-			this.cfMatrix = new double[this.tenor.length][this.cfCol.length];
+	//		Constructing C matrix = base tenor (16) X cf tenor (102) : 이자지급주기마다 1원 주는 경우 = 1+(ytm/freq)
+			this.cfMatrix = new double[this.tenor.length][this.cfCol.length]; 
 			
 			for(int i=0; i<cfMatrix.length; i++) {
 				for(int j=0; j<cfMatrix[i].length; j++) {
@@ -162,12 +162,12 @@ public class SmithWilsonKicsBts extends IrModel {
 //		log.info("{},{}", this.cfCol, alpha);		
 		RealMatrix weight  = MatrixUtils.createRealMatrix(smithWilsonWeight(this.cfCol, this.cfCol, alpha, this.ltfrCont));
 		RealMatrix cfMatx  = MatrixUtils.createRealMatrix(this.cfMatrix);
-		RealMatrix cwctInv = MatrixUtils.inverse(cfMatx.multiply(weight).multiply(cfMatx.transpose()));
-		RealMatrix cDotMu  = cfMatx.multiply(MatrixUtils.createColumnRealMatrix(muCol));
-		RealMatrix mSubCU  = MatrixUtils.createColumnRealMatrix(mean).subtract(cDotMu);
-		RealMatrix zetaCol = cwctInv.multiply(mSubCU);
+		RealMatrix cwctInv = MatrixUtils.inverse(cfMatx.multiply(weight).multiply(cfMatx.transpose())); // (CWCt)^(-1)
+		RealMatrix cDotMu  = cfMatx.multiply(MatrixUtils.createColumnRealMatrix(muCol)); // C * Mu
+		RealMatrix mSubCU  = MatrixUtils.createColumnRealMatrix(mean).subtract(cDotMu); // m - C * mu
+		RealMatrix zetaCol = cwctInv.multiply(mSubCU); // zeta = (CWCt)^(-1) * ( m - C * Mu) 
 		
-		this.zetaHat       = cfMatx.transpose().multiply(zetaCol);
+		this.zetaHat       = cfMatx.transpose().multiply(zetaCol); //C^T * zeta 
 	}
 	
 	
@@ -184,7 +184,7 @@ public class SmithWilsonKicsBts extends IrModel {
 	private List<SmithWilsonRslt> swProjectionList(double alpha, double[] prjTenor) {
 		
 		List<SmithWilsonRslt> swResultlList = new ArrayList<SmithWilsonRslt>();			
-		smithWilsonZeta(alpha);		
+		smithWilsonZeta(alpha);	// zetaHat
 
 		RealMatrix weightPrj = MatrixUtils.createRealMatrix(smithWilsonWeight(prjTenor, this.cfCol, alpha, this.ltfrCont));
 
@@ -192,6 +192,7 @@ public class SmithWilsonKicsBts extends IrModel {
 		for(int i=0; i<muPrj.length; i++) muPrj[i] = this.zeroBondUnitPrice(this.ltfrCont, prjTenor[i]);				
 		
 		RealMatrix priceCol  = weightPrj.multiply(this.zetaHat).add(MatrixUtils.createColumnRealMatrix(muPrj));
+		//p(t) = e^(-ufr*t) + sigma (zetaHat * W) s.t. W = wilson-function 
 		
 		//log.info("{}", priceCol.getEntry(1,0)) : column index = 1
 		double[] priceZcb = new double[prjTenor.length];
@@ -199,10 +200,10 @@ public class SmithWilsonKicsBts extends IrModel {
 		double[] fwdCont  = new double[prjTenor.length];
 
 		for(int i=0; i<prjTenor.length; i++) {
-			priceZcb[i] = priceCol.getEntry(i,0);			
-			spotCont[i] = -1.0 / prjTenor[i] * Math.log(priceZcb[i]);
-			spotCont[i] = Math.log(Math.exp(spotCont[i]) + this.liqPrem);			
-			fwdCont[i]  = (i > 0) ? (spotCont[i] * prjTenor[i] - spotCont[i-1] * prjTenor[i-1]) / (prjTenor[i] - prjTenor[i-1]) : spotCont[i];			
+			priceZcb[i] = priceCol.getEntry(i,0);		// zero coupon bond price	
+			spotCont[i] = -1.0 / prjTenor[i] * Math.log(priceZcb[i]); // spot(cont)
+			spotCont[i] = Math.log(Math.exp(spotCont[i]) + this.liqPrem);	// dist2Cont(spot(dist) => 유동성반영 후 spot(cont) 		
+			fwdCont[i]  = (i > 0) ? (spotCont[i] * prjTenor[i] - spotCont[i-1] * prjTenor[i-1]) / (prjTenor[i] - prjTenor[i-1]) : spotCont[i];	// 직전 tenor와 당기 tenor를 이용해서 fwd rate산출 		
 			
 			SmithWilsonRslt swResult = new SmithWilsonRslt();
 			
@@ -222,6 +223,7 @@ public class SmithWilsonKicsBts extends IrModel {
 	}	
 	
 	/**
+	 * symmetric wilson W(i,j) function 
 	 * @param prjYearFrac, tenorYearFrac, alpha, ltfrCont
 	 * @return weight matrix
 	 * @see swProjectionList

@@ -2,7 +2,7 @@ package com.gof.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,9 +27,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "IR_CURVE_SPOT_SEQ_GEN",sequenceName = "IR_CURVE_SPOT_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurveSpot implements Serializable {	
+public class IrCurveSpot  extends BaseEntity implements Serializable {	
 	
 	private static final long serialVersionUID = 8405894865559378104L;
 	
@@ -42,8 +43,8 @@ public class IrCurveSpot implements Serializable {
 	private String matCd;	
 	
 	private Double spotRate;		
-	private String modifiedBy;	
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;	
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -160,8 +161,8 @@ public class IrCurveSpot implements Serializable {
 		ytm.setIrCurveNm(this.irCurveNm);		
 		ytm.setMatCd(this.matCd);
 		ytm.setYtm(this.spotRate);		
-		ytm.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		ytm.setUpdateDate(LocalDateTime.now());
+//		ytm.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		ytm.setUpdateDate(LocalDateTime.now());
 		
 		return ytm;
 	}		
@@ -178,8 +179,8 @@ public class IrCurveSpot implements Serializable {
 		rst.setDayOfWeek(dayOfWeek);
 		rst.setBizDayType("Y");
 		rst.setIrCurve(this.irCurve);
-		rst.setModifiedBy("ESG");
-		rst.setUpdateDate(LocalDateTime.now());
+//		rst.setModifiedBy("ESG");
+//		rst.setUpdateDate(LocalDateTime.now());
 		
 		return rst;		
 	}		

@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
+//import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -258,16 +259,12 @@ public class Main {
 		
 		try {			
 			if(argInputMap.containsKey(ERunArgument.job) && argInputMap.get(ERunArgument.job).toUpperCase().equals("CIR")) {				
-//				CoJobListDao.getCoJobList("CIR").stream().forEach(s -> log.info("JOB LIST: {}, {}", s.getJobId().trim(), s.getJobNm().trim()));
 				CoJobListDao.getCoJobList("CIR").stream().forEach(s -> log.info("JOB LIST: {}, {}", s.getJobNm().trim(), s.getJobName().trim()));
-//				jobList = CoJobListDao.getCoJobList("CIR").stream().map(s -> s.getJobId().trim()).collect(Collectors.toList());
 				jobList = CoJobListDao.getCoJobList("CIR").stream().map(s -> s.getJobNm().trim()).collect(Collectors.toList());
 			}				
 			else {
 //				Map<String, String> jobListMap = CoJobListDao.getCoJobList().stream().collect(Collectors.toMap(CoJobList::getJobId, CoJobList::getJobNm, (k, v) -> k, TreeMap::new));			
-//				CoJobListDao.getCoJobList().stream().forEach(s -> log.info("JOB LIST: {}, {}", s.getJobId().trim(), s.getJobNm().trim()));
 				CoJobListDao.getCoJobList().stream().forEach(s -> log.info("JOB LIST: {}, {}", s.getJobNm().trim(), s.getJobName().trim()));
-//				jobList    = CoJobListDao.getCoJobList().stream().map(s -> s.getJobId().trim()).collect(Collectors.toList());				
 				jobList    = CoJobListDao.getCoJobList().stream().map(s -> s.getJobNm().trim()).collect(Collectors.toList());				
 			}
 			
@@ -299,14 +296,14 @@ public class Main {
 //		jobList.add("120");
 //		jobList.add("130");		
 //		jobList.add("150");
-		
+//		
 //		jobList.add("210");
 //		jobList.add("220");
 //		jobList.add("230");
 //		jobList.add("240");
 //		jobList.add("250");
 //		jobList.add("260");
-		jobList.add("270");
+//		jobList.add("270");
 //		jobList.add("280");
 	}		
 	
@@ -317,8 +314,12 @@ public class Main {
 			CoJobInfo jobLog = startJogLog(EJob.ESG110);
 			
 			try {
+				
+				// ir curve에 사용여부 Y 인 대상 
 				irCurveMap    = IrCurveDao.getIrCurveList().stream()
 										  .collect(Collectors.toMap(s->s.getIrCurveNm(), Function.identity()));
+				
+				// 처리해야 할 대상 : 금리커브를 기준으로 함. 
 				irCurveNmList = irCurveMap.keySet().stream().collect(Collectors.toList());				
 
 				if(irCurveNmList.isEmpty()) {
@@ -336,23 +337,27 @@ public class Main {
 //				paramSwUsrList.forEach(s -> log.info("paramSwUsrList: {}", s));
 				log.info("Active PARAM_SW_USR SIZE in [{}]: [{}]", bssd, paramSwUsrList.size());
 				
-				// dao 조회조건에 들어갈 대상 : 순서 상관없고 중복없어야 하므로 set으로 구성함. 
-				Set<String>  applBizDvSet    = paramSwUsrList.stream().map(s -> s.getApplBizDv())   .collect(Collectors.toSet());				
-				Set<String>  irCurveNmSet    = paramSwUsrList.stream().map(s -> s.getIrCurveNm())   .collect(Collectors.toSet());
-				Set<Integer> irCurveSceNoSet = paramSwUsrList.stream().map(s -> s.getIrCurveSceNo()).collect(Collectors.toSet());
+				// 23.03.27 loop 처리를 주석처리하면서 여기도 사용안함  
+//				Set<String>  applBizDvSet    = paramSwUsrList.stream().map(s -> s.getApplBizDv())   .collect(Collectors.toSet());				
+//				Set<String>  irCurveNmSet    = paramSwUsrList.stream().map(s -> s.getIrCurveNm())   .collect(Collectors.toSet());
+//				Set<Integer> irCurveSceNoSet = paramSwUsrList.stream().map(s -> s.getIrCurveSceNo()).collect(Collectors.toSet());
 //				irCurveSceNoSet.forEach(s -> log.info("irCurveSceNoSet: {}", s));
 				
 				List<IrParamSw> paramSwList = new ArrayList<IrParamSw>();
 			
-				// TODO 목적별로 따로 돌것도 아닌데 왜 굳이 조건을 나눠서 가져올까 ? 어차피 아래에서 biz별로 구분해서 grouping 함 
-				for(String biz : applBizDvSet) {
-					for(String curve : irCurveNmSet) {
-						for(Integer sceNo : irCurveSceNoSet) {
-							List<IrParamSw> sw = IrParamSwDao.getIrParamSwList(bssd, biz, curve, sceNo);
-							paramSwList.addAll(sw);
-						}
-					}
-				}				
+				// ?? 목적별로 따로 돌것도 아닌데 왜 굳이 조건을 나눠서 가져올까 ? 어차피 아래에서 biz별로 구분해서 grouping 함 
+//				for(String biz : applBizDvSet) {
+//					for(String curve : irCurveNmSet) {
+//						for(Integer sceNo : irCurveSceNoSet) {
+//							List<IrParamSw> sw = IrParamSwDao.getIrParamSwList(bssd, biz, curve, sceNo);
+//							paramSwList.addAll(sw);
+//						}
+//					}
+//				}
+				// 23.03.27 한꺼번에 가져오기 
+				List<IrParamSw> sw = IrParamSwDao.getIrParamSwList(bssd);
+				paramSwList.addAll(sw);
+				
 //				paramSwList.forEach(s -> log.info("paramSwList: {}", s));
 				log.info("Active PARAM_SW     SIZE in [{}]: [{}]", bssd, paramSwList.size());
 				
@@ -362,15 +367,18 @@ public class Main {
 				}
 
 				// save
+				paramSwList.stream().forEach(s->s.setModifiedBy("GESG"+"job110"));
+				paramSwList.stream().forEach(s->s.setUpdateDate(LocalDateTime.now())); 
 				paramSwList.stream().forEach(s -> session.save(s));
 				log.info("[{}] has been Created from [{}] in Job:[{}] [BASE_YYMM: {}, COUNT: {}]", Process.toPhysicalName(IrParamSw.class.getSimpleName()), Process.toPhysicalName(IrParamSwUsr.class.getSimpleName()), jobLog.getJobId(), bssd, paramSwList.size());
 
-				// 1.KICS 일 때 : irCurveSwMap
+				// 1.KICS & 시나리오 1 일 때 : irCurveSwMap
 				irCurveSwMap  = paramSwList.stream().filter(s -> s.getIrCurveSceNo().equals(1) && s.getApplBizDv().equals("KICS"))
 				                                    .collect(Collectors.toMap(IrParamSw::getIrCurveNm, Function.identity()));
 
-				// 2.KICS가 아닐 때 : irCurveSwMap
-				for(IrParamSw irParamSw : paramSwList.stream().filter(s -> s.getIrCurveSceNo().equals(1) && !s.getApplBizDv().equals("KICS")).collect(Collectors.toList())) {
+				// 2.KICS가 아니고 시나리오 1 : irCurveSwMap
+				for(IrParamSw irParamSw : paramSwList.stream().filter(s -> s.getIrCurveSceNo().equals(1) && !s.getApplBizDv().equals("KICS"))
+													.collect(Collectors.toList())) {
 					irCurveSwMap.putIfAbsent(irParamSw.getIrCurveNm(), irParamSw);
 				}
 				
@@ -551,6 +559,7 @@ public class Main {
 			CoJobInfo jobLog = startJogLog(EJob.ESG150);			
 			
 			try {
+				// irCurve useYn = Y
 			    for(String irCurveNm : irCurveNmList) {
 			    	
 			    	// IR_PARAM_SW 설정여부 확인 
@@ -561,7 +570,11 @@ public class Main {
 
 					// 기준일자의 이전 작업 결과 delete 
 					IrCurveSpotDao.deleteIrCurveSpotMonth(bssd, irCurveNm);
-					List<IrCurveYtm> ytmRstList = IrCurveYtmDao.getIrCurveYtmMonth(bssd, irCurveNm);					
+					
+					// YTM 가져오기 
+					List<IrCurveYtm> ytmRstList = IrCurveYtmDao.getIrCurveYtmMonth(bssd, irCurveNm);	
+					
+					// input ytm 적재여부 확인 
 					if(ytmRstList.size()==0) {
 						log.warn("No Historical YTM Data exist for [{}, {}]", bssd, irCurveNm);
 						continue;
@@ -571,17 +584,27 @@ public class Main {
 					TreeMap<String, List<IrCurveYtm>> ytmRstMap = new TreeMap<String, List<IrCurveYtm>>();
 					ytmRstMap = ytmRstList.stream().collect(Collectors.groupingBy(s -> s.getBaseDate(), TreeMap::new, Collectors.toList()));					
 					
+					// 생성한 ytm 트리맵 기준일자별로 루프 
 					for(Map.Entry<String, List<IrCurveYtm>> ytmRst : ytmRstMap.entrySet()) {						
 						
 //						log.info("ytmRst: {}, {}, {}, {}, {}, {}", ytmRst.getKey(), irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getSwAlphaYtm(), irCurveSwMap.get(irCrv.getKey()).getFreq(), ytmRst.getValue(), ytmRst);
+						
 						// spot rate 만들어서 담을 통 
 						List<IrCurveSpot> rst = new ArrayList<IrCurveSpot>();
-						// biz : SW 방식으로 ytm -> spot 전환해서 return 
-						rst = Esg150_YtmToSpotSw.createIrCurveSpot(ytmRst.getKey(), irCurveMap.get(irCurveNm), ytmRst.getValue(),irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
 						
+						// biz로직 :ytm -> spot 
+						rst = Esg150_YtmToSpotSw.createIrCurveSpot(ytmRst.getKey(), irCurveNm, ytmRst.getValue(),irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
+						
+						// ir curve에 대한 정보 추가 setter (fk)
+						rst.forEach(s -> s.setIrCurve(irCurveMap.get(irCurveNm)));
+					
 						if(rst.isEmpty()) throw new Exception();
+						
+						// 저장 
 						rst.forEach(s -> session.save(s));
 					}
+					
+					// 
 					session.flush();
 					session.clear();
 				}
@@ -690,6 +713,8 @@ public class Main {
 					log.info("[{}] has been Deleted in Job:[{}] [IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrCurveSpotWeek.class.getSimpleName()), jobLog.getJobId(), irCrv.getKey(), delNum);
 
 					List<IrCurveSpotWeek> spotWeek = Esg210_SpotWeek.setupIrCurveSpotWeek(bssd, iRateHisStBaseDate, irCrv.getKey(), tenorList);
+					spotWeek.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));
+				    spotWeek.stream().forEach(s -> s.setModifiedBy("ESG210")) ;
 					spotWeek.stream().forEach(s -> session.save(s));
 					
 					session.flush();

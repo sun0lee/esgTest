@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,10 +30,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @SequenceGenerator (name = "IR_SPRD_LP_SEQ_GEN",sequenceName = "IR_SPRD_LP_SEQ",initialValue = 1, allocationSize = 1)
-public class IrSprdLp implements Serializable {	
+public class IrSprdLp extends BaseEntity implements Serializable {	
 	
 	private static final long serialVersionUID = 1004575080756955856L;
 
@@ -49,8 +50,8 @@ public class IrSprdLp implements Serializable {
 	private String matCd;	
 	
 	private Double liqPrem;
-	private String modifiedBy;
-	private LocalDateTime updateDate;
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -67,8 +68,8 @@ public class IrSprdLp implements Serializable {
 		lpBiz.setIrCurveSceNo(this.irCurveSceNo);
 		lpBiz.setMatCd(this.matCd);
 		lpBiz.setLiqPrem(this.liqPrem);		
-		lpBiz.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		lpBiz.setUpdateDate(LocalDateTime.now());
+//		lpBiz.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		lpBiz.setUpdateDate(LocalDateTime.now());
 		
 		return lpBiz;
 	}	

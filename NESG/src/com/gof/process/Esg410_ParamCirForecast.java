@@ -17,12 +17,12 @@ public class Esg410_ParamCirForecast extends Process {
 	public static final Esg410_ParamCirForecast INSTANCE = new Esg410_ParamCirForecast();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrParamModelCalc> createCirParam(String bssd, String irModelId, String irCurveId, Double dt, List<IrCurveSpot> spotList, Double accuracy) {	
+	public static List<IrParamModelCalc> createCirParam(String bssd, String irModelNm, String irCurveNm, Double dt, List<IrCurveSpot> spotList, Double accuracy) {	
 		
 		List<IrParamModelCalc> rst = new ArrayList<IrParamModelCalc>();
 		
 		if(spotList.isEmpty()) {
-			log.warn("No IR History Data of [MODEL:{}, ID:{}] in [{}]", irModelId, irCurveId, jobId);
+			log.warn("No IR History Data of [MODEL:{}, ID:{}] in [{}]", irModelNm, irCurveNm, jobId);
 			return rst;
 		}
 		
@@ -36,10 +36,10 @@ public class Esg410_ParamCirForecast extends Process {
 		rst = cir.getCalibrationResult();
 	
 		rst.stream().forEach(s -> s.setBaseYymm(bssd));
-		rst.stream().forEach(s -> s.setIrModelId(irModelId));
-		rst.stream().forEach(s -> s.setIrCurveId(irCurveId));
-		rst.stream().forEach(s -> s.setLastModifiedBy(jobId));
-		rst.stream().forEach(s -> s.setLastUpdateDate(LocalDateTime.now()));
+		rst.stream().forEach(s -> s.setIrModelNm(irModelNm));
+		rst.stream().forEach(s -> s.setIrCurveNm(irCurveNm));
+		rst.stream().forEach(s -> s.setModifiedBy(jobId));
+		rst.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));
 
 		log.info("{}({}) creates [{}] results. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.size(), toPhysicalName(IrParamModelCalc.class.getSimpleName()));
 		

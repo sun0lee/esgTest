@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Table(name ="CO_CD_MST")
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "CO_CD_MST_SEQ_GEN",sequenceName = "CO_CD_MST_SEQ",initialValue = 1, allocationSize = 1)
 public class CoCdMst extends BaseEntity implements Serializable {	
 	

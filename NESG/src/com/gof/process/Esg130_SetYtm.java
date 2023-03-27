@@ -154,8 +154,8 @@ public class Esg130_SetYtm extends Process {
                 .irCurveNm(ytmUsrHis.getIrCurveNm())
                 .matCd(TenList.get(idx)) // 0~14 까지 반복 ?? 
                 .ytm(round(StringUtil.objectToPrimitive(ytmList.get(idx), 0.0) * toReal, digit))
-                .modifiedBy(jobId + "Builder")
-                .updateDate(LocalDateTime.now())
+//                .modifiedBy(jobId + "Builder")
+//                .updateDate(LocalDateTime.now())
 				.build();
 	}
 	
@@ -171,8 +171,8 @@ public class Esg130_SetYtm extends Process {
                 .irCurveNm(ytmUsr.getIrCurveNm())
                 .matCd(ytmUsr.getMatCd())
                 .ytm(round(StringUtil.objectToPrimitive(ytmUsr.getYtm(), 0.0) * toReal, digit))
-                .modifiedBy(jobId + "Builder")
-                .updateDate(LocalDateTime.now())
+//                .modifiedBy(jobId + "Builder")
+//                .updateDate(LocalDateTime.now())
 				.build();
 
 	}

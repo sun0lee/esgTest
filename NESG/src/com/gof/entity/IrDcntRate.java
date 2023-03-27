@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,10 +26,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "IR_DCNT_RATE_SEQ_GEN",sequenceName = "IR_DCNT_RATE_SEQ",initialValue = 1, allocationSize = 1)
-public class IrDcntRate implements Serializable {
+public class IrDcntRate extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = -4252300668894647002L;
 
@@ -49,8 +50,8 @@ public class IrDcntRate implements Serializable {
 	private Double fwdRate;	
 	private Double adjSpotRate;
 	private Double adjFwdRate;	
-	private String modifiedBy;
-	private LocalDateTime updateDate;
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -121,8 +122,8 @@ public class IrDcntRate implements Serializable {
 		adjSpot.setIrCurveNm(this.irCurveNm);		
 		adjSpot.setMatCd(this.matCd);			
 		adjSpot.setSpotRate(this.adjSpotRate);
-		adjSpot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		adjSpot.setUpdateDate(LocalDateTime.now());
+//		adjSpot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		adjSpot.setUpdateDate(LocalDateTime.now());
 		
 		return adjSpot;
 	}
@@ -137,8 +138,8 @@ public class IrDcntRate implements Serializable {
 		spot.setIrCurveNm(this.irCurveNm);		
 		spot.setMatCd(this.matCd);			
 		spot.setSpotRate(this.spotRate);
-		spot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		spot.setUpdateDate(LocalDateTime.now());
+//		spot.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		spot.setUpdateDate(LocalDateTime.now());
 		
 		return spot;
 	}		

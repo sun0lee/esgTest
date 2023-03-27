@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,10 +26,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @SequenceGenerator (name = "IR_DCNT_RATE_USR_SEQ_GEN",sequenceName = "IR_DCNT_RATE_USR_SEQ",initialValue = 1, allocationSize = 1)
-public class IrDcntRateUsr implements Serializable {
+public class IrDcntRateUsr extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = -4252300668894647002L;
 
@@ -47,8 +48,8 @@ public class IrDcntRateUsr implements Serializable {
 	private Double fwdRate;
 	private Double adjSpotRate;
 	private Double adjFwdRate;
-	private String modifiedBy;
-	private LocalDateTime updateDate;
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -70,8 +71,8 @@ public class IrDcntRateUsr implements Serializable {
 		dcnt.setAdjSpotRate(this.adjSpotRate);
 		dcnt.setAdjFwdRate(this.adjFwdRate);
 
-		dcnt.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		dcnt.setUpdateDate(LocalDateTime.now());		
+//		dcnt.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		dcnt.setUpdateDate(LocalDateTime.now());		
 		
 		return dcnt;
 	}	

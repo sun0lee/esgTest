@@ -59,7 +59,7 @@ public class Esg430_BizScenCirForecast extends Process {
 	}
 	
 	
-	public static List<IrParamModelRnd> createRandCir(String bssd, String irModelId, String irCurveId, Integer prjYear, Integer scenNum, Integer seed) {	
+	public static List<IrParamModelRnd> createRandCir(String bssd, String irModelNm, String irCurveNm, Integer prjYear, Integer scenNum, Integer seed) {	
 
 		List<IrParamModelRnd> rst = new ArrayList<IrParamModelRnd>();		
 		
@@ -83,13 +83,13 @@ public class Esg430_BizScenCirForecast extends Process {
 			for(int j=0; j<randNum[i].length; j++) {								
 				IrParamModelRnd rand = new IrParamModelRnd();								
 				rand.setBaseYymm(bssd);
-				rand.setIrModelId(irModelId);
-				rand.setIrCurveId(irCurveId);
+				rand.setIrModelNm(irModelNm);
+				rand.setIrCurveNm(irCurveNm);
 				rand.setSceNo(j+1);
 				rand.setMatCd(String.format("%s%04d", "M", i+1));
 				rand.setRndNum(randNum[i][j]);
-				rand.setLastModifiedBy(jobId);
-				rand.setLastUpdateDate(LocalDateTime.now());
+				rand.setModifiedBy(jobId);
+				rand.setUpdateDate(LocalDateTime.now());
 				
 				rst.add(rand);
 			}

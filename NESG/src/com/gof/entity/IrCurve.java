@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EBoolean;
 
 import lombok.EqualsAndHashCode;
@@ -22,9 +23,9 @@ import lombok.NoArgsConstructor;
 @Table(name ="IR_CURVE")
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "IR_CURVE_SEQ_GEN",sequenceName = "IR_CURVE_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurve implements Serializable {	
+public class IrCurve  extends BaseEntity implements Serializable {	
 	
 	private static final long serialVersionUID = -7079607534247603390L;
 

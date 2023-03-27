@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,7 +26,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "CO_JOB_LIST_SEQ_GEN",sequenceName = "CO_JOB_LIST_SEQ",initialValue = 1, allocationSize = 1)
 public class CoJobList  extends BaseEntity implements Serializable {

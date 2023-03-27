@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,8 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+//import javax.persistence.Transient;
 
+import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EBoolean;
 
 import lombok.EqualsAndHashCode;
@@ -29,10 +30,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @SequenceGenerator (name = "IR_PARAM_MODEL_SEQ_GEN",sequenceName = "IR_PARAM_MODEL_SEQ",initialValue = 1, allocationSize = 1)
-public class IrParamModel implements Serializable {
+public class IrParamModel  extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = -3967105002517595201L;
 
@@ -41,9 +42,7 @@ public class IrParamModel implements Serializable {
 	@Id
 	private long id;
 
-	private String irModelNm;	
-	
-	@Transient //DB 추가하기!!
+	private String irModelNm;		
 	private String irModelName;
 	
 	private String irCurveNm;
@@ -54,8 +53,8 @@ public class IrParamModel implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private EBoolean useYn;
 	
-	private String modifiedBy;
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID")

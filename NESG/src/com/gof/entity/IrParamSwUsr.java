@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,10 +26,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString(exclude = "irCurve") //양방향 참조시에 순환참조를 막기위해 toString에서 제외시킴. 단방향은 상관 없지 않을까 ?
 @SequenceGenerator (name = "IR_PARAM_SW_USR_SEQ_GEN",sequenceName = "IR_PARAM_SW_USR_SEQ",initialValue = 1, allocationSize = 1)
-public class IrParamSwUsr implements Serializable {
+public class IrParamSwUsr extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 4818870209511307188L;
 
@@ -61,8 +63,8 @@ public class IrParamSwUsr implements Serializable {
 	private Double addSprd;	
 	private String pvtRateMatCd;	
 	private Double multPvtRate;	
-	private String modifiedBy;
-	private LocalDateTime updateDate;		
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;		
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -93,8 +95,8 @@ public class IrParamSwUsr implements Serializable {
 		paramSw.setAddSprd(this.addSprd);
 		paramSw.setPvtRateMatCd(this.pvtRateMatCd);
 		paramSw.setMultPvtRate(this.multPvtRate);		
-		paramSw.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		paramSw.setUpdateDate(LocalDateTime.now());		
+//		paramSw.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		paramSw.setUpdateDate(LocalDateTime.now());		
 		
 		return paramSw;
 	}	

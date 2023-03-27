@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,10 +26,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @ToString(exclude="irCurve")
 @SequenceGenerator (name = "IR_CURVE_SPOT_WEEK_SEQ_GEN",sequenceName = "IR_CURVE_SPOT_WEEK_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurveSpotWeek implements Serializable {
+public class IrCurveSpotWeek  extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 8687612876394929135L;
 	
@@ -45,8 +46,8 @@ public class IrCurveSpotWeek implements Serializable {
 	private Double spotRate;	
 	private String dayOfWeek;
 	private String bizDayType;	
-	private String modifiedBy;
-	private LocalDateTime updateDate;
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
@@ -80,8 +81,8 @@ public class IrCurveSpotWeek implements Serializable {
 		this.spotRate = curveHis.spotRate;
 		this.dayOfWeek = curveHis.dayOfWeek;
 		this.bizDayType = curveHis.bizDayType;
-		this.modifiedBy = curveHis.modifiedBy;
-		this.updateDate = curveHis.updateDate;
+//		this.modifiedBy = curveHis.modifiedBy;
+//		this.updateDate = curveHis.updateDate;
 	}
 	
 	public IrCurveSpot convertToHis() {
@@ -92,8 +93,8 @@ public class IrCurveSpotWeek implements Serializable {
 		rst.setIrCurve(this.irCurve);
 		rst.setMatCd(this.matCd);
 		rst.setSpotRate(this.spotRate);
-		rst.setModifiedBy("GESG_" + this.getClass().getSimpleName());
-		rst.setUpdateDate(LocalDateTime.now());
+//		rst.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//		rst.setUpdateDate(LocalDateTime.now());
 		return rst;
 	}	
 	

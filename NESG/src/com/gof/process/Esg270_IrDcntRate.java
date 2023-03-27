@@ -58,12 +58,13 @@ public class Esg270_IrDcntRate extends Process {
 				LocalDate baseDate = DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth());
 //				log.info("{}, {}, {}", swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear);
 
-				// 부채 할인용 : 조정 후 금리커브 =>smith-wilson 변환 결과  
+				// smith-wilson 변환 생성 (조정 금리커브)  
 				SmithWilsonKics swKics = new SmithWilsonKics(baseDate, irCurveSpotList, CMPD_MTD_DISC, true, swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear, 1, 100, DCB_MON_DIF);				
+				// dcntRate 들고 들어가서 변환함.
 				List<IrDcntRate> adjRateList = swKics.getSmithWilsonResultList().stream().map(s -> s.convert()).collect(Collectors.toList());
 				
 				
-				
+				// 만기별 map 
 				Map<String, IrDcntRate> adjRateMap = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));				
 				TreeSet<Double> tenorList = adjRateList.stream().map(s -> Double.valueOf(1.0 * Integer.valueOf(s.getMatCd().substring(1)) / MONTH_IN_YEAR)).collect(Collectors.toCollection(TreeSet::new));
 				double[] prjTenor = tenorList.stream().mapToDouble(Double::doubleValue).toArray();				
@@ -78,7 +79,7 @@ public class Esg270_IrDcntRate extends Process {
 							log.warn("No Historical YTM Data exist for [{}, {}] in [{}]", bssd, curveSwMap.getKey(), jobId);
 							continue;
 						}				
-						// 자산 할인율 산출을 위한 ytm smith-wilson 변환결과 
+						// 자산 할인율 산출을 위한 ytm smith-wilson 변환 
 						SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 								.baseDate(baseDate)					
 								.ytmCurveHisList(ytmList)
@@ -88,6 +89,7 @@ public class Esg270_IrDcntRate extends Process {
 						
 						baseRateSce1Map = swBts.getSmithWilsonResultList(prjTenor).stream().collect(Collectors.toMap(SmithWilsonRslt::getMatCd, Function.identity()));
 						
+						// smith-wilson 변환 결과 (기본 금리커브)  
 						for(IrDcntRate rslt : adjRateList) {	
 							// 자산 할인율 보간결과 넣어주기 
 							rslt.setSpotRate(baseRateSce1Map.get(rslt.getMatCd()).getSpotDisc());

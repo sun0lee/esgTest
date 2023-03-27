@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,9 +23,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @SequenceGenerator (name = "IR_SPRD_CRD_SEQ_GEN",sequenceName = "IR_SPRD_CRD_SEQ",initialValue = 1, allocationSize = 1)
-public class IrSprdCrd implements Serializable {
+public class IrSprdCrd extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = 76762312409390492L;
 
@@ -39,8 +40,8 @@ public class IrSprdCrd implements Serializable {
 	private String matCd;	
 	
 	private Double crdSprd;
-	private String modifiedBy;	
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;	
+//	private LocalDateTime updateDate;	
 	
 }
 

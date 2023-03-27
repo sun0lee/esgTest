@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.gof.abstracts.BaseEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,10 +26,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @SequenceGenerator (name = "IR_PARAM_SW_SEQ_GEN",sequenceName = "IR_PARAM_SW_SEQ",initialValue = 1, allocationSize = 1)
-public class IrParamSw implements Serializable {
+public class IrParamSw extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = -4175243759288891655L;
 
@@ -60,8 +62,8 @@ public class IrParamSw implements Serializable {
 	private Double addSprd;
 	private String pvtRateMatCd;	
 	private Double multPvtRate;	
-	private String modifiedBy;
-	private LocalDateTime updateDate;	
+//	private String modifiedBy;
+//	private LocalDateTime updateDate;	
 	
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID")

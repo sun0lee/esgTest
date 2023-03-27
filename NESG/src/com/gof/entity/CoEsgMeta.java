@@ -1,7 +1,7 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name ="CO_ESG_META")
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "CO_ESG_META_SEQ_GEN",sequenceName = "CO_ESG_META_SEQ",initialValue = 1, allocationSize = 1)
 public class CoEsgMeta  extends BaseEntity implements Serializable {
 
