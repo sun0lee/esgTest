@@ -11,6 +11,7 @@ import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrCurveYtmUsr;
 import com.gof.entity.IrCurveYtmUsrHis;
 import com.gof.enums.EJob;
+import com.gof.interfaces.IRateInput;
 import com.gof.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +22,9 @@ public class Esg130_SetYtm extends Process {
 	public static final Esg130_SetYtm INSTANCE = new Esg130_SetYtm();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 
-	public static List<IrCurveYtm> createYtmFromUsrHis(String bssd, String irCurveNm) {
+	public static List<IRateInput> createYtmFromUsrHis(String bssd, String irCurveNm) {
 				
-		List<IrCurveYtm>       ytmList    = new ArrayList<IrCurveYtm>();		
+		List<IRateInput>       ytmList    = new ArrayList<IRateInput>();		
 		List<String>           ytmTen     = Arrays.asList("M0003", "M0006", "M0009", "M0012", "M0018", "M0024", "M0030", "M0036", "M0048", "M0060", "M0084", "M0120", "M0180", "M0240", "M0360", "M0600");		
 		List<IrCurveYtmUsrHis> ytmUsrList = IrCurveYtmDao.getIrCurveYtmUsrHis(bssd, irCurveNm);
 		
@@ -110,11 +111,12 @@ public class Esg130_SetYtm extends Process {
 
 	
 	// 23.03.06 builder test
-	public static Stream<IrCurveYtm> createYtmFromUsr(String bssd, String irCurveNm) {
+	public static Stream<IRateInput> createYtmFromUsr(String bssd, String irCurveNm) {
 
 		return IrCurveYtmDao.getIrCurveYtmUsr(bssd).filter(s->s.getIrCurveNm().equals(irCurveNm))
 												   .map(s->Esg130_SetYtm.buildFromYtmUsr(s));
 	}
+	
 
 	private static IrCurveYtm buildFromYtmUsrHis (IrCurveYtmUsrHis ytmUsrHis, int idx) {
 		

@@ -19,6 +19,7 @@ import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.interfaces.IRateDcnt;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,7 +37,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "IR_DCNT_RATE_BU_SEQ_GEN",sequenceName = "IR_DCNT_RATE_BU_SEQ",initialValue = 1, allocationSize = 1)
-public class IrDcntRateBu extends BaseEntity implements Serializable {
+public class IrDcntRateBu extends BaseEntity implements Serializable, IRateDcnt {
 	
 	private static final long serialVersionUID = -4644199390958760035L;
 
@@ -64,6 +65,11 @@ public class IrDcntRateBu extends BaseEntity implements Serializable {
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
 	private IrCurve irCurve ;
 
+	
+//	23.03.31 add
+	public Double getSpotRate() {
+		return getSpotRateCont();
+	};
 	
 	public IrCurveSpot convertAdj() {
 		

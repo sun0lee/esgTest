@@ -19,6 +19,7 @@ import com.gof.entity.IrDcntRate;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrParamSw;
 import com.gof.enums.EJob;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.SmithWilsonKics;
 import com.gof.model.SmithWilsonKicsBts;
 import com.gof.model.entity.SmithWilsonRslt;
@@ -33,6 +34,12 @@ public class Esg270_IrDcntRate extends Process {
 	public static final Esg270_IrDcntRate INSTANCE = new Esg270_IrDcntRate();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
+	/**
+	 * @param bssd
+	 * @param applBizDv
+	 * @param paramSwMap
+	 * @param projectionYear
+	 * */
 	public static List<IrDcntRate> createIrDcntRate(String bssd, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap, Integer projectionYear) {	
 		
 		List<IrDcntRate> rst = new ArrayList<IrDcntRate>();
@@ -74,7 +81,9 @@ public class Esg270_IrDcntRate extends Process {
 					if( swSce.getKey()==1 || swSce.getKey() > 6) {
 						adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));										
 						
-						List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, curveSwMap.getKey());
+//						List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, curveSwMap.getKey());
+						List<IRateInput> ytmList = IrCurveYtmDao.getIrCurveYtm2(bssd, curveSwMap.getKey());
+						
 						if(ytmList.size()==0) {
 							log.warn("No Historical YTM Data exist for [{}, {}] in [{}]", bssd, curveSwMap.getKey(), jobId);
 							continue;
@@ -131,7 +140,8 @@ public class Esg270_IrDcntRate extends Process {
 					// 부채평가용 (조정 할인율 커브 :연속복리 spot rate사용 )
 					adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));		
 					
-					List<IrCurveYtm> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
+//					List<IrCurveYtm> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
+					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
 					if(ytmList.size()==0) {
 						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
 						continue;

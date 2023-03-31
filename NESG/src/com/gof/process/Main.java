@@ -74,6 +74,7 @@ import com.gof.entity.RcCorpPdBiz;
 import com.gof.entity.RcCorpTm;
 import com.gof.enums.EJob;
 import com.gof.enums.ERunArgument;
+import com.gof.interfaces.IRateInput;
 import com.gof.util.AesCrypto;
 import com.gof.util.DateUtil;
 import com.gof.util.EsgConstant;
@@ -292,7 +293,7 @@ public class Main {
 		}
 		
 		jobList.clear();
-		jobList.add("110");
+//		jobList.add("110");
 //		jobList.add("120");
 //		jobList.add("130");		
 //		jobList.add("150");
@@ -303,13 +304,14 @@ public class Main {
 //		jobList.add("240");
 //		jobList.add("250");
 //		jobList.add("260");
-//		jobList.add("270");
+		jobList.add("270");
 //		jobList.add("280");
 	}		
 	
 	//TODO: Start from E_IR_PARAM_SW_USR
 	private static void job110() {
-		if(jobList.contains("110")) {
+//		if(jobList.contains("110")) {
+		if(true) {	
 			session.beginTransaction();		
 			CoJobInfo jobLog = startJogLog(EJob.ESG110);
 			
@@ -343,7 +345,7 @@ public class Main {
 //				Set<Integer> irCurveSceNoSet = paramSwUsrList.stream().map(s -> s.getIrCurveSceNo()).collect(Collectors.toSet());
 //				irCurveSceNoSet.forEach(s -> log.info("irCurveSceNoSet: {}", s));
 				
-				List<IrParamSw> paramSwList = new ArrayList<IrParamSw>();
+//				List<IrParamSw> paramSwList = new ArrayList<IrParamSw>();
 			
 				// ?? 목적별로 따로 돌것도 아닌데 왜 굳이 조건을 나눠서 가져올까 ? 어차피 아래에서 biz별로 구분해서 grouping 함 
 //				for(String biz : applBizDvSet) {
@@ -355,8 +357,10 @@ public class Main {
 //					}
 //				}
 				// 23.03.27 한꺼번에 가져오기 
-				List<IrParamSw> sw = IrParamSwDao.getIrParamSwList(bssd);
-				paramSwList.addAll(sw);
+//				List<IrParamSw> sw = IrParamSwDao.getIrParamSwList(bssd);
+//				paramSwList.addAll(sw);
+				
+				List<IrParamSw> paramSwList = IrParamSwDao.getIrParamSwList(bssd);
 				
 //				paramSwList.forEach(s -> log.info("paramSwList: {}", s));
 				log.info("Active PARAM_SW     SIZE in [{}]: [{}]", bssd, paramSwList.size());
@@ -516,20 +520,13 @@ public class Main {
 					log.info("[{}] has been Deleted in Job:[{}] [COUNT: {}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), jobLog.getJobId(), delNum);
 					
 					// 기존 코드 (setter 이용)
-					List<IrCurveYtm> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis(bssd, irCurveNm);
+//					List<IrCurveYtm> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis(bssd, irCurveNm);
+					List<IRateInput> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis(bssd, irCurveNm);
 					ytmUsrHis.stream().forEach(s -> session.save(s));
+
 					
-//					// 수정 (builder 이용) -_-... 이건아닌듯. 
-//					Stream<IrCurveYtm> ytmUsrHis0 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 0);
-//					Stream<IrCurveYtm> ytmUsrHis1 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 1);
-//					Stream<IrCurveYtm> ytmUsrHis2 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 2);
-//					Stream<IrCurveYtm> ytmUsrHis3 = Esg130_SetYtm.createYtmFromUsrHisIdx(bssd, irCurveNm, 3);
-//					Stream<IrCurveYtm> ytmUsrHis = 	Stream.concat(ytmUsrHis0
-//												  , Stream.concat(ytmUsrHis1
-//												  , Stream.concat(ytmUsrHis2,ytmUsrHis3)));
-//					ytmUsrHis.forEach(s -> session.save(s));
-					
-					Stream<IrCurveYtm> ytmUsr    = Esg130_SetYtm.createYtmFromUsr(bssd, irCurveNm);
+//					Stream<IrCurveYtm> ytmUsr    = Esg130_SetYtm.createYtmFromUsr(bssd, irCurveNm);
+					Stream<IRateInput> ytmUsr    = Esg130_SetYtm.createYtmFromUsr(bssd, irCurveNm);
 					ytmUsr.forEach(s -> session.save(s)); 
 			    	
 			    }
@@ -572,7 +569,7 @@ public class Main {
 					IrCurveSpotDao.deleteIrCurveSpotMonth(bssd, irCurveNm);
 					
 					// YTM 가져오기 
-					List<IrCurveYtm> ytmRstList = IrCurveYtmDao.getIrCurveYtmMonth(bssd, irCurveNm);	
+					List<IrCurveYtm> ytmRstList = IrCurveYtmDao.getIrCurveYtmMonth(bssd, irCurveNm);
 					
 					// input ytm 적재여부 확인 
 					if(ytmRstList.size()==0) {
@@ -580,12 +577,15 @@ public class Main {
 						continue;
 					}					
 					
-					// (이미 irCurve 기준으로 loop돌고 있음) TreeMap : 기준일자별, (만기별 ytm) 생성   
-					TreeMap<String, List<IrCurveYtm>> ytmRstMap = new TreeMap<String, List<IrCurveYtm>>();
+					// (이미 irCurve 기준으로 loop돌고 있음) TreeMap (basedate, mat별 ytm) 생성   
+//					TreeMap<String, List<IrCurveYtm>> ytmRstMap = new TreeMap<String, List<IrCurveYtm>>();
+					TreeMap<String, List<IRateInput>> ytmRstMap = new TreeMap<String, List<IRateInput>>();
+					
 					ytmRstMap = ytmRstList.stream().collect(Collectors.groupingBy(s -> s.getBaseDate(), TreeMap::new, Collectors.toList()));					
 					
 					// 생성한 ytm 트리맵 기준일자별로 루프 
-					for(Map.Entry<String, List<IrCurveYtm>> ytmRst : ytmRstMap.entrySet()) {						
+//					for(Map.Entry<String, List<IrCurveYtm>> ytmRst : ytmRstMap.entrySet()) {						
+					for(Map.Entry<String, List<IRateInput>> ytmRst : ytmRstMap.entrySet()) {						
 						
 //						log.info("ytmRst: {}, {}, {}, {}, {}, {}", ytmRst.getKey(), irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getSwAlphaYtm(), irCurveSwMap.get(irCrv.getKey()).getFreq(), ytmRst.getValue(), ytmRst);
 						
@@ -593,7 +593,8 @@ public class Main {
 						List<IrCurveSpot> rst = new ArrayList<IrCurveSpot>();
 						
 						// biz로직 :ytm -> spot 
-						rst = Esg150_YtmToSpotSw.createIrCurveSpot(ytmRst.getKey(), irCurveNm, ytmRst.getValue(),irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
+//						rst = Esg150_YtmToSpotSw.createIrCurveSpot(	ytmRst.getKey() , irCurveNm , ytmRst.getValue(), irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
+						rst = Esg150_YtmToSpotSw.createIrCurveSpot(	ytmRst.getValue(), irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
 						
 						// ir curve에 대한 정보 추가 setter (fk)
 						rst.forEach(s -> s.setIrCurve(irCurveMap.get(irCurveNm)));
@@ -619,7 +620,7 @@ public class Main {
 			session.getTransaction().commit();		
 		}
 	}
-	
+
 	//TODO: for temporary use only
 	private static void job151() {
 		if(jobList.contains("151")) {

@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.interfaces.IRateInput;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,7 +30,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "IR_CURVE_SPOT_SEQ_GEN",sequenceName = "IR_CURVE_SPOT_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurveSpot  extends BaseEntity implements Serializable {	
+public class IrCurveSpot  extends BaseEntity implements Serializable, IRateInput {	
 	
 	private static final long serialVersionUID = 8405894865559378104L;
 	
@@ -131,9 +132,16 @@ public class IrCurveSpot  extends BaseEntity implements Serializable {
 		return new IrCurveSpot(bssd, this);
 	}
 	
-	public String getBaseYymm() {
-		return getBaseDate().substring(0,6);
-	}
+//  23.03.31 주석처리 : IRateRst interface 에서 디폴트 메서드로 정의함. 
+//	public String getBaseYymm() {
+//		return getBaseDate().substring(0,6);
+//	}
+	
+//	23.03.31 add
+	public Double getRate() {
+		return getSpotRate();
+	};
+	
 	public boolean isBaseTerm() {
 		if(matCd.equals("M0003") 
 				|| matCd.equals("M0006") 

@@ -1,13 +1,12 @@
 package com.gof.process;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrCurveYtm;
 import com.gof.enums.EJob;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.SmithWilsonKicsBts;
 import com.gof.util.DateUtil;
 
@@ -19,7 +18,19 @@ public class Esg150_YtmToSpotSw extends Process {
 	public static final Esg150_YtmToSpotSw INSTANCE = new Esg150_YtmToSpotSw();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrCurveSpot> createIrCurveSpot(String baseYmd, String irCurveNm, List<IrCurveYtm> ytmRst, Double alphaApplied, Integer freq) {		
+//	23.03.31 매개변수 줄이기 
+//	public static List<IrCurveSpot> createIrCurveSpot(String baseYmd, String irCurveNm, List<IrCurveYtm> ytmRst, Double alphaApplied, Integer freq) {
+	/** ytm -> spot
+	 * @param ytmRst
+	 * @param alphaApplied
+	 * @param freq
+	 * */
+	public static List<IrCurveSpot> createIrCurveSpot(List<IRateInput> ytmRst, Double alphaApplied, Integer freq) {		
+		
+		// 내부 변수로 정의 
+		String baseYmd   = ytmRst.get(0).getBaseDate();
+		String irCurveNm = ytmRst.get(0).getIrCurveNm();
+		
 		
 		SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 									 .baseDate(DateUtil.convertFrom(baseYmd))
@@ -40,10 +51,8 @@ public class Esg150_YtmToSpotSw extends Process {
 		}
 		rst.stream().forEach(s -> s.setIrCurveNm(irCurveNm));
 		rst.stream().forEach(s -> s.setBaseDate(baseYmd));
-		rst.stream().forEach(s -> s.setModifiedBy(jobId));
-		rst.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));
 		
-		log.info("{}({}) creates [{}] results of [{}] in [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.size(), irCurveNm, baseYmd, toPhysicalName(IrCurveSpot.class.getSimpleName()));
+		log.info("{}({}) creates [{}] results of [{}] in [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.size(), baseYmd, toPhysicalName(IrCurveSpot.class.getSimpleName()));
 		
 		return rst;
 	}

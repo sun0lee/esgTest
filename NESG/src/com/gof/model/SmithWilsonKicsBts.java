@@ -11,6 +11,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrCurveYtm;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 
 import lombok.Builder;
@@ -39,7 +40,8 @@ public class SmithWilsonKicsBts extends IrModel {
 	 * @param IrCurveYtm 
 	 * @param ltfr = this.iRateBase[this.iRateBase.length-1] ; 마지막값  */
 	@Builder(builderClassName="of", builderMethodName="of")
-	public SmithWilsonKicsBts(LocalDate baseDate, List<IrCurveYtm> ytmCurveHisList, Double alphaApplied, Boolean isRealNumber, Integer freq, Double liqPrem) {				
+//	public SmithWilsonKicsBts(LocalDate baseDate, List<IrCurveYtm> ytmCurveHisList, Double alphaApplied, Boolean isRealNumber, Integer freq, Double liqPrem) {				
+	public SmithWilsonKicsBts(LocalDate baseDate, List<IRateInput> ytmCurveHisList, Double alphaApplied, Boolean isRealNumber, Integer freq, Double liqPrem) {				
 		super();		
 		this.baseDate = baseDate;		
 		this.setTermStructureYtm(ytmCurveHisList);
@@ -60,7 +62,7 @@ public class SmithWilsonKicsBts extends IrModel {
 //		log.info("baseDate: {}, tenor:{}, iRate:{}, ltfrT:{}, ltfr:{}, ltfrCont:{}", this.baseDate, this.tenor, this.iRateBase, this.ltfrT, this.ltfr, this.ltfrCont);
 	}
 	
-	
+	// SmithWilsonResultList를 IrCurveSpot 타입의 list로 리턴함 
 	public List<IrCurveSpot> getSpotBtsRslt() {		
 		
 		List<IrCurveSpot> curveList = new ArrayList<IrCurveSpot>();
@@ -85,7 +87,7 @@ public class SmithWilsonKicsBts extends IrModel {
 		return resultList;		
 	}
 	
-
+// SmithWilsonResult를 List로 반환함 
 	public List<SmithWilsonRslt> getSmithWilsonResultList() {
 		
 		List<SmithWilsonRslt> resultList = new ArrayList<SmithWilsonRslt>();		

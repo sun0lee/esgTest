@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.interfaces.IRateDcnt;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,7 +30,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "IR_DCNT_RATE_SEQ_GEN",sequenceName = "IR_DCNT_RATE_SEQ",initialValue = 1, allocationSize = 1)
-public class IrDcntRate extends BaseEntity implements Serializable {
+public class IrDcntRate extends BaseEntity implements Serializable, IRateDcnt {
 
 	private static final long serialVersionUID = -4252300668894647002L;
 

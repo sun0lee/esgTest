@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.gof.dao.IrCurveSpotDao;
+//import com.gof.dao.IrCurveSpotDao;
 import com.gof.dao.IrCurveYtmDao;
 import com.gof.dao.IrSprdDao;
 import com.gof.entity.IrCurveSpot;
@@ -17,6 +17,7 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsBiz;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.enums.EJob;
+import com.gof.interfaces.IRateInput;
 import com.gof.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,27 +28,36 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 	public static final Esg261_IrDcntRateBu_Ytm INSTANCE = new Esg261_IrDcntRateBu_Ytm();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelId, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
+	/**
+	 * @param bssd
+	 * @param irModelNm
+	 * @param applBizDv
+	 * @param paramSwMap*/
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelNm, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		
 		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {		
 			
+			
+			// ori ytm 
 			List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, curveSwMap.getKey());
 //			ytmList.forEach(s-> log.info("ytm : {},{}", s.toString()));
 
+			
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
-	// 1. ytm -> spot 변환 ytm에 직접 스프레드를 반영 후 spot rate으로 변환함 10.0 추가된 up down 시나리오 산출 부분 확인 
-				List<IrCurveYtm> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
+				
+	// 1. ytm -> spot 변환 (ytm에 직접 스프레드를 반영, 10.0 추가된 up down 시나리오 산출 부분 확인)
+				List<IRateInput> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
 //				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
-				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(bssd, curveSwMap.getKey(), ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
-						.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
+				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
+											.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
 		
-				//23.03.08 add spotList에 irCurve를 넘겨줄 방법이 없어서 산출한 뒤에 넘겨줌 .
+				// irCurveSid add 
 				spotList.forEach(s-> s.setIrCurve(swSce.getValue().getIrCurve()));
+//				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));
 				
-				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));
 				TreeMap<String, Double> spotMap = spotList.stream().collect(Collectors.toMap(IrCurveSpot::getMatCd, IrCurveSpot::getSpotRate, (k, v) -> k, TreeMap::new));
 				
 				if(spotList.isEmpty()) {
@@ -58,7 +68,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream()
 						                                   .collect(Collectors.toMap(IrSprdLpBiz::getMatCd, IrSprdLpBiz::getLiqPrem));
 	// 3. 금리 충격스프레드 가져오기 
-				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelId, curveSwMap.getKey(), StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
+				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, curveSwMap.getKey(), StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
 															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 	// 4. 시나리오 적용할 준비 : spotSceList copy 			
 				List<IrCurveSpot> spotSceList = spotList.stream().map(s -> s.deepCopy(s)).collect(Collectors.toList());

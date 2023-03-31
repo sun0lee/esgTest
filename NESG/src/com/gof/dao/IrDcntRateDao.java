@@ -62,7 +62,12 @@ public class IrDcntRateDao extends DaoUtil {
 		return getIrDcntRateBuList(bssd).stream().map(s -> s.convertBase()).collect(Collectors.toList());
 	}
 	
-	
+	/**
+	 * @param bssd
+	 * @param applBizDv
+	 * @param irCurveNm
+	 * @param irCurveSceNo
+	 * */
 	public static List<IrCurveSpot> getIrDcntRateBuToBaseSpotList(String bssd, String applBizDv, String irCurveNm, Integer irCurveSceNo) {		
 		return getIrDcntRateBuList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream().map(s -> s.convertBase()).collect(Collectors.toList());
 	}	

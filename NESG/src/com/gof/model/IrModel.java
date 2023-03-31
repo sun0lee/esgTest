@@ -26,6 +26,7 @@ import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrCurveYtm;
 import com.gof.interfaces.Constant;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 import com.gof.util.DateUtil;
 
@@ -72,14 +73,19 @@ public abstract class IrModel implements Constant {
 	public void setTermStructureBase(List<IrCurveSpot> irCurveHisList) {
 		
 //		this.tenor = irCurveHis.stream().map(s -> Double.parseDouble(s.getMatCd().substring(1, 5)) / 12.0).mapToDouble(Double::doubleValue).toArray();
-		for(IrCurveSpot curve : irCurveHisList) this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getSpotRate());		
+		for(IrCurveSpot curve : irCurveHisList) 
+			this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getSpotRate());		
 		setTermStructureBase(this.termStructureBase);							
 	}
 	
 
-	public void setTermStructureYtm(List<IrCurveYtm> ytmCurveHisList) {	
+//	public void setTermStructureYtm(List<IrCurveYtm> ytmCurveHisList) {	
+	public void setTermStructureYtm(List<IRateInput> ytmCurveHisList) {	
 
-		for(IrCurveYtm curve : ytmCurveHisList) this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getYtm());		
+//		for(IrCurveYtm curve : ytmCurveHisList) 
+		for(IRateInput curve : ytmCurveHisList) 
+//			this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getYtm());		
+			this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getRate());		
 		setTermStructureBase(this.termStructureBase);							
 	}	
 
