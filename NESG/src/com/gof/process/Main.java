@@ -296,7 +296,7 @@ public class Main {
 //		jobList.add("110");
 //		jobList.add("120");
 //		jobList.add("130");		
-//		jobList.add("150");
+		jobList.add("150");
 //		
 //		jobList.add("210");
 //		jobList.add("220");
@@ -304,7 +304,7 @@ public class Main {
 //		jobList.add("240");
 //		jobList.add("250");
 //		jobList.add("260");
-		jobList.add("270");
+//		jobList.add("270");
 //		jobList.add("280");
 	}		
 	
@@ -504,8 +504,6 @@ public class Main {
 				}
 */
 				
-				
-//			  23.03.06 수정 
 			    for (String irCurveNm : irCurveNmList) {
 					
 					if(!irCurveSwMap.containsKey(irCurveNm)) { 
@@ -519,13 +517,9 @@ public class Main {
 		
 					log.info("[{}] has been Deleted in Job:[{}] [COUNT: {}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), jobLog.getJobId(), delNum);
 					
-					// 기존 코드 (setter 이용)
-//					List<IrCurveYtm> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis(bssd, irCurveNm);
 					List<IRateInput> ytmUsrHis = Esg130_SetYtm.createYtmFromUsrHis(bssd, irCurveNm);
 					ytmUsrHis.stream().forEach(s -> session.save(s));
-
 					
-//					Stream<IrCurveYtm> ytmUsr    = Esg130_SetYtm.createYtmFromUsr(bssd, irCurveNm);
 					Stream<IRateInput> ytmUsr    = Esg130_SetYtm.createYtmFromUsr(bssd, irCurveNm);
 					ytmUsr.forEach(s -> session.save(s)); 
 			    	
@@ -577,24 +571,20 @@ public class Main {
 						continue;
 					}					
 					
-					// (이미 irCurve 기준으로 loop돌고 있음) TreeMap (basedate, mat별 ytm) 생성   
-//					TreeMap<String, List<IrCurveYtm>> ytmRstMap = new TreeMap<String, List<IrCurveYtm>>();
 					TreeMap<String, List<IRateInput>> ytmRstMap = new TreeMap<String, List<IRateInput>>();
-					
 					ytmRstMap = ytmRstList.stream().collect(Collectors.groupingBy(s -> s.getBaseDate(), TreeMap::new, Collectors.toList()));					
 					
 					// 생성한 ytm 트리맵 기준일자별로 루프 
-//					for(Map.Entry<String, List<IrCurveYtm>> ytmRst : ytmRstMap.entrySet()) {						
 					for(Map.Entry<String, List<IRateInput>> ytmRst : ytmRstMap.entrySet()) {						
 						
 //						log.info("ytmRst: {}, {}, {}, {}, {}, {}", ytmRst.getKey(), irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getSwAlphaYtm(), irCurveSwMap.get(irCrv.getKey()).getFreq(), ytmRst.getValue(), ytmRst);
 						
-						// spot rate 만들어서 담을 통 
 						List<IrCurveSpot> rst = new ArrayList<IrCurveSpot>();
 						
 						// biz로직 :ytm -> spot 
-//						rst = Esg150_YtmToSpotSw.createIrCurveSpot(	ytmRst.getKey() , irCurveNm , ytmRst.getValue(), irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
-						rst = Esg150_YtmToSpotSw.createIrCurveSpot(	ytmRst.getValue(), irCurveSwMap.get(irCurveNm).getSwAlphaYtm(), irCurveSwMap.get(irCurveNm).getFreq());
+						rst = Esg150_YtmToSpotSw.createIrCurveSpot(	ytmRst.getValue()
+																  , irCurveSwMap.get(irCurveNm).getSwAlphaYtm()
+																  , irCurveSwMap.get(irCurveNm).getFreq());
 						
 						// ir curve에 대한 정보 추가 setter (fk)
 						rst.forEach(s -> s.setIrCurve(irCurveMap.get(irCurveNm)));

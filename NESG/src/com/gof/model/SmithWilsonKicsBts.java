@@ -10,7 +10,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import com.gof.entity.IrCurveSpot;
-import com.gof.entity.IrCurveYtm;
+//import com.gof.entity.IrCurveSpot;
+//import com.gof.entity.IrCurveYtm;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 
@@ -40,10 +41,9 @@ public class SmithWilsonKicsBts extends IrModel {
 	 * @param IrCurveYtm 
 	 * @param ltfr = this.iRateBase[this.iRateBase.length-1] ; 마지막값  */
 	@Builder(builderClassName="of", builderMethodName="of")
-//	public SmithWilsonKicsBts(LocalDate baseDate, List<IrCurveYtm> ytmCurveHisList, Double alphaApplied, Boolean isRealNumber, Integer freq, Double liqPrem) {				
 	public SmithWilsonKicsBts(LocalDate baseDate, List<IRateInput> ytmCurveHisList, Double alphaApplied, Boolean isRealNumber, Integer freq, Double liqPrem) {				
 		super();		
-		this.baseDate = baseDate;		
+		this.baseDate = baseDate; // 날짜별로 처리하고 있기 때문에 굳이 가지고 들어올 필요가 없긴한데..
 		this.setTermStructureYtm(ytmCurveHisList);
 		this.setLastLiquidPoint(this.tenor[this.tenor.length-1]);
 		this.isRealNumber = (isRealNumber == null ? true : isRealNumber);		
@@ -62,12 +62,14 @@ public class SmithWilsonKicsBts extends IrModel {
 //		log.info("baseDate: {}, tenor:{}, iRate:{}, ltfrT:{}, ltfr:{}, ltfrCont:{}", this.baseDate, this.tenor, this.iRateBase, this.ltfrT, this.ltfr, this.ltfrCont);
 	}
 	
-	// SmithWilsonResultList를 IrCurveSpot 타입의 list로 리턴함 
+//	23.04.03 주석처리 타입변환은 여기에서 안함. 
+/* // (타입변환) SmithWilsonResultList (SmithWilsonRslt 타입)를 IrCurveSpot 타입의 list로 리턴함
 	public List<IrCurveSpot> getSpotBtsRslt() {		
 		
 		List<IrCurveSpot> curveList = new ArrayList<IrCurveSpot>();
-		
-		for(SmithWilsonRslt sw : this.getSmithWilsonResultList()) {
+				
+		for(SmithWilsonRslt sw : this.getSmithWilsonResultList()) { 
+			// 만기코드별로 한줄씩 결과값이 출력되기 때문에 한줄 씩 타입변환해서 담아주기 
 			IrCurveSpot crv = new IrCurveSpot();
 			crv.setBaseDate(sw.getBaseDate());
 			crv.setMatCd(sw.getMatCd());
@@ -77,8 +79,10 @@ public class SmithWilsonKicsBts extends IrModel {
 		}		
 		return curveList;
 	}	
+*/
+
 	
-	
+	// 테너가 다를 때(보간 보외), SmithWilsonResult
 	public List<SmithWilsonRslt> getSmithWilsonResultList(double[] prjTenor) {
 
 		List<SmithWilsonRslt> resultList = new ArrayList<SmithWilsonRslt>();		
@@ -86,13 +90,13 @@ public class SmithWilsonKicsBts extends IrModel {
 		
 		return resultList;		
 	}
+
 	
-// SmithWilsonResult를 List로 반환함 
+    // 기본 테너를 기준으로 반환(ytm2spot)할 때, SmithWilsonResult 
 	public List<SmithWilsonRslt> getSmithWilsonResultList() {
 		
 		List<SmithWilsonRslt> resultList = new ArrayList<SmithWilsonRslt>();		
-		resultList.addAll(this.swProjectionList(this.alphaApplied));
-//		resultList.addAll(this.swProjectionList(this.alphaApplied, new double[] {1., 2., 3., 4., 5.}));
+		resultList.addAll(this.swProjectionList(this.alphaApplied, this.tenor));
 		
 		return resultList;
 	}	
@@ -172,10 +176,10 @@ public class SmithWilsonKicsBts extends IrModel {
 		this.zetaHat       = cfMatx.transpose().multiply(zetaCol); //C^T * zeta 
 	}
 	
-	
-	private List<SmithWilsonRslt> swProjectionList(double alpha) {
-		return swProjectionList(alpha, this.tenor);
-	}
+// 23.04.03 주석처리 굳이 이 단계를 나눈 이유는 뭘까? 	
+//	private List<SmithWilsonRslt> swProjectionList(double alpha) {
+//		return swProjectionList(alpha, this.tenor);
+//	}
 	
 	//TODO:
 	/**
