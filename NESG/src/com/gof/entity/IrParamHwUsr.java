@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
+import com.gof.enums.EApplBizDv;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -34,7 +37,8 @@ public class IrParamHwUsr implements Serializable, EntityIdentifier {
 	private String baseYymm;	
 	
 	@Id		
-	private String applBizDv;
+	@Enumerated(EnumType.STRING)
+	private EApplBizDv applBizDv;
 	
 	@Id
 	private String irModelId;

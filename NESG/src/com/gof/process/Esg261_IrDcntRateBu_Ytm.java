@@ -16,6 +16,7 @@ import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsBiz;
 import com.gof.entity.IrSprdLpBiz;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.interfaces.IRateInput;
 import com.gof.util.StringUtil;
@@ -33,7 +34,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 	 * @param irModelNm
 	 * @param applBizDv
 	 * @param paramSwMap*/
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelNm, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		
@@ -98,7 +99,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 						double baseSpot = pvtMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
 						double baseSpotCont = baseSpot;	
 						
-						double shkCont      = applBizDv.equals("KICS") ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) : 0.0; 	
+						double shkCont      = applBizDv.equals(EApplBizDv.KICS) ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) : 0.0; 	
 						double lpDisc       = irSprdLpMap.getOrDefault(spot.getMatCd(), 0.0);
 						
 						double spotCont     = baseSpotCont + shkCont;

@@ -12,6 +12,7 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
+import com.gof.enums.EApplBizDv;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -53,7 +54,7 @@ public class IrParamHwCalc implements Serializable, EntityIdentifier {
 	private LocalDateTime lastUpdateDate;
 	
 	
-	public IrParamHwBiz convert(String applBizDv) {		
+	public IrParamHwBiz convert(EApplBizDv applBizDv) {		
 		
 		IrParamHwBiz paramHwBiz = new IrParamHwBiz();			
 		

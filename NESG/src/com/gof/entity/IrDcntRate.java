@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EApplBizDv;
 import com.gof.interfaces.IRateDcnt;
 
 import lombok.EqualsAndHashCode;
@@ -42,7 +45,8 @@ public class IrDcntRate extends BaseEntity implements Serializable, IRateDcnt {
 
 	
 	private String baseYymm;
-	private String applBizDv;
+	@Enumerated (EnumType.STRING)
+	private EApplBizDv applBizDv;
 	private String irCurveNm;
 	private Integer irCurveSceNo;
 	private String matCd;
@@ -63,7 +67,8 @@ public class IrDcntRate extends BaseEntity implements Serializable, IRateDcnt {
 		IrDcntRateBiz adjDcnt = new IrDcntRateBiz();
 		
 		adjDcnt.setBaseYymm(this.baseYymm);		
-		adjDcnt.setApplBizDv(this.applBizDv  + "_L");
+//		adjDcnt.setApplBizDv(this.applBizDv  + "_L");
+		adjDcnt.setApplBizDv(EApplBizDv.getApplBizDetDv(this.applBizDv, "L"));
 		adjDcnt.setIrCurveNm(this.irCurveNm);
 		adjDcnt.setIrCurve(this.irCurve);
 		adjDcnt.setIrCurveSceNo(this.irCurveSceNo);
@@ -82,7 +87,8 @@ public class IrDcntRate extends BaseEntity implements Serializable, IRateDcnt {
 		IrDcntRateBiz baseDcnt = new IrDcntRateBiz();
 		
 		baseDcnt.setBaseYymm(this.baseYymm);		
-		baseDcnt.setApplBizDv(this.applBizDv + "_A");
+//		baseDcnt.setApplBizDv(this.applBizDv + "_A");
+		baseDcnt.setApplBizDv(EApplBizDv.getApplBizDetDv(this.applBizDv, "A"));
 		baseDcnt.setIrCurveNm(this.irCurveNm);
 		baseDcnt.setIrCurve(this.irCurve);
 		baseDcnt.setIrCurveSceNo(this.irCurveSceNo);		

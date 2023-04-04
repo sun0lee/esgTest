@@ -9,6 +9,7 @@ import com.gof.dao.IrSprdDao;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdLp;
 import com.gof.entity.IrSprdLpBiz;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
 
@@ -20,7 +21,7 @@ public class Esg250_BizLpSprd extends Process {
 	public static final Esg250_BizLpSprd INSTANCE = new Esg250_BizLpSprd();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static List<IrSprdLpBiz> setLpSprdBiz(String bssd, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
+	public static List<IrSprdLpBiz> setLpSprdBiz(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
 		
 		List<IrSprdLpBiz> rst = new ArrayList<IrSprdLpBiz>();
 		

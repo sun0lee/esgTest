@@ -33,7 +33,6 @@ public class Esg150_YtmToSpotSw extends Process {
 		
 		// 내부 변수로 정의 
 		String baseYmd   = ytmRst.get(0).getBaseDate();
-		String irCurveNm = ytmRst.get(0).getIrCurveNm();
 		IrCurve irCurve  = ytmRst.get(0).getIrCurve();
 		
 		
@@ -53,7 +52,7 @@ public class Esg150_YtmToSpotSw extends Process {
 		
 		// sw 결과를 spot rate형태로 변환하기 (한줄씩 처리되므로 만기별 변환처리를 반복함.)
 		for (SmithWilsonRslt swRst : swBts.getSmithWilsonResultList()) {
-			tempSpot = new IrCurveSpot( baseYmd,  irCurve,  swRst.getMatCd(),  1,  swRst.getSpotDisc()) ;
+			tempSpot = new IrCurveSpot( baseYmd, irCurve, swRst.getMatCd(), 1, swRst.getSpotDisc()) ;
 			spotRst.add(tempSpot) ;
 		}
 		
@@ -61,7 +60,10 @@ public class Esg150_YtmToSpotSw extends Process {
 			if(crv.getSpotRate().isNaN() || crv.getSpotRate().isInfinite()) {
 //				double[] ytm = ytmRst.stream().filter(s -> s.getMatCd().equals(crv.getMatCd())).map(IrCurveYtm::getYtm).mapToDouble(Double::doubleValue).toArray();
 //				crv.setSpotRate(ytm[0]);				
-				log.error("YTM to SPOT BootStrapping is failed. Check YTM Data in [{}] Table for [ID: {} in {}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), irCurveNm, baseYmd);
+				log.error("YTM to SPOT BootStrapping is failed. Check YTM Data in [{}] Table for [ID: {} in {}]"
+						, Process.toPhysicalName(IrCurveYtm.class.getSimpleName())
+						, irCurve.getIrCurveNm()
+						, baseYmd);
 				return new ArrayList<IrCurveSpot>();
 			}
 		}

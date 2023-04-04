@@ -18,6 +18,7 @@ import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrDcntRate;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrParamSw;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.SmithWilsonKics;
@@ -40,7 +41,7 @@ public class Esg270_IrDcntRate extends Process {
 	 * @param paramSwMap
 	 * @param projectionYear
 	 * */
-	public static List<IrDcntRate> createIrDcntRate(String bssd, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap, Integer projectionYear) {	
+	public static List<IrDcntRate> createIrDcntRate(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap, Integer projectionYear) {	
 		
 		List<IrDcntRate> rst = new ArrayList<IrDcntRate>();
 		
@@ -76,7 +77,7 @@ public class Esg270_IrDcntRate extends Process {
 				TreeSet<Double> tenorList = adjRateList.stream().map(s -> Double.valueOf(1.0 * Integer.valueOf(s.getMatCd().substring(1)) / MONTH_IN_YEAR)).collect(Collectors.toCollection(TreeSet::new));
 				double[] prjTenor = tenorList.stream().mapToDouble(Double::doubleValue).toArray();				
 				
-				if(applBizDv.equals("KICS")) {
+				if(applBizDv.equals(EApplBizDv.KICS)) {
 	  // KICS 기준시나리오 1 or 기타 별도 정의 6,7,8,9 
 					if( swSce.getKey()==1 || swSce.getKey() > 6) {
 						adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));										

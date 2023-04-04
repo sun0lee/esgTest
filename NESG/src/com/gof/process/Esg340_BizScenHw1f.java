@@ -20,6 +20,7 @@ import com.gof.entity.IrParamHwRnd;
 import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidSceSto;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.model.Hw1fSimulationKics;
 import com.gof.model.entity.Hw1fCalibParas;
@@ -33,7 +34,7 @@ public class Esg340_BizScenHw1f extends Process {
 	public static final Esg340_BizScenHw1f INSTANCE = new Esg340_BizScenHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 
-	public static Map<String, List<?>> createScenHw1f(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear) {
+	public static Map<String, List<?>> createScenHw1f(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear) {
 		
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
@@ -132,7 +133,7 @@ public class Esg340_BizScenHw1f extends Process {
 		rst.put("RND", randRst);
 		
 		log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.get("SCE").size(), applBizDv, irCurveId, irCurveSceNo, toPhysicalName(IrDcntSceStoBiz.class.getSimpleName()));
-		if(applBizDv.equals("KICS") && rst.get("RND").size() > 0) {
+		if(applBizDv.equals(EApplBizDv.KICS) && rst.get("RND").size() > 0) {
 			log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.get("RND").size(), applBizDv, irCurveId, irCurveSceNo, toPhysicalName(IrParamHwRnd.class.getSimpleName()));	
 		}
 		
@@ -140,7 +141,7 @@ public class Esg340_BizScenHw1f extends Process {
 	}		
 	
 	
-	public static List<IrValidSceSto> createQuantileValue(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap) {		
+	public static List<IrValidSceSto> createQuantileValue(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap) {		
 		
 		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();		
 		

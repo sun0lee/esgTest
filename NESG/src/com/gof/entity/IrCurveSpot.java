@@ -2,7 +2,6 @@ package com.gof.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 //import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -65,8 +64,6 @@ public class IrCurveSpot  extends BaseEntity implements Serializable, IRateInput
 		this.irCurveNm = irCurve.getIrCurveNm();
 		this.matCd = matCd;
 		this.spotRate = intRate;
-//		setModifiedBy("ESG");
-//		setUpdateDate(LocalDateTime.now());
 	}
 	public IrCurveSpot(String baseDate, String matCd, Double intRate) {
 		this.baseDate = baseDate;

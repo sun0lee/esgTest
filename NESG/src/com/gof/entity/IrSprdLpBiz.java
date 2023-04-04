@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +19,7 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EApplBizDv;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,7 +46,8 @@ public class IrSprdLpBiz extends BaseEntity implements Serializable {
 	private long id;
 
 	private String baseYymm;
-	private String applBizDv;
+	@Enumerated(EnumType.STRING)
+	private EApplBizDv applBizDv;
 	private String irCurveNm;
 	private Integer irCurveSceNo;	
 	private String matCd;	

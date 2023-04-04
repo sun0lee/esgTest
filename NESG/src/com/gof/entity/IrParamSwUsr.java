@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EApplBizDv;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -41,7 +44,8 @@ public class IrParamSwUsr extends BaseEntity implements Serializable {
 	private String applStYymm;
 	private String applEdYymm;	
 
-	private String applBizDv;	
+	@Enumerated (EnumType.STRING)
+	private EApplBizDv applBizDv;	
 	
 //	private long irCurveSid;
 	private String irCurveNm;

@@ -6,6 +6,7 @@ import org.hibernate.Session;
 
 import com.gof.entity.IrDcntSceStoBiz;
 import com.gof.entity.IrParamHwRnd;
+import com.gof.enums.EApplBizDv;
 import com.gof.util.HibernateUtil;
 
 public class IrParamHwRndDao extends DaoUtil {
@@ -50,7 +51,7 @@ public class IrParamHwRndDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrDcntSceStoBiz> getIrDcntSceStoBizList(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo){
+	public static List<IrDcntSceStoBiz> getIrDcntSceStoBizList(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo){
 		
 		String query = "select a from IrDcntSceStoBiz a "
 					 + " where 1=1 "

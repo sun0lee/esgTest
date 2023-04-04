@@ -10,13 +10,14 @@ import com.gof.entity.IrSprdAfnsUsr;
 import com.gof.entity.IrSprdLp;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.entity.IrSprdLpUsr;
+import com.gof.enums.EApplBizDv;
 import com.gof.util.HibernateUtil;
 
 public class IrSprdDao extends DaoUtil {
 	
 	private static Session session = HibernateUtil.getSessionFactory().openSession();
 	
-	public static List<IrSprdLpBiz> getIrSprdLpBizList(String bssd, String applBizDv, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrSprdLpBiz> getIrSprdLpBizList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo){
 		
 		String query = "select a from IrSprdLpBiz a           "
 					 + " where 1=1                            "
@@ -36,7 +37,7 @@ public class IrSprdDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrSprdLp> getIrSprdLpList(String bssd, String dcntApplModelCd, String applBizDv, String irCurveNm, Integer irCurveSceNo) {
+	public static List<IrSprdLp> getIrSprdLpList(String bssd, String dcntApplModelCd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {
 		
 		String query = " select a from IrSprdLp a                  "
 				 	 + "  where 1=1                                " 
@@ -58,7 +59,7 @@ public class IrSprdDao extends DaoUtil {
 	}		
 	
 	
-	public static List<IrSprdLpUsr> getIrSprdLpUsrList(String bssd, String applBizDv, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrSprdLpUsr> getIrSprdLpUsrList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo){
 		
 		String query = "select a from IrSprdLpUsr a                        "
 					 + " where 1=1                                         "

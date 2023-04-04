@@ -20,6 +20,7 @@ import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidSceSto;
 import com.gof.entity.StdAsstIrSceSto;
+import com.gof.enums.EApplBizDv;
 import com.gof.model.Hw1fSimulationKics;
 import com.gof.model.entity.Hw1fCalibParas;
 import com.gof.model.entity.IrModelSce;
@@ -33,7 +34,7 @@ public class Esg370_ValidScenHw1f extends Process {
 	public static final Esg370_ValidScenHw1f INSTANCE = new Esg370_ValidScenHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static Map<String, List<?>> createValidInputHw1f(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
+	public static Map<String, List<?>> createValidInputHw1f(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
 		
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
@@ -99,7 +100,7 @@ public class Esg370_ValidScenHw1f extends Process {
 	}
 	
 	
-	public static List<IrValidSceSto> testMarketConsistency(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap, TreeMap<Integer, TreeMap<Integer, Double>> stoYldMap, Double sigLevel) {		
+	public static List<IrValidSceSto> testMarketConsistency(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap, TreeMap<Integer, TreeMap<Integer, Double>> stoYldMap, Double sigLevel) {		
 		
 		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();		
 		

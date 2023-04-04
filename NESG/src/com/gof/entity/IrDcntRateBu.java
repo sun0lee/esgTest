@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +21,7 @@ import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EApplBizDv;
 import com.gof.interfaces.IRateDcnt;
 
 import lombok.EqualsAndHashCode;
@@ -47,7 +50,8 @@ public class IrDcntRateBu extends BaseEntity implements Serializable, IRateDcnt 
 	private long id;
 
 	private String baseYymm;
-	private String applBizDv; 
+	@Enumerated(EnumType.STRING)
+	private EApplBizDv applBizDv; 
 	private String irCurveNm;
 	private Integer irCurveSceNo;
 	private String matCd;	

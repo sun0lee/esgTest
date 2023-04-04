@@ -9,6 +9,7 @@ import com.gof.dao.IrParamHwDao;
 import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwUsr;
 import com.gof.entity.IrParamHwCalc;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class Esg330_BizParamHw1f extends Process {
 	public static final Esg330_BizParamHw1f INSTANCE = new Esg330_BizParamHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrParamHwBiz> createBizHw1fParam(String bssd, String applBizDv, String irModelId, String irCurveId, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {
+	public static List<IrParamHwBiz> createBizHw1fParam(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {
 		
 		List<IrParamHwBiz>  paramHwBiz  = new ArrayList<IrParamHwBiz>();
 		List<IrParamHwUsr>  paramHwUsr  = IrParamHwDao.getIrParamHwUsrList(bssd, applBizDv, irModelId, irCurveId);		
@@ -29,7 +30,7 @@ public class Esg330_BizParamHw1f extends Process {
 			paramHwBiz = paramHwUsr.stream().map(s -> s.convert()).collect(Collectors.toList());
 			log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), paramHwBiz.size(), toPhysicalName(IrParamHwUsr.class.getSimpleName()), toPhysicalName(IrParamHwBiz.class.getSimpleName()));			
 		}
-		else if(applBizDv.equals("KICS") && !paramHwCalc.isEmpty()) {			
+		else if(applBizDv.equals(EApplBizDv.KICS) && !paramHwCalc.isEmpty()) {			
 			paramHwBiz = calcBizHw1fParam(bssd, applBizDv, irModelId, irCurveId, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd);			
 			log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), paramHwBiz.size(), toPhysicalName(IrParamHwCalc.class.getSimpleName()), toPhysicalName(IrParamHwBiz.class.getSimpleName()));
 		}
@@ -46,7 +47,7 @@ public class Esg330_BizParamHw1f extends Process {
 	}
 	
 	
-	private static List<IrParamHwBiz> calcBizHw1fParam(String bssd, String applBizDv, String irModelId, String irCurveId, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {		
+	private static List<IrParamHwBiz> calcBizHw1fParam(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {		
 		
 		List<IrParamHwBiz>  paramHwBiz  = new ArrayList<IrParamHwBiz>();
 		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd, irModelId + "_NSP", irCurveId);
@@ -71,13 +72,13 @@ public class Esg330_BizParamHw1f extends Process {
 		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, "ALPHA", hwAlphaAvgNum, hwAlphaAvgMatCd));
 		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, "SIGMA", hwSigmaAvgNum, hwSigmaAvgMatCd));		
 		
-		if(applBizDv.equals("KICS")) paramHwBiz.stream().forEach(s -> log.info("PARAM BIZ from CALC: [{}, {}, {}, {}], {}", s.getIrModelId(), s.getApplBizDv(), s.getParamTypCd(), s.getMatCd(), s.getParamVal()));
+		if(applBizDv.equals(EApplBizDv.KICS)) paramHwBiz.stream().forEach(s -> log.info("PARAM BIZ from CALC: [{}, {}, {}, {}], {}", s.getIrModelId(), s.getApplBizDv(), s.getParamTypCd(), s.getMatCd(), s.getParamVal()));
 
 		return paramHwBiz;
 	}
 	
 	
-	private static List<IrParamHwBiz> createBizAppliedParameterOuter(String bssd, String applBizDv, String irModelId, String irCurveId, String paramTypCd, int monthNum, String matCd) {
+	private static List<IrParamHwBiz> createBizAppliedParameterOuter(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, String paramTypCd, int monthNum, String matCd) {
 		
 		List<IrParamHwCalc> paramCalcHisList = new ArrayList<IrParamHwCalc>();
 		if(paramTypCd.equals("ALPHA")) {

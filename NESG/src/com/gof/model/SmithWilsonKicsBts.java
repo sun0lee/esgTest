@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import com.gof.entity.IrCurveSpot;
 //import com.gof.entity.IrCurveSpot;
 //import com.gof.entity.IrCurveYtm;
 import com.gof.interfaces.IRateInput;
@@ -64,21 +63,21 @@ public class SmithWilsonKicsBts extends IrModel {
 	
 //	23.04.03 주석처리 타입변환은 여기에서 안함. 
 /* // (타입변환) SmithWilsonResultList (SmithWilsonRslt 타입)를 IrCurveSpot 타입의 list로 리턴함
-	public List<IrCurveSpot> getSpotBtsRslt() {		
-		
-		List<IrCurveSpot> curveList = new ArrayList<IrCurveSpot>();
-				
-		for(SmithWilsonRslt sw : this.getSmithWilsonResultList()) { 
-			// 만기코드별로 한줄씩 결과값이 출력되기 때문에 한줄 씩 타입변환해서 담아주기 
-			IrCurveSpot crv = new IrCurveSpot();
-			crv.setBaseDate(sw.getBaseDate());
-			crv.setMatCd(sw.getMatCd());
-//			crv.setIntRate(sw.getSpotCont());
-			crv.setSpotRate(sw.getSpotDisc());
-			curveList.add(crv);
-		}		
-		return curveList;
-	}	
+//	public List<IrCurveSpot> getSpotBtsRslt() {		
+//		
+//		List<IrCurveSpot> curveList = new ArrayList<IrCurveSpot>();
+//				
+//		for(SmithWilsonRslt sw : this.getSmithWilsonResultList()) { 
+//			// 만기코드별로 한줄씩 결과값이 출력되기 때문에 한줄 씩 타입변환해서 담아주기 
+//			IrCurveSpot crv = new IrCurveSpot();
+//			crv.setBaseDate(sw.getBaseDate());
+//			crv.setMatCd(sw.getMatCd());
+////			crv.setIntRate(sw.getSpotCont());
+//			crv.setSpotRate(sw.getSpotDisc());
+//			curveList.add(crv);
+//		}		
+//		return curveList;
+//	}	
 */
 
 	
@@ -114,16 +113,15 @@ public class SmithWilsonKicsBts extends IrModel {
 		if(this.freq > 0) {		
 			Set<Double> cfColSet = new TreeSet<Double>();	
 			
-			for(int i=0; i<this.tenor.length; i++) { // 0~15 : 16개 base tenor 단위로 
+			for(int i=0; i<this.tenor.length; i++) {
 				int jMax = (int) Math.ceil(this.tenor[i] * this.freq);
 				
 				for(int j=0; j<jMax; j++) {
 					cfColSet.add(this.tenor[i] - 1.0 * j / this.freq);
 				}
 			}
-			this.cfCol = cfColSet.stream().mapToDouble(Double::doubleValue).toArray(); //102개 이자지급주기단위(freq:2)로 cf tenor 생성 
+			this.cfCol = cfColSet.stream().mapToDouble(Double::doubleValue).toArray(); 
 			
-	//		Constructing C matrix = base tenor (16) X cf tenor (102) : 이자지급주기마다 1원 주는 경우 = 1+(ytm/freq)
 			this.cfMatrix = new double[this.tenor.length][this.cfCol.length]; 
 			
 			for(int i=0; i<cfMatrix.length; i++) {
