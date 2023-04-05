@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EApplBizDv;
+import com.gof.interfaces.IRateDcnt;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,7 +33,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString
 @SequenceGenerator (name = "IR_DCNT_RATE_USR_SEQ_GEN",sequenceName = "IR_DCNT_RATE_USR_SEQ",initialValue = 1, allocationSize = 1)
-public class IrDcntRateUsr extends BaseEntity implements Serializable {
+public class IrDcntRateUsr extends BaseEntity implements Serializable, IRateDcnt {
 	
 	private static final long serialVersionUID = -4252300668894647002L;
 
@@ -39,7 +43,8 @@ public class IrDcntRateUsr extends BaseEntity implements Serializable {
 	private long id;
 
 	private String baseYymm;
-	private String applBizDv;
+	@Enumerated(EnumType.STRING)
+	private EApplBizDv applBizDv;
 	private String irCurveNm;
 	private Integer irCurveSceNo;
 	private String matCd;

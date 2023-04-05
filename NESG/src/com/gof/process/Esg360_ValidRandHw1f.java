@@ -20,6 +20,7 @@ import com.gof.entity.IrParamHwRnd;
 import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidRnd;
+import com.gof.enums.EApplBizDv;
 import com.gof.model.Hw1fSimulationKics;
 import com.gof.model.entity.Hw1fCalibParas;
 import com.gof.util.StringUtil;
@@ -32,7 +33,7 @@ public class Esg360_ValidRandHw1f extends Process {
 	public static final Esg360_ValidRandHw1f INSTANCE = new Esg360_ValidRandHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static List<IrParamHwRnd> createValidInputHw1f(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
+	public static List<IrParamHwRnd> createValidInputHw1f(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
 
 		List<IrParamHwRnd> randRst = new ArrayList<IrParamHwRnd>();
 		

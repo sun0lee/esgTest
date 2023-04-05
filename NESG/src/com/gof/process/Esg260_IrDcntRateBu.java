@@ -14,6 +14,7 @@ import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsBiz;
 import com.gof.entity.IrSprdLpBiz;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
 
@@ -25,7 +26,7 @@ public class Esg260_IrDcntRateBu extends Process {
 	public static final Esg260_IrDcntRateBu INSTANCE = new Esg260_IrDcntRateBu();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelNm, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		
@@ -95,7 +96,7 @@ public class Esg260_IrDcntRateBu extends Process {
 						
 //						double shkCont      = irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0);
 //						double shkCont      = applBizDv.equals("KICS") ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) : 0.0;  //Parallel Shift is Discrete Rate (Below is Continuous)
-						double shkCont      = (applBizDv.equals("KICS") && swSce.getKey() <= kicsAddSprdContSceNo) ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) + addSprd : irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0);
+						double shkCont      = (applBizDv.equals(EApplBizDv.KICS) && swSce.getKey() <= kicsAddSprdContSceNo) ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) + addSprd : irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0);
 						double lpDisc       = irSprdLpMap.getOrDefault(spot.getMatCd(), 0.0);
 						
 						double spotCont     = baseSpotCont + shkCont;

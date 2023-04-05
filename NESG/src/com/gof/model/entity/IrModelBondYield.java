@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.gof.entity.StdAsstIrSceSto;
+import com.gof.enums.EApplBizDv;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,7 +34,7 @@ public class IrModelBondYield implements Serializable {
 	private String lastModifiedBy;	
 	private LocalDateTime lastUpdateDate;
 	
-	public StdAsstIrSceSto convert(String applBizDv, String stdAsstCd, Integer sceTypCd, String jobId) {
+	public StdAsstIrSceSto convert(EApplBizDv applBizDv, String stdAsstCd, Integer sceTypCd, String jobId) {
 		
 		StdAsstIrSceSto rst = new StdAsstIrSceSto();		
 		

@@ -9,6 +9,7 @@ import org.hibernate.query.Query;
 import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrCurveYtmUsr;
 import com.gof.entity.IrCurveYtmUsrHis;
+import com.gof.interfaces.IRateInput;
 import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
 
@@ -54,6 +55,26 @@ public class IrCurveYtmDao extends DaoUtil {
 					 ;
 		
 		List<IrCurveYtm> curveRst = session.createQuery(query, IrCurveYtm.class)
+										   .setParameter("irCurveNm", irCurveNm)
+										   .setParameter("bssd", getMaxBaseDate(bssd, irCurveNm))
+										   .getResultList();
+		
+//		log.info("maxDate : {}, curveSize : {}", getMaxBaseDate(bssd, irCurveNm),curveRst.size());
+		return curveRst;
+	}
+	
+// 뭔가 빼려고 작업하는건데 자꾸 추가하게 되면 뭔가 잘못된 듯... ㅠ
+	public static List<IRateInput> getIrCurveYtm2(String bssd, String irCurveNm) {
+		
+		String query = "select a from IrCurveYtm a "
+					 + " where 1=1 "
+					 + "   and a.irCurveNm = :irCurveNm "
+					 + "   and a.baseDate  = :bssd	    "
+					 + "   and a.ytm is not null        "
+					 + "   order by a.matCd             "
+					 ;
+		
+		List<IRateInput> curveRst = session.createQuery(query, IRateInput.class)
 										   .setParameter("irCurveNm", irCurveNm)
 										   .setParameter("bssd", getMaxBaseDate(bssd, irCurveNm))
 										   .getResultList();
@@ -121,7 +142,6 @@ public class IrCurveYtmDao extends DaoUtil {
 		
 		return curveRst;
 	}	
-	
 	
 	public static List<IrCurveYtm> getIrCurveYtmMonth(String bssd, String irCurveNm, List<String> tenorList) {
 		
@@ -191,7 +211,7 @@ public class IrCurveYtmDao extends DaoUtil {
 //					  ;
 //	}	// 2023.03.06 삭제 검토 =>filter 이용하면 사용할때에 조건을 추가로 주는건 문제가 안됨. 성능땜에 조건별로 조회하는 것인가 ??
 
-	// 23.03.06 기준일자로만 가져오기 List -> Stream 으로 타입변경 
+	// 23.03.06 기준일자로만 가져오기 
 	public static Stream<IrCurveYtmUsr> getIrCurveYtmUsr(String bssd) {
 		
 		String query = " select a from IrCurveYtmUsr a         " 
@@ -199,10 +219,15 @@ public class IrCurveYtmDao extends DaoUtil {
 					 + "    and substr(a.baseDate,1,6) = :bssd "
 					 + "  order by a.baseDate                  "				
 		 		 	 ;
+//		stream type으로 지정했을때 
 		Query<IrCurveYtmUsr> q =session.createQuery(query, IrCurveYtmUsr.class);
 			q.setParameter("bssd",bssd) ;
-			
 		return q.stream();
+		
+//		return session.createQuery(query, IrCurveYtmUsr.class)
+//		  .setParameter("bssd", bssd)
+//		  .getResultList()
+//		  ;
 	}	
 	
 }

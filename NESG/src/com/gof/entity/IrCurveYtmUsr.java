@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.interfaces.IRateInput;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,7 +30,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "IR_CURVE_YTM_USR_SEQ_GEN",sequenceName = "IR_CURVE_YTM_USR_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurveYtmUsr extends BaseEntity implements Serializable {	
+public class IrCurveYtmUsr extends BaseEntity implements Serializable, IRateInput {	
 
 	private static final long serialVersionUID = 8728364358808498458L;
 
@@ -50,6 +51,10 @@ public class IrCurveYtmUsr extends BaseEntity implements Serializable {
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
 	private IrCurve irCurve ;
 
+//	23.03.31 add
+	public Double getRate() {
+		return getYtm();
+	};
 	
 	public IrCurveSpot convertToHis() {
 		

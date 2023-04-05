@@ -12,6 +12,7 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdCurve;
 import com.gof.entity.IrSprdLp;
 import com.gof.entity.IrSprdLpUsr;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
 
@@ -23,7 +24,7 @@ public class Esg240_LpSprd extends Process {
 	public static final Esg240_LpSprd INSTANCE = new Esg240_LpSprd();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static List<IrSprdLp> setLpFromSwMap(String bssd, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
+	public static List<IrSprdLp> setLpFromSwMap(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
 		
 		List<IrSprdLp> rst = new ArrayList<IrSprdLp>();
 		
@@ -67,7 +68,7 @@ public class Esg240_LpSprd extends Process {
 	}
 	
 	
-	public static List<IrSprdLp> setLpFromCrdSprd(String bssd, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap, String lpCurveId) {
+	public static List<IrSprdLp> setLpFromCrdSprd(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap, String lpCurveId) {
 		
 		List<IrSprdLp> rst = new ArrayList<IrSprdLp>();
 		
@@ -109,7 +110,7 @@ public class Esg240_LpSprd extends Process {
 	}
 	
 	
-	public static List<IrSprdLp> setLpFromUsr(String bssd, String applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
+	public static List<IrSprdLp> setLpFromUsr(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
 		
 		List<IrSprdLp> rst = new ArrayList<IrSprdLp>();
 		

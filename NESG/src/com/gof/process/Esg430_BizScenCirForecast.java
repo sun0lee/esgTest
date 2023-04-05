@@ -13,6 +13,7 @@ import com.gof.entity.IrDcntSceStoGnr;
 import com.gof.entity.IrParamModelBiz;
 import com.gof.entity.IrParamModelRnd;
 import com.gof.entity.IrQvalSce;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.model.CIRSimulationForcast;
 import com.gof.model.RandomNumberKics;
@@ -46,7 +47,7 @@ public class Esg430_BizScenCirForecast extends Process {
 		rst = cir.getSimulationResult();
 	
 		rst.stream().forEach(s -> s.setBaseYymm(bssd));
-		rst.stream().forEach(s -> s.setApplBizDv("IBIZ"));		
+		rst.stream().forEach(s -> s.setApplBizDv(EApplBizDv.IBIZ));		
 		rst.stream().forEach(s -> s.setIrModelId(irModelId));
 		rst.stream().forEach(s -> s.setIrCurveId(irCurveId));
 		rst.stream().forEach(s -> s.setIrCurveSceNo(1));
@@ -100,7 +101,7 @@ public class Esg430_BizScenCirForecast extends Process {
 	}	
 	
 	
-	public static List<IrQvalSce> createQuantileValue(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> cirSceMap) {		
+	public static List<IrQvalSce> createQuantileValue(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> cirSceMap) {		
 		
 		List<IrQvalSce> rst = new ArrayList<IrQvalSce>();		
 		

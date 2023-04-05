@@ -16,6 +16,7 @@ import com.gof.dao.RcCorpPdDao;
 import com.gof.entity.RcCorpPd;
 import com.gof.entity.RcCorpPdBiz;
 import com.gof.entity.RcCorpTm;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.ECrdGrd;
 import com.gof.enums.EJob;
 import com.gof.model.entity.TransMat;
@@ -97,7 +98,7 @@ public class Esg820_RcCorpPd extends Process {
 	}
 	
 	
-	public static List<RcCorpPdBiz> createRcCorpPdBiz(String bssd, String applBizDv, String crdEvalAgncyCd, List<RcCorpPd> corpPd) {	
+	public static List<RcCorpPdBiz> createRcCorpPdBiz(String bssd, EApplBizDv applBizDv, String crdEvalAgncyCd, List<RcCorpPd> corpPd) {	
 		
 		List<RcCorpPdBiz> rst = new ArrayList<RcCorpPdBiz>();		
 //		corpPd.stream().filter(s -> Integer.valueOf(s.getMatCd().substring(1)) <= 48).forEach(s -> log.info("{}", s));		

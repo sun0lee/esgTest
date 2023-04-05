@@ -9,6 +9,7 @@ import org.apache.commons.math3.random.GaussianRandomGenerator;
 import org.apache.commons.math3.random.MersenneTwister;
 
 import com.gof.entity.StdAsstIrSceSto;
+import com.gof.enums.EApplBizDv;
 import com.gof.entity.IrParamHwRnd;
 
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +54,7 @@ public class LogNormal4jOld {
 		this.randomNum = createRandomSeed(sceNum + 1, tenorSize);
 	}	
 	
-	public List<StdAsstIrSceSto> getBizStockScenario(String bssd, String assetCd, String bizDv, int batch){
+	public List<StdAsstIrSceSto> getBizStockScenario(String bssd, String assetCd, EApplBizDv bizDv, int batch){
 		List<StdAsstIrSceSto> rstList = new ArrayList<StdAsstIrSceSto>();
 		
 		double yieldSce =0.0;

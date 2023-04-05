@@ -7,6 +7,7 @@ import org.hibernate.Session;
 
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrParamSwUsr;
+import com.gof.enums.EApplBizDv;
 import com.gof.util.HibernateUtil;
 
 public class IrParamSwDao extends DaoUtil {
@@ -54,7 +55,7 @@ public class IrParamSwDao extends DaoUtil {
 	}
 
 	
-	public static List<IrParamSwUsr> getIrParamSwUsrList(String bssd, String applBizDv, String irCurveNm, Integer irCurveSceNo) {
+	public static List<IrParamSwUsr> getIrParamSwUsrList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {
 		
 		String applStYymm = getAppliedYymm(bssd, applBizDv, irCurveNm, irCurveSceNo);
 		
@@ -78,14 +79,14 @@ public class IrParamSwDao extends DaoUtil {
 	}		
 	
 	
-	public static List<IrParamSw> getIrParamSwList(String bssd, String applBizDv, String irCurveNm, Integer irCurveSceNo) {
+	public static List<IrParamSw> getIrParamSwList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {
 		return getIrParamSwUsrList(bssd, applBizDv, irCurveNm, irCurveSceNo)
 				.stream()
 				.map(s -> s.convert(bssd)).collect(Collectors.toList());		
 	}
 
 
-	private static String getAppliedYymm(String bssd, String applBizDv, String irCurveNm, Integer irCurveSceNo) {		
+	private static String getAppliedYymm(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
 		
 		String query = " select max(a.applStYymm) from IrParamSwUsr a 		"
 			     	 + "  where 1=1											"

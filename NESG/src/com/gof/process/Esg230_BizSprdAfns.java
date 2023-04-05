@@ -26,7 +26,13 @@ public class Esg230_BizSprdAfns extends Process {
 		List<IrSprdAfnsCalc> irShockCalc = IrSprdDao.getIrSprdAfnsCalcList(bssd, irModelNm, irCurveNm);		
 		List<IrSprdAfnsUsr>  irShockUsr  = IrSprdDao.getIrSprdAfnsUsrList(bssd, irModelNm, irCurveNm);
 	
-		if(!irShockUsr.isEmpty()) {
+		// 둘 다 없으면 경고 때리고 비어있는 채로 리턴 
+		if (irShockUsr.isEmpty()&&irShockCalc.isEmpty()) {
+			log.warn("{}({}) No Shock Spread from Model in [Model:{}, ID:{}]", jobId, EJob.valueOf(jobId).getJobName(), irModelNm, irCurveNm);
+//			return irShockBiz; 
+		}
+		// irShockUsr있으면 우선 적용 
+		else if(!irShockUsr.isEmpty()) {
 			
 			for(IrSprdAfnsUsr usr : irShockUsr) {				
 				for(int i=0; i<6; i++) {
@@ -43,21 +49,11 @@ public class Esg230_BizSprdAfns extends Process {
 					if(i==0) { 
 						biz.setShkSprdCont(0.0);
 					}
-					else if(i==1) {
-						biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getMeanSprd(), 0.0));
-					}
-					else if(i==2) {
-						biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getUpSprd(), 0.0));
-					}
-					else if(i==3) {
-						biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getDownSprd(), 0.0));
-					}
-					else if(i==4) {
-						biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getFlatSprd(), 0.0));
-					}
-					else {
-						biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getSteepSprd(), 0.0));
-					}
+					else if(i==1) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getMeanSprd() , 0.0));}
+					else if(i==2) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getUpSprd()   , 0.0));}
+					else if(i==3) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getDownSprd() , 0.0));}
+					else if(i==4) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getFlatSprd() , 0.0));}
+					else 		  {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getSteepSprd(), 0.0));}
 					
 					biz.setModifiedBy(jobId);
 					biz.setUpdateDate(LocalDateTime.now());
@@ -65,16 +61,24 @@ public class Esg230_BizSprdAfns extends Process {
 					irShockBiz.add(biz);
 				}				
 			}
-			log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), irShockBiz.size(), toPhysicalName(IrSprdAfnsUsr.class.getSimpleName()), toPhysicalName(IrSprdAfnsBiz.class.getSimpleName()));
+			
+			log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table"
+				, jobId
+				, EJob.valueOf(jobId).getJobName()
+				, irShockBiz.size()
+				, toPhysicalName(IrSprdAfnsUsr.class.getSimpleName())
+				, toPhysicalName(IrSprdAfnsBiz.class.getSimpleName()));
 		}
-		else {
-			if(!irShockCalc.isEmpty()) {				
+		// irShockUsr 없고 irShockCalc 있으면 
+		else { 
 				irShockBiz = irShockCalc.stream().map(s -> s.convert()).collect(Collectors.toList());
-				log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), irShockBiz.size(), toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), toPhysicalName(IrSprdAfnsBiz.class.getSimpleName()));
-			}
-			else {
-				log.warn("{}({}) No Shock Spread from Model in [Model:{}, ID:{}]", jobId, EJob.valueOf(jobId).getJobName(), irModelNm, irCurveNm);				
-			}			
+				
+			log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table"
+				, jobId
+				, EJob.valueOf(jobId).getJobName()
+				, irShockBiz.size()
+				, toPhysicalName(IrSprdAfnsCalc.class.getSimpleName())
+				, toPhysicalName(IrSprdAfnsBiz.class.getSimpleName()));			
 		}
 		return irShockBiz;
 	}	

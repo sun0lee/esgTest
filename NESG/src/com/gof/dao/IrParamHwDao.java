@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwCalc;
 import com.gof.entity.IrParamHwUsr;
+import com.gof.enums.EApplBizDv;
 import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
 
@@ -28,7 +29,7 @@ public class IrParamHwDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrParamHwUsr> getIrParamHwUsrList(String bssd, String applBizDv, String irModelId, String irCurveId) {
+	public static List<IrParamHwUsr> getIrParamHwUsrList(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId) {
 		
 		String query = " select a from IrParamHwUsr a    "
 				 	 + "  where 1=1                      " 
@@ -125,7 +126,7 @@ public class IrParamHwDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrParamHwBiz> getIrParamHwBizList(String bssd, String applBizDv, String irModelId, String irCurveId) {
+	public static List<IrParamHwBiz> getIrParamHwBizList(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId) {
 		
 		String query = " select a from IrParamHwBiz a    "
 				 	 + "  where 1=1                      " 

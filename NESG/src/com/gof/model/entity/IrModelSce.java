@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.gof.entity.IrDcntSceStoBiz;
+import com.gof.enums.EApplBizDv;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class IrModelSce implements Serializable {
 	private String lastModifiedBy;	
 	private LocalDateTime lastUpdateDate;	
 	
-	public IrDcntSceStoBiz convert(String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, String jobId) {
+	public IrDcntSceStoBiz convert(EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, String jobId) {
 		IrDcntSceStoBiz rst = new IrDcntSceStoBiz();
 		
 		rst.setBaseYymm(this.baseDate.substring(0,6));		

@@ -13,6 +13,7 @@ import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.StdAsstIrSceSto;
+import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
 import com.gof.model.Hw1fSimulationKics;
 import com.gof.model.entity.Hw1fCalibParas;
@@ -27,7 +28,7 @@ public class Esg350_BizBondYieldHw1f extends Process {
 	public static final Esg350_BizBondYieldHw1f INSTANCE = new Esg350_BizBondYieldHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 
-	public static List<StdAsstIrSceSto> createBondYieldHw1f(String bssd, String applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {		
+	public static List<StdAsstIrSceSto> createBondYieldHw1f(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {		
 		
 		List<StdAsstIrSceSto> rst  = new ArrayList<StdAsstIrSceSto>();
 		

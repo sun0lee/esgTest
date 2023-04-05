@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +21,8 @@ import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EApplBizDv;
+import com.gof.interfaces.IRateDcnt;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,7 +40,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper=false)
 @ToString
 @SequenceGenerator (name = "IR_DCNT_RATE_BU_SEQ_GEN",sequenceName = "IR_DCNT_RATE_BU_SEQ",initialValue = 1, allocationSize = 1)
-public class IrDcntRateBu extends BaseEntity implements Serializable {
+public class IrDcntRateBu extends BaseEntity implements Serializable, IRateDcnt {
 	
 	private static final long serialVersionUID = -4644199390958760035L;
 
@@ -46,7 +50,8 @@ public class IrDcntRateBu extends BaseEntity implements Serializable {
 	private long id;
 
 	private String baseYymm;
-	private String applBizDv; 
+	@Enumerated(EnumType.STRING)
+	private EApplBizDv applBizDv; 
 	private String irCurveNm;
 	private Integer irCurveSceNo;
 	private String matCd;	
@@ -64,6 +69,11 @@ public class IrDcntRateBu extends BaseEntity implements Serializable {
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
 	private IrCurve irCurve ;
 
+	
+//	23.03.31 add
+	public Double getSpotRate() {
+		return getSpotRateCont();
+	};
 	
 	public IrCurveSpot convertAdj() {
 		
