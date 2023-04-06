@@ -75,7 +75,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				List<IrCurveSpot> spotSceList = spotList.stream().map(s -> s.deepCopy(s)).collect(Collectors.toList());
 				
 				
-				String fwdMatCd = StringUtil.objectToPrimitive(swSce.getValue().getFwdMatCd(), "M0000");				
+				String fwdMatCd = swSce.getValue().getFwdMatCd();				
 				if(!fwdMatCd.equals("M0000")) {
 					// spot -> fwd 변환 
 					Map<String, Double> fwdSpotMap = irSpotDiscToFwdMap(bssd, spotMap, fwdMatCd);
@@ -83,11 +83,13 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 					spotSceList.stream().forEach(s -> s.setSpotRate(fwdSpotMap.get(s.getMatCd())));					
 				}				
 
-				String pvtMatCd = StringUtil.objectToPrimitive(swSce.getValue().getPvtRateMatCd() , "M0000");
-				double pvtRate  = StringUtil.objectToPrimitive(spotMap.getOrDefault(pvtMatCd, 0.0), 0.0    );				
-				double pvtMult  = StringUtil.objectToPrimitive(swSce.getValue().getMultPvtRate()  , 1.0    );				
-				double addSprd  = StringUtil.objectToPrimitive(swSce.getValue().getAddSprd()      , 0.0    );
-				int    llp      = StringUtil.objectToPrimitive(swSce.getValue().getLlp()          , 20     );				
+				String pvtMatCd = swSce.getValue().getPvtRateMatCd();
+				// 23.04.06 spotRate entity에서 값을 가져올때 이미 null 인 경우 에러를 return 하기 때문에 null인 채로 여기까지 올 수 없을텐데 또 default 처리가 된 이유가 뭘까.
+//				double pvtRate  = StringUtil.objectToPrimitive(spotMap.getOrDefault(pvtMatCd, 0.0), 0.0    );				
+				double pvtRate  = spotMap.getOrDefault(pvtMatCd, 0.0);				
+				double pvtMult  = swSce.getValue().getMultPvtRate();				
+				double addSprd  = swSce.getValue().getAddSprd();
+				int    llp      = swSce.getValue().getLlp();				
 				
 //				log.info("{}, {}, {}, {}, {}, {}, {}, {}, {}", applBizDv, curveSwMap.getKey(), swSce.getKey(), pvtMatCd, pvtRate, pvtMult, intMult, addSprd, llp);
 				for(IrCurveSpot spot : spotSceList) {				
@@ -96,7 +98,8 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 						IrDcntRateBu dcntRateBu = new IrDcntRateBu();						
 						
 					// 충격 시나리오 적용은 fwd로 변환해서 적용해야 하는지 확인하기 !!	
-						double baseSpot = pvtMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
+//						double baseSpot = pvtMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
+						double baseSpot = pvtMult * (spot.getSpotRate() - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
 						double baseSpotCont = baseSpot;	
 						
 						double shkCont      = applBizDv.equals(EApplBizDv.KICS) ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) : 0.0; 	

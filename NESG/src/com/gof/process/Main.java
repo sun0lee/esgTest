@@ -94,7 +94,7 @@ public class Main {
 	private static List<String>              jobList      = new ArrayList<String>();
 
 	private static Session   session;
-	private static String    bssd;	
+	private static String    bssd;		
 	
 	private static int       projectionYear              = 120;                                            
 	private static long      cnt                         = 0;	                 
@@ -109,10 +109,10 @@ public class Main {
 	private static Map<String, Map<Integer, IrParamSw>> ifrsSwMap = new TreeMap<String, Map<Integer, IrParamSw>>();
 	private static Map<String, Map<Integer, IrParamSw>> ibizSwMap = new TreeMap<String, Map<Integer, IrParamSw>>();
 	private static Map<String, Map<Integer, IrParamSw>> saasSwMap = new TreeMap<String, Map<Integer, IrParamSw>>();
-//	private static Map<IrCurve, Map<Integer, IrParamSw>> kicsSwMap = new TreeMap<IrCurve, Map<Integer, IrParamSw>>();
-//	private static Map<IrCurve, Map<Integer, IrParamSw>> ifrsSwMap = new TreeMap<IrCurve, Map<Integer, IrParamSw>>();
-//	private static Map<IrCurve, Map<Integer, IrParamSw>> ibizSwMap = new TreeMap<IrCurve, Map<Integer, IrParamSw>>();
-//	private static Map<IrCurve, Map<Integer, IrParamSw>> saasSwMap = new TreeMap<IrCurve, Map<Integer, IrParamSw>>();
+	
+//	public static void getBizSwMap (EApplBizDv bizDv) {
+		//put 
+//	}
 	
 	private static double    hw1fInitAlpha               = 0.05;
 	private static double    hw1fInitSigma               = 0.007;		
@@ -234,6 +234,7 @@ public class Main {
 			System.exit(0);
 		}
 		
+		
 		Properties properties = new Properties();
 		try {
 			FileInputStream fis = new FileInputStream(argInputMap.get(ERunArgument.properties));
@@ -316,7 +317,6 @@ public class Main {
 		if(true) {	
 			session.beginTransaction();		
 			CoJobInfo jobLog = startJogLog(EJob.ESG110);
-			
 			try {
 				
 				// ir curve에 사용여부 Y 인 대상 
@@ -690,7 +690,7 @@ public class Main {
 					}
 
 //					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getLlp());
-					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCrv.getKey(), Math.min(StringUtil.objectToPrimitive(irCurveSwMap.get(irCrv.getKey()).getLlp()), 20));
+					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCrv.getKey(), Math.min(irCurveSwMap.get(irCrv.getKey()).getLlp(), 20));
 					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getLlp(), tenorList);				
 
 					if(tenorList.isEmpty()) {
@@ -763,7 +763,7 @@ public class Main {
 					
 					log.info("AFNS Shock Spread (Cont) for [{}({}, {})]", irCrv.getKey(), irCrv.getValue().getIrCurveNm(), irCrv.getValue().getCurCd());
 					
-					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCrv.getKey(), Math.min(StringUtil.objectToPrimitive(irCurveSwMap.get(irCrv.getKey()).getLlp()), 20));
+					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCrv.getKey(), Math.min(irCurveSwMap.get(irCrv.getKey()).getLlp(), 20));
 //					tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
 //					log.info("{}", tenorList);
 					//TODO:

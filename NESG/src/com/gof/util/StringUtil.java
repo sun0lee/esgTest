@@ -127,7 +127,10 @@ public class StringUtil implements Constant {
 		else return attr.doubleValue();
 	}	
 	
-
+/**
+ * nvl(attr, defaultValue )
+ * @param 
+ * */
 	public static int objectToPrimitive(Integer attr, Integer defaultValue) {		
 		
 		if(attr == null) return defaultValue.intValue();
@@ -148,7 +151,10 @@ public class StringUtil implements Constant {
 		else return Integer.parseInt(attr);				
 	}	
 	
-	
+	/**
+	 * nvl(attr,defaultValue)
+	 * @param 
+	 * */
 	public static String objectToPrimitive(String attr, String defaultValue) {
 		
 		if(attr == null) return defaultValue; 

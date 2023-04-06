@@ -59,18 +59,19 @@ public class Esg260_IrDcntRateBu extends Process {
 //				List<IrCurveSpot> spotSceList = spotList;
 				List<IrCurveSpot> spotSceList = spotList.stream().map(s -> s.deepCopy(s)).collect(Collectors.toList());
 				
-				String fwdMatCd = StringUtil.objectToPrimitive(swSce.getValue().getFwdMatCd(), "M0000");				
+				String fwdMatCd = swSce.getValue().getFwdMatCd();				
 				if(!fwdMatCd.equals("M0000")) {					
 					Map<String, Double> fwdSpotMap = irSpotDiscToFwdMap(bssd, spotMap, fwdMatCd);					
 					spotSceList.stream().forEach(s -> s.setSpotRate(fwdSpotMap.get(s.getMatCd())));					
 				}				
 
-				String pvtMatCd = StringUtil.objectToPrimitive(swSce.getValue().getPvtRateMatCd() , "M0000");
-				double pvtRate  = StringUtil.objectToPrimitive(spotMap.getOrDefault(pvtMatCd, 0.0), 0.0    );				
-				double pvtMult  = StringUtil.objectToPrimitive(swSce.getValue().getMultPvtRate()  , 1.0    );				
-//				double intMult  = StringUtil.objectToPrimitive(swSce.getValue().getMultIntRate()  , 1.0    );				
-				double addSprd  = StringUtil.objectToPrimitive(swSce.getValue().getAddSprd()      , 0.0    );
-				int    llp      = StringUtil.objectToPrimitive(swSce.getValue().getLlp()          , 20     );				
+				String pvtMatCd = swSce.getValue().getPvtRateMatCd();
+//				double pvtRate  = StringUtil.objectToPrimitive(spotMap.getOrDefault(pvtMatCd, 0.0), 0.0    );				
+				double pvtRate  = spotMap.getOrDefault(pvtMatCd, 0.0);				
+				double pvtMult  = swSce.getValue().getMultPvtRate();				
+//				double intMult  = swSce.getValue().getMultIntRate();				
+				double addSprd  = swSce.getValue().getAddSprd();
+				int    llp      = swSce.getValue().getLlp();				
 				
 //				log.info("{}, {}, {}, {}, {}, {}, {}, {}, {}", applBizDv, curveSwMap.getKey(), swSce.getKey(), pvtMatCd, pvtRate, pvtMult, intMult, addSprd, llp);
 				for(IrCurveSpot spot : spotSceList) {				
@@ -87,7 +88,8 @@ public class Esg260_IrDcntRateBu extends Process {
 //						double baseSpot = intMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) + pvtMult * pvtRate) + addSprd2 + pvtRate * 0;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
 //						double baseSpotCont = irDiscToCont(baseSpot);
 						
-						double baseSpot = pvtMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
+//						double baseSpot = pvtMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
+						double baseSpot = pvtMult * (spot.getSpotRate() - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
 //						double baseSpotCont = baseSpot;					
 						double baseSpotCont = irDiscToCont(baseSpot);
 //						if(swSce.getValue().getApplBizDv().equals("SAAS")) {

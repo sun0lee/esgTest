@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.interfaces.IRateInput;
+import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -51,6 +52,10 @@ public class IrCurveSpot  extends BaseEntity implements Serializable, IRateInput
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
 	private IrCurve irCurve ;
 	
+	// 23.04.06 default 처리는 entity getter에서 처리하기 
+	public Double getSpotRate() {
+		return spotRate = StringUtil.objectToPrimitive(spotRate);
+	}
 	
 	public IrCurveSpot(String baseDate, String irCurveNm, String matCd, Integer sceNo, Double intRate) {
 		this.baseDate = baseDate;
