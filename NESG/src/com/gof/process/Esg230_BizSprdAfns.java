@@ -38,22 +38,22 @@ public class Esg230_BizSprdAfns extends Process {
 				for(int i=0; i<6; i++) {
 					IrSprdAfnsBiz biz = new IrSprdAfnsBiz();			
 					
-					biz.setBaseYymm(usr.getBaseYymm());
+					biz.setBaseYymm    (usr.getBaseYymm());
 					biz.setIrParamModel(usr.getIrParamModel());
-					biz.setIrModelNm(usr.getIrModelNm());
-					biz.setIrCurve(usr.getIrCurve());
-					biz.setIrCurveNm(usr.getIrCurveNm());
+					biz.setIrModelNm   (usr.getIrModelNm());
+					biz.setIrCurve     (usr.getIrCurve());
+					biz.setIrCurveNm   (usr.getIrCurveNm());
 					biz.setIrCurveSceNo(i+1);
-					biz.setMatCd(usr.getMatCd());
+					biz.setMatCd       (usr.getMatCd());
 					
 					if(i==0) { 
 						biz.setShkSprdCont(0.0);
 					}
-					else if(i==1) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getMeanSprd() , 0.0));}
-					else if(i==2) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getUpSprd()   , 0.0));}
-					else if(i==3) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getDownSprd() , 0.0));}
-					else if(i==4) {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getFlatSprd() , 0.0));}
-					else 		  {biz.setShkSprdCont(StringUtil.objectToPrimitive(usr.getSteepSprd(), 0.0));}
+					else if(i==1) {biz.setShkSprdCont(usr.getMeanSprd() );}
+					else if(i==2) {biz.setShkSprdCont(usr.getUpSprd()   );}
+					else if(i==3) {biz.setShkSprdCont(usr.getDownSprd() );}
+					else if(i==4) {biz.setShkSprdCont(usr.getFlatSprd() );}
+					else 		  {biz.setShkSprdCont(usr.getSteepSprd());}
 					
 					biz.setModifiedBy(jobId);
 					biz.setUpdateDate(LocalDateTime.now());

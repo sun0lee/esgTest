@@ -87,7 +87,8 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				// 23.04.06 spotRate entity에서 값을 가져올때 이미 null 인 경우 에러를 return 하기 때문에 null인 채로 여기까지 올 수 없을텐데 또 default 처리가 된 이유가 뭘까.
 //				double pvtRate  = StringUtil.objectToPrimitive(spotMap.getOrDefault(pvtMatCd, 0.0), 0.0    );				
 				double pvtRate  = spotMap.getOrDefault(pvtMatCd, 0.0);				
-				double pvtMult  = swSce.getValue().getMultPvtRate();				
+				double pvtMult  = swSce.getValue().getMultPvtRate();		
+//				double pvtMult  = StringUtil.objectToPrimitive(swSce.getValue().getMultPvtRate()  , 1.0    );
 				double addSprd  = swSce.getValue().getAddSprd();
 				int    llp      = swSce.getValue().getLlp();				
 				
