@@ -43,22 +43,22 @@ public class Esg130_SetYtm extends Process {
 				ytm.setIrCurve(usr.getIrCurve());				
 				ytm.setMatCd(ytmTen.get(i));
 					
-				if     (i==0)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0003(), 0.0) * toReal, digit)); }
-				else if(i==1)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0006(), 0.0) * toReal, digit)); }
-				else if(i==2)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0009(), 0.0) * toReal, digit)); }
-				else if(i==3)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0012(), 0.0) * toReal, digit)); }
-				else if(i==4)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0018(), 0.0) * toReal, digit)); }
-				else if(i==5)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0024(), 0.0) * toReal, digit)); }
-				else if(i==6)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0030(), 0.0) * toReal, digit)); }
-				else if(i==7)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0036(), 0.0) * toReal, digit)); }
-				else if(i==8)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0048(), 0.0) * toReal, digit)); }
-				else if(i==9)  {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0060(), 0.0) * toReal, digit)); }
-				else if(i==10) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0084(), 0.0) * toReal, digit)); }
-				else if(i==11) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0120(), 0.0) * toReal, digit)); }
-				else if(i==12) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0180(), 0.0) * toReal, digit)); }
-				else if(i==13) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0240(), 0.0) * toReal, digit)); }
-				else if(i==14) {ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0360(), 0.0) * toReal, digit)); }
-				else {			ytm.setYtm(round(StringUtil.objectToPrimitive(usr.getYtmM0600(), 0.0) * toReal, digit)); }
+				if     (i==0)  {ytm.setYtm(round(usr.getYtmM0003() * toReal, digit)); }
+				else if(i==1)  {ytm.setYtm(round(usr.getYtmM0006() * toReal, digit)); }
+				else if(i==2)  {ytm.setYtm(round(usr.getYtmM0009() * toReal, digit)); }
+				else if(i==3)  {ytm.setYtm(round(usr.getYtmM0012() * toReal, digit)); }
+				else if(i==4)  {ytm.setYtm(round(usr.getYtmM0018() * toReal, digit)); }
+				else if(i==5)  {ytm.setYtm(round(usr.getYtmM0024() * toReal, digit)); }
+				else if(i==6)  {ytm.setYtm(round(usr.getYtmM0030() * toReal, digit)); }
+				else if(i==7)  {ytm.setYtm(round(usr.getYtmM0036() * toReal, digit)); }
+				else if(i==8)  {ytm.setYtm(round(usr.getYtmM0048() * toReal, digit)); }
+				else if(i==9)  {ytm.setYtm(round(usr.getYtmM0060() * toReal, digit)); }
+				else if(i==10) {ytm.setYtm(round(usr.getYtmM0084() * toReal, digit)); }
+				else if(i==11) {ytm.setYtm(round(usr.getYtmM0120() * toReal, digit)); }
+				else if(i==12) {ytm.setYtm(round(usr.getYtmM0180() * toReal, digit)); }
+				else if(i==13) {ytm.setYtm(round(usr.getYtmM0240() * toReal, digit)); }
+				else if(i==14) {ytm.setYtm(round(usr.getYtmM0360() * toReal, digit)); }
+				else {			ytm.setYtm(round(usr.getYtmM0600() * toReal, digit)); }
 				
 				ytm.setModifiedBy(jobId);
 				ytm.setUpdateDate(LocalDateTime.now());

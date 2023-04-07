@@ -93,7 +93,7 @@ public class Esg270_IrDcntRate extends Process {
 						SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 								.baseDate(baseDate)					
 								.ytmCurveHisList(ytmList)
-								.alphaApplied(StringUtil.objectToPrimitive(swSce.getValue().getSwAlphaYtm(), 0.1))													 
+								.alphaApplied(swSce.getValue().getSwAlphaYtm())													 
 								.freq(StringUtil.objectToPrimitive(swSce.getValue().getFreq(), 2))
 								.build();						
 						
@@ -152,7 +152,7 @@ public class Esg270_IrDcntRate extends Process {
 					SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 							 									 .baseDate(baseDate)					
 							 									 .ytmCurveHisList(ytmList)
-							 									 .alphaApplied(StringUtil.objectToPrimitive(swSce.getValue().getSwAlphaYtm(), 0.1))													 
+							 									 .alphaApplied(swSce.getValue().getSwAlphaYtm())													 
 							 									 .freq(0)
 							 									 .build();						
 

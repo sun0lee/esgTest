@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
+import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -49,18 +50,18 @@ public class IrParamSw extends BaseEntity implements Serializable {
 	private String irCurveNm;	
 	private Integer irCurveSceNo;
 	
-	private String irCurveSceNm;
-	private String curCd;
+	private String  irCurveSceNm;
+	private String  curCd;
 	private Integer freq;
 	private Integer llp;
-	private Double ltfr;
+	private Double  ltfr;
 	private Integer ltfrCp;
-	private Double liqPrem;
-	private String liqPremApplDv;
+	private Double  liqPrem;
+	private String  liqPremApplDv;
 	private Integer shkSprdSceNo;
-	private Double swAlphaYtm;		
-	private String stoSceGenYn;	
-	private String fwdMatCd;	
+	private Double  swAlphaYtm;		
+	private String  stoSceGenYn;	
+	private String  fwdMatCd;	
 	
 	@Column(name = "MULT_INT_RATE")
 	private Double multIntRate;   //ytmSpread
@@ -79,7 +80,40 @@ public class IrParamSw extends BaseEntity implements Serializable {
 		return multIntRate == null ? 0.0 : multIntRate.doubleValue();
 	}
 	
-
+	
+// 23.04.06 프로그램마다 default 값 처리하는 부분을 여기에서 처리함.
+	
+	public Integer getFreq() {
+		return freq = StringUtil.objectToPrimitive(freq, 2) ;
+		
+	}
+	
+	public String getFwdMatCd() {
+		return fwdMatCd = StringUtil.objectToPrimitive(fwdMatCd, "M0000");
+	}
+	public Integer getLlp() {
+		return llp = StringUtil.objectToPrimitive(llp, 20);
+	}
+	public String getLiqPremApplDv() {
+		return liqPremApplDv = StringUtil.objectToPrimitive(liqPremApplDv, "1");
+	}
+	public Double getSwAlphaYtm() {
+		return swAlphaYtm = StringUtil.objectToPrimitive(swAlphaYtm, 0.1) ; 
+	}
+	
+	public Double getMultIntRate() {
+		return multIntRate = StringUtil.objectToPrimitive(multIntRate , 1.0  );
+	}
+	
+	public Double getAddSprd() {
+		return addSprd =  StringUtil.objectToPrimitive(addSprd, 0.0);
+	}
+	public String getPvtRateMatCd() {
+		return pvtRateMatCd = StringUtil.objectToPrimitive(pvtRateMatCd , "M0000");
+	}
+	public Double getMultPvtRate() {
+		return multPvtRate = StringUtil.objectToPrimitive(multPvtRate , 1.0  );
+	}
 
 }
 

@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
+import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -77,5 +78,41 @@ public class IrVolSwpnUsr implements Serializable {
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
 	private IrCurve irCurve ;
 
-	
+	//user input  entity 값에 대한 default 처리 
+	public Double getVolSwpnY1() {
+	return volSwpnY1 = StringUtil.objectToPrimitive(volSwpnY1, 25.0) ;
+	}
+	public Double getVolSwpnY2() {
+	return volSwpnY2 = StringUtil.objectToPrimitive(volSwpnY2, 25.0) ;
+	}
+	public Double getVolSwpnY3() {
+	return volSwpnY3 = StringUtil.objectToPrimitive(volSwpnY3, 25.0) ;
+	}
+	public Double getVolSwpnY4() {
+	return volSwpnY4 = StringUtil.objectToPrimitive(volSwpnY4, 25.0) ;
+	}
+	public Double getVolSwpnY5() {
+	return volSwpnY5 = StringUtil.objectToPrimitive(volSwpnY5, 25.0) ;
+	}
+	public Double getVolSwpnY7() {
+	return volSwpnY7 = StringUtil.objectToPrimitive(volSwpnY7, 25.0) ;
+	}
+	public Double getVolSwpnY10() {
+	return volSwpnY10 = StringUtil.objectToPrimitive(volSwpnY10, 25.0) ;
+	}
+	public Double getVolSwpnY12() {
+	return volSwpnY12 = StringUtil.objectToPrimitive(volSwpnY12, 25.0) ;
+	}
+	public Double getVolSwpnY15() {
+	return volSwpnY15 = StringUtil.objectToPrimitive(volSwpnY15, 25.0) ;
+	}
+	public Double getVolSwpnY20() {
+	return volSwpnY20 = StringUtil.objectToPrimitive(volSwpnY20, 25.0) ;
+	}
+	public Double getVolSwpnY25() {
+	return volSwpnY25 = StringUtil.objectToPrimitive(volSwpnY25, 25.0) ;
+	}
+	public Double getVolSwpnY30() {
+	return volSwpnY30 = StringUtil.objectToPrimitive(volSwpnY30, 25.0) ;
+	}
 }

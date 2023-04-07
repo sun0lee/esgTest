@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -64,5 +65,69 @@ public class IrCurveYtmUsrHis extends BaseEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
 	private IrCurve irCurve ;
-
+	
+	public Double getYtmM0003() {
+		return ytmM0003 = StringUtil.objectToPrimitive(ytmM0003, 0.0) ;
+		
+	}
+	public Double getYtmM0006() {
+		return ytmM0006 = StringUtil.objectToPrimitive(ytmM0006, 0.0) ;
+		
+	}
+	public Double getYtmM0009() {
+		return ytmM0009 = StringUtil.objectToPrimitive(ytmM0009, 0.0) ;
+		
+	}
+	public Double getYtmM0012() {
+		return ytmM0012 = StringUtil.objectToPrimitive(ytmM0012, 0.0) ;
+		
+	}
+	public Double getYtmM0018() {
+		return ytmM0018 = StringUtil.objectToPrimitive(ytmM0018, 0.0) ;
+		
+	}
+	public Double getYtmM0024() {
+		return ytmM0024 = StringUtil.objectToPrimitive(ytmM0024, 0.0) ;
+		
+	}
+	public Double getYtmM0030() {
+		return ytmM0030 = StringUtil.objectToPrimitive(ytmM0030, 0.0) ;
+		
+	}
+	public Double getYtmM0036() {
+		return ytmM0036 = StringUtil.objectToPrimitive(ytmM0036, 0.0) ;
+		
+	}
+	public Double getYtmM0048() {
+		return ytmM0048 = StringUtil.objectToPrimitive(ytmM0048, 0.0) ;
+		
+	}
+	public Double getYtmM0060() {
+		return ytmM0060 = StringUtil.objectToPrimitive(ytmM0060, 0.0) ;
+		
+	}
+	public Double getYtmM0084() {
+		return ytmM0084 = StringUtil.objectToPrimitive(ytmM0084, 0.0) ;
+		
+	}
+	public Double getYtmM0120() {
+		return ytmM0120 = StringUtil.objectToPrimitive(ytmM0120, 0.0) ;
+		
+	}
+	public Double getYtmM0180() {
+		return ytmM0180 = StringUtil.objectToPrimitive(ytmM0180, 0.0) ;
+		
+	}
+	public Double getYtmM0240() {
+		return ytmM0240 = StringUtil.objectToPrimitive(ytmM0240, 0.0) ;
+		
+	}
+	public Double getYtmM0360() {
+		return ytmM0360 = StringUtil.objectToPrimitive(ytmM0360, 0.0) ;
+		
+	}
+	public Double getYtmM0600() {
+		return ytmM0600 = StringUtil.objectToPrimitive(ytmM0600, 0.0) ;
+		
+	}
 }

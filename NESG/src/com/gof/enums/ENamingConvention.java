@@ -51,15 +51,26 @@ public enum ENamingConvention {
 				StringBuilder result = new StringBuilder();
 				int len = input.length();
 
-				for (int i = 0; i < len; i++) {
-					char currentChar = input.charAt(i);
-					if (Character.isLowerCase(currentChar)) {
-						result.append(Character.toUpperCase(currentChar));
-					} else {
-						result.append("_").append(Character.toUpperCase(currentChar));
-					}
-				}
+//				2023.04.06 
+//				for (int i = 0; i < len; i++) {
+//					char currentChar = input.charAt(i);
+//					if (Character.isLowerCase(currentChar)) {
+//						result.append(Character.toUpperCase(currentChar));
+//					} else {
+//						result.append("_").append(Character.toUpperCase(currentChar)); 
+				// 대문자인 경우 앞에 _를 붙이는데 이러면 맨 처음에도 _가 붙게됨.prefix가 없는 경우 불필요한 _ 
+//					}
+//				}
 				
+			    for (int i = 0; i < len; i++) {
+			        char currentChar = input.charAt(i);
+			        // 문자열이 첫번째가 아니고 대문자일때만 앞에 _ 붙이기로 수정함.
+			        // 테이블마다 prefix를 사용하는 경우 i!=0 조건만 지우면 됨. 
+			        if (i != 0 && Character.isUpperCase(currentChar)) {
+			            result.append("_");
+			        }
+			        result.append(Character.toUpperCase(currentChar));
+			    }
 				return result.toString();
 			}
 			

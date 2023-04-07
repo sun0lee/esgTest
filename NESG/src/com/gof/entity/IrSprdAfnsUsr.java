@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.interfaces.EntityIdentifier;
+import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -60,5 +61,21 @@ public class IrSprdAfnsUsr  extends BaseEntity implements Serializable, EntityId
 	@JoinColumn(name = "IR_MODEL_SID" , referencedColumnName ="SID")
 	private IrParamModel irParamModel ;
 
-	
+	// 23.04.07 input 값에 대한 default 처리 
+	public Double genMeanSprd() {
+		return meanSprd = StringUtil.objectToPrimitive(meanSprd , 0.0) ;
+	}
+	public Double getUpSprd() {
+		return upSprd = StringUtil.objectToPrimitive(upSprd , 0.0) ;
+	}
+	public Double genDownSprd() {
+		return downSprd = StringUtil.objectToPrimitive(downSprd , 0.0) ;
+	}
+	public Double genFlatSprd() {
+		return flatSprd = StringUtil.objectToPrimitive(flatSprd , 0.0) ;
+	}
+	public Double genSteepSprd() {
+		return steepSprd = StringUtil.objectToPrimitive(steepSprd , 0.0) ;
+	}
+
 }

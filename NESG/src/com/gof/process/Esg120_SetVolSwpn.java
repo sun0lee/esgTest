@@ -42,27 +42,27 @@ public class Esg120_SetVolSwpn extends Process {
 				
 				if(i==0) { 
 					vol.setSwapTenNum(Integer.valueOf(1));
-					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY1(), 25.0) * toReal, digit));
+					vol.setVol(round(volUsr.getVolSwpnY1() * toReal, digit));
 				}
 				else if(i==1) {
 					vol.setSwapTenNum(Integer.valueOf(2));
-					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY2(), 25.0) * toReal, digit));
+					vol.setVol(round(volUsr.getVolSwpnY2() * toReal, digit));
 				}
 				else if(i==2) {
 					vol.setSwapTenNum(Integer.valueOf(3));
-					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY3(), 25.0) * toReal, digit));
+					vol.setVol(round(volUsr.getVolSwpnY3() * toReal, digit));
 				}
 				else if(i==3) {
 					vol.setSwapTenNum(Integer.valueOf(5));
-					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY5(), 25.0) * toReal, digit));					
+					vol.setVol(round(volUsr.getVolSwpnY5() * toReal, digit));					
 				}
 				else if(i==4) {
 					vol.setSwapTenNum(Integer.valueOf(7));
-					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY7(), 25.0) * toReal, digit));
+					vol.setVol(round(volUsr.getVolSwpnY7() * toReal, digit));
 				}
 				else {
 					vol.setSwapTenNum(Integer.valueOf(10));
-					vol.setVol(round(StringUtil.objectToPrimitive(volUsr.getVolSwpnY10(), 25.0) * toReal, digit));
+					vol.setVol(round(volUsr.getVolSwpnY10() * toReal, digit));
 				}
 				
 				vol.setModifiedBy(jobId);
