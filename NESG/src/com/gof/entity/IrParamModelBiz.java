@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -40,7 +43,8 @@ public class IrParamModelBiz  extends BaseEntity implements Serializable, Entity
 	private String baseYymm;
 	private String irModelNm;
 	private String irCurveNm;
-	private String paramTypCd;	
+	@Enumerated(EnumType.STRING)
+	private EParamTypCd paramTypCd;	
 	
 	private Double paramVal;	
 //	private String lastModifiedBy;

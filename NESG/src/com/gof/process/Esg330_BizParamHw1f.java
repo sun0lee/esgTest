@@ -11,6 +11,7 @@ import com.gof.entity.IrParamHwUsr;
 import com.gof.entity.IrParamHwCalc;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EJob;
+import com.gof.enums.EParamTypCd;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,7 +54,8 @@ public class Esg330_BizParamHw1f extends Process {
 		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd, irModelId + "_NSP", irCurveId);
 
 		for(IrParamHwCalc calc : paramHwCalc) {
-			if(calc.getParamTypCd().equals("COST")) continue;
+//			if(calc.getParamTypCd().equals("COST")) continue;
+			if(calc.getParamTypCd()==EParamTypCd.COST) continue;
 			
 			IrParamHwBiz biz = new IrParamHwBiz();			
 			biz.setBaseYymm(bssd);
@@ -69,8 +71,8 @@ public class Esg330_BizParamHw1f extends Process {
 			paramHwBiz.add(biz);
 		}		
 						
-		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, "ALPHA", hwAlphaAvgNum, hwAlphaAvgMatCd));
-		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, "SIGMA", hwSigmaAvgNum, hwSigmaAvgMatCd));		
+		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, EParamTypCd.ALPHA, hwAlphaAvgNum, hwAlphaAvgMatCd));
+		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, EParamTypCd.SIGMA, hwSigmaAvgNum, hwSigmaAvgMatCd));		
 		
 		if(applBizDv.equals(EApplBizDv.KICS)) paramHwBiz.stream().forEach(s -> log.info("PARAM BIZ from CALC: [{}, {}, {}, {}], {}", s.getIrModelId(), s.getApplBizDv(), s.getParamTypCd(), s.getMatCd(), s.getParamVal()));
 
@@ -78,10 +80,10 @@ public class Esg330_BizParamHw1f extends Process {
 	}
 	
 	
-	private static List<IrParamHwBiz> createBizAppliedParameterOuter(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, String paramTypCd, int monthNum, String matCd) {
+	private static List<IrParamHwBiz> createBizAppliedParameterOuter(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, EParamTypCd paramTypCd, int monthNum, String matCd) {
 		
 		List<IrParamHwCalc> paramCalcHisList = new ArrayList<IrParamHwCalc>();
-		if(paramTypCd.equals("ALPHA")) {
+		if(paramTypCd==EParamTypCd.ALPHA) {
 			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, irModelId + "_SP", irCurveId, paramTypCd, monthNum, matCd);
 		}
 		else {

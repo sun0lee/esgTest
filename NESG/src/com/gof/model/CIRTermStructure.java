@@ -21,6 +21,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 
 import com.gof.entity.IrCurveSpot;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 import com.gof.util.DateUtil;
 
@@ -73,7 +74,7 @@ public class CIRTermStructure extends IrModel {
 //		double[]   baseRate    = new double[] {0.00541094484478832, 0.00648046522498502, 0.00871426771066752, 0.00957012108585276, 0.01155037857853425, 0.01306160221245922, 0.01388401499446035
 //				                             , 0.0146180119810746 , 0.01610774927339009, 0.01761371602422424, 0.01990500084649605, 0.0213226811489029 , 0.02237566974987093, 0.02236847998415925};    //FY2021 06 IR_CURVE_SPOT
 		
-		List<IrCurveSpot> curveList = new ArrayList<IrCurveSpot>();		
+		List<IRateInput> curveList = new ArrayList<IRateInput>();		
 		for(int i=0; i<matCd.length; i++) {
 			IrCurveSpot curve = new IrCurveSpot();			
 			curve.setMatCd(matCd[i]);
@@ -96,7 +97,7 @@ public class CIRTermStructure extends IrModel {
 
 	
 	@Builder(builderClassName="of", builderMethodName="of")
-	public CIRTermStructure(String bssd, List<IrCurveSpot> iRateBaseList, Character cmpdType, Boolean isRealNumber, Integer prjYear, Integer prjInterval, Double ltfr, Integer ltfrT, Double liqPrem, Integer dayCountBasis, Integer itrMax, Double accuracy) {				
+	public CIRTermStructure(String bssd, List<IRateInput> iRateBaseList, Character cmpdType, Boolean isRealNumber, Integer prjYear, Integer prjInterval, Double ltfr, Integer ltfrT, Double liqPrem, Integer dayCountBasis, Integer itrMax, Double accuracy) {				
 		super();		
 		
 		this.baseDate = (baseDate == null ? LocalDate.now() : DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth()));
@@ -112,7 +113,7 @@ public class CIRTermStructure extends IrModel {
 		this.accuracy = (accuracy == null ? 1.0E-8 : accuracy);
 		
 		this.dt = this.prjInterval / 12.0;		
-		this.setTermStructureBase(iRateBaseList);
+		this.setTermStructure(iRateBaseList);
 		this.setIrmodelAttributes();		
 	}	
 	

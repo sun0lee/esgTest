@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.gof.entity.IrDcntSceStoGnr;
 import com.gof.entity.IrParamModelBiz;
+import com.gof.enums.EParamTypCd;
 import com.gof.util.DateUtil;
 
 import lombok.Builder;
@@ -86,10 +87,10 @@ public class CIRSimulationForcast extends IrModel {
 	private void setIrmodelAttributes(List<IrParamModelBiz> irParamModelBizList) {
 		
 		try {
-			this.rZero = irParamModelBizList.stream().filter(s -> s.getParamTypCd().equals("R_ZERO")).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
-			this.alpha = irParamModelBizList.stream().filter(s -> s.getParamTypCd().equals("ALPHA" )).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
-			this.theta = irParamModelBizList.stream().filter(s -> s.getParamTypCd().equals("THETA" )).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
-			this.sigma = irParamModelBizList.stream().filter(s -> s.getParamTypCd().equals("SIGMA" )).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
+			this.rZero = irParamModelBizList.stream().filter(s -> s.getParamTypCd()==EParamTypCd.R_ZERO).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
+			this.alpha = irParamModelBizList.stream().filter(s -> s.getParamTypCd()==EParamTypCd.ALPHA).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
+			this.theta = irParamModelBizList.stream().filter(s -> s.getParamTypCd()==EParamTypCd.THETA).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
+			this.sigma = irParamModelBizList.stream().filter(s -> s.getParamTypCd()==EParamTypCd.SIGMA).map(s -> s.getParamVal()).mapToDouble(Double::doubleValue).toArray()[0];
 		}
 		catch(Exception e) {
 			log.error("Check CIR Parameter");

@@ -9,8 +9,10 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import com.gof.entity.IrCurveSpot;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -47,19 +49,57 @@ public class SmithWilsonKics extends IrModel {
 	private RealMatrix                    zetaColumn;
 	
 	
-	public SmithWilsonKics(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, boolean isRealNumber, double ltfr, int ltfrT, int prjYear) {
-		this(baseDate, irCurveHisList, CMPD_MTD_DISC, isRealNumber, ltfr, ltfrT, prjYear, 1, 100, 1);		
+	public SmithWilsonKics(LocalDate baseDate
+//						 , List<IrCurveSpot> irCurveHisList
+						 , List<IRateInput> irCurveHisList
+						 , boolean isRealNumber
+						 , double ltfr
+						 , int ltfrT
+						 , int prjYear) 
+	{
+		this( baseDate
+			, irCurveHisList
+			, CMPD_MTD_DISC
+			, isRealNumber
+			, ltfr
+			, ltfrT
+			, prjYear
+			, 1
+			, 100
+			, 1);		
 	}	
 
-	public SmithWilsonKics(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int dayCountBasis) {
-		this(baseDate, irCurveHisList, cmpdType     , isRealNumber, ltfr, ltfrT, prjYear, 1, 100, dayCountBasis);		
+	public SmithWilsonKics(LocalDate baseDate
+//						 , List<IrCurveSpot> irCurveHisList
+						 , List<IRateInput> irCurveHisList
+						 , char cmpdType
+						 , boolean isRealNumber
+						 , double ltfr
+						 , int ltfrT
+						 , int prjYear
+						 , int dayCountBasis) 
+	{
+		this( baseDate
+			, irCurveHisList
+			, cmpdType     
+			, isRealNumber
+			, ltfr
+			, ltfrT
+			, prjYear
+			, 1
+			, 100
+			, dayCountBasis);		
 	}
 	/**
 	 * 부채평가용 
 	 * @param IrCurveSpot 
-	 * @param ltfr ; 입력값  */
+	 * @param ltfr ; SwParam 입력값 
+	 * @param alphaItrNum alpha산출 후 적용  */
+	
+	@Builder(builderClassName="of", builderMethodName="of")
 	public SmithWilsonKics(LocalDate baseDate
-					, List<IrCurveSpot> irCurveHisList
+//					, List<IrCurveSpot> irCurveHisList
+					, List<IRateInput> irCurveHisList
 					, char cmpdType
 					, boolean isRealNumber
 					, double ltfr
@@ -71,7 +111,8 @@ public class SmithWilsonKics extends IrModel {
 	{				
 		super();		
 		this.baseDate = baseDate;		
-		this.setTermStructureBase(irCurveHisList);
+//		this.setTermStructureBase(irCurveHisList);
+		this.setTermStructure(irCurveHisList);
 		this.setLastLiquidPoint(this.tenor[this.tenor.length-1]);
 		this.cmpdType = cmpdType; // D
 		this.isRealNumber = isRealNumber;

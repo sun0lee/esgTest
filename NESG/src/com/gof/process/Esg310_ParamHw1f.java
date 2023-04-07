@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.gof.entity.IrCurveSpot;
+//import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrParamHwCalc;
 import com.gof.entity.IrValidParamHw;
 import com.gof.entity.IrVolSwpn;
 import com.gof.enums.EJob;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.Hw1fCalibrationKics;
 import com.gof.model.entity.SwpnVolInfo;
 
@@ -24,7 +25,7 @@ public class Esg310_ParamHw1f extends Process {
 	public static final Esg310_ParamHw1f INSTANCE = new Esg310_ParamHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static Map<String, List<?>> createParamHw1fNonSplitMap(String bssd, String irModelId, String irCurveId, List<IrCurveSpot> spotList, List<IrVolSwpn> swpnVolList, double[] initParas, Integer freq, double errTol, int[] alphaPiece, int[] sigmaPiece) {
+	public static Map<String, List<?>> createParamHw1fNonSplitMap(String bssd, String irModelId, String irCurveId, List<IRateInput> spotList, List<IrVolSwpn> swpnVolList, double[] initParas, Integer freq, double errTol, int[] alphaPiece, int[] sigmaPiece) {
 		
 		Map<String, List<?>>  irParamHw1fMap  = new TreeMap<String, List<?>>();
 		List<IrParamHwCalc>   paramCalc       = new ArrayList<IrParamHwCalc>();
@@ -61,7 +62,7 @@ public class Esg310_ParamHw1f extends Process {
 	}
 	
 	
-	public static Map<String, List<?>> createParamHw1fSplitMap(String bssd, String irModelId, String irCurveId, List<IrCurveSpot> spotList, List<IrVolSwpn> swpnVolList, double[] initParas, Integer freq, double errTol, int[] alphaPiece, int[] sigmaPiece) {
+	public static Map<String, List<?>> createParamHw1fSplitMap(String bssd, String irModelId, String irCurveId, List<IRateInput> spotList, List<IrVolSwpn> swpnVolList, double[] initParas, Integer freq, double errTol, int[] alphaPiece, int[] sigmaPiece) {
 		
 		Map<String, List<?>>  irParamHw1fMap  = new TreeMap<String, List<?>>();
 		List<IrParamHwCalc>   paramCalc       = new ArrayList<IrParamHwCalc>();

@@ -13,6 +13,7 @@ import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -50,7 +51,8 @@ public class IrParamHwUsr implements Serializable, EntityIdentifier {
 	private String matCd;
 
 	@Id
-	private String paramTypCd;	
+	@Enumerated(EnumType.STRING)
+	private EParamTypCd paramTypCd;	
 	
 	private Double paramVal;	
 	private String lastModifiedBy;

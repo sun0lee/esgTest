@@ -23,6 +23,7 @@ import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrParamModelCalc;
+import com.gof.enums.EParamTypCd;
 import com.gof.util.DateUtil;
 
 import lombok.Builder;
@@ -80,22 +81,22 @@ public class CIRCalibrationForcast extends IrModel {
 		this.mleOptimize(new double[] {this.initAlpha, this.initTheta, this.initSigma});
 		
 		IrParamModelCalc rZero = new IrParamModelCalc();
-		rZero.setParamTypCd("R_ZERO");
+		rZero.setParamTypCd(EParamTypCd.R_ZERO);
 		rZero.setParamVal(this.rZero);
 		rst.add(rZero);
 		
 		IrParamModelCalc alpha = new IrParamModelCalc();
-		alpha.setParamTypCd("ALPHA");
+		alpha.setParamTypCd(EParamTypCd.ALPHA);
 		alpha.setParamVal(this.alpha);
 		rst.add(alpha);
 
 		IrParamModelCalc theta = new IrParamModelCalc();
-		theta.setParamTypCd("THETA");
+		theta.setParamTypCd(EParamTypCd.THETA);
 		theta.setParamVal(this.theta);
 		rst.add(theta);
 
 		IrParamModelCalc sigma = new IrParamModelCalc();
-		sigma.setParamTypCd("SIGMA");
+		sigma.setParamTypCd(EParamTypCd.SIGMA);
 		sigma.setParamVal(this.sigma);
 		rst.add(sigma);
 		

@@ -11,6 +11,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import com.gof.entity.IrCurveSpot;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 
 import lombok.Getter;
@@ -72,7 +73,7 @@ public class SmithWilsonDep1 extends IrModel {
 //		
 //		SmithWilson sw = new SmithWilson(LocalDate.of(2017, 12, 31), ts, CMPD_MTD_DISC, false, 4.5, 60, 100, 1);
 		
-		List<IrCurveSpot> curveList = new ArrayList<IrCurveSpot>();		
+		List<IRateInput> curveList = new ArrayList<IRateInput>();		
 		for(int i=0; i<testTenor.length; i++) {
 			IrCurveSpot curve = new IrCurveSpot();			
 			curve.setMatCd(testMatCd[i]);
@@ -92,18 +93,18 @@ public class SmithWilsonDep1 extends IrModel {
 	}	
 
 	//TODO; 
-	public SmithWilsonDep1(LocalDate baseDate, List<IrCurveSpot> irCurveHisList,                boolean isRealNumber, double ltfr, int ltfrT, int prjYear) {
+	public SmithWilsonDep1(LocalDate baseDate, List<IRateInput> irCurveHisList,                boolean isRealNumber, double ltfr, int ltfrT, int prjYear) {
 		this(baseDate, irCurveHisList, CMPD_MTD_DISC, isRealNumber, ltfr, ltfrT, prjYear, 1, 20, 1);		
 	}	
 
-	public SmithWilsonDep1(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int dayCountBasis) {
+	public SmithWilsonDep1(LocalDate baseDate, List<IRateInput> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int dayCountBasis) {
 		this(baseDate, irCurveHisList, cmpdType     , isRealNumber, ltfr, ltfrT, prjYear, 1, 20, dayCountBasis);		
 	}
 	
-	public SmithWilsonDep1(LocalDate baseDate, List<IrCurveSpot> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int prjInterval, int alphaItrNum, int dayCountBasis) {				
+	public SmithWilsonDep1(LocalDate baseDate, List<IRateInput> irCurveHisList, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int prjInterval, int alphaItrNum, int dayCountBasis) {				
 		super();		
 		this.baseDate = baseDate;		
-		this.setTermStructureBase(irCurveHisList);
+		this.setTermStructure(irCurveHisList);
 		this.setLastLiquidPoint(this.tenor[this.tenor.length-1]);
 		this.cmpdType = cmpdType;
 		this.isRealNumber = isRealNumber;

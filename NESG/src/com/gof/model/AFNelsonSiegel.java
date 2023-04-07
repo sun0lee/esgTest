@@ -30,11 +30,12 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
 
-import com.gof.entity.IrCurveSpot;
+//import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrDcntSceDetBiz;
 import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamAfnsCalc;
 import com.gof.entity.IrSprdAfnsCalc;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 
 import lombok.Getter;
@@ -89,21 +90,25 @@ public class AFNelsonSiegel extends IrModel {
 	protected List<IrDcntSceDetBiz> rsltList = new ArrayList<IrDcntSceDetBiz>();
 	
 		
-	public AFNelsonSiegel(LocalDate baseDate, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, double dt, double initSigma) {				
+//	public AFNelsonSiegel(LocalDate baseDate, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, double dt, double initSigma) {				
+	public AFNelsonSiegel(LocalDate baseDate, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, double dt, double initSigma) {				
 		this(baseDate, "AFNS", null, iRateHisList, iRateBaseList, false       , CMPD_MTD_DISC, dt, initSigma, DCB_MON_DIF, 0.045, 0.045, 60  , 0.0032  , 1.0/12, 0.05, 2.0, 3, 140    , 1e-10, 100, 0.995, 0.001);		
 	}	
 	
-	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
+//	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
+	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
 			              double ltfrL, double ltfrA, int ltfrT, double liqPrem, int prjYear) {		
 		this(baseDate, mode  , null, iRateHisList, iRateBaseList, isRealNumber, cmpdType     , dt, initSigma, DCB_MON_DIF, ltfrL, ltfrA, ltfrT, liqPrem, 1.0/12, 0.05, 2.0, 3, prjYear, 1e-10, 100, 0.995, 0.001);		
 	}
 	
-	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IrParamAfnsBiz> inputParas, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
+//	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IrParamAfnsBiz> inputParas, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
+	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IrParamAfnsBiz> inputParas, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
 						  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
 
 		this.baseDate      = baseDate;
 		this.mode          = mode;
-		setTermStructureBase(iRateBaseList);		
+//		setTermStructureBase(iRateBaseList);		
+		setTermStructure(iRateBaseList);		
 		setAfnsParamList(inputParas);		
 		//TODO: iRateBaseList 가 null임을 고려해야함. dummy관점에서라도 irateBaseList는 null을 안넣는게 좋을듯
 		this.irCurveNm     = iRateBaseList.get(0).getIrCurveNm();
@@ -132,13 +137,15 @@ public class AFNelsonSiegel extends IrModel {
 	}
 	
 	
-	public AFNelsonSiegel(LocalDate baseDate, String mode, double[] inputParas, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
+//	public AFNelsonSiegel(LocalDate baseDate, String mode, double[] inputParas, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
+	public AFNelsonSiegel(LocalDate baseDate, String mode, double[] inputParas, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
 		                  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
 		
 		this.baseDate      = baseDate;		
 		this.mode          = mode;
 		this.inputParas    = inputParas;		
 		this.setTermStructureHis(iRateHisList, iRateBaseList);
+//		this.setTermStructureHis(iRateHisList, iRateBaseList);
 		this.isRealNumber  = isRealNumber;
 		this.cmpdType      = cmpdType;		
 		this.dt            = dt;	
@@ -162,17 +169,20 @@ public class AFNelsonSiegel extends IrModel {
 	
 
 	//TODO:
-	public void setTermStructureHis(List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList) {		
+//	public void setTermStructureHis(List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList) {		
+	public void setTermStructureHis(List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList) {		
 				
 		Map<String, Map<String, Double>> tsHisArg = new TreeMap<String, Map<String, Double>>();		
-		tsHisArg = iRateHisList.stream().collect(Collectors.groupingBy(s -> s.getBaseDate(), TreeMap::new, Collectors.toMap(IrCurveSpot::getMatCd, IrCurveSpot::getSpotRate)));
+//		tsHisArg = iRateHisList.stream().collect(Collectors.groupingBy(s -> s.getBaseDate(), TreeMap::new, Collectors.toMap(IrCurveSpot::getMatCd, IrCurveSpot::getSpotRate)));
+		tsHisArg = iRateHisList.stream().collect(Collectors.groupingBy(s -> s.getBaseDate(), TreeMap::new, Collectors.toMap(IRateInput::getMatCd, IRateInput::getRate)));
 		this.setTermStructureHis(tsHisArg, iRateBaseList);		
 		
 //		iRateHisList.stream().filter(s -> Double.parseDouble(s.getMatCd().substring(1, 5)) <= 12 ).forEach(s -> log.info("{}, {}, {}", s.getBaseDate(), s.getMatCd(), s.getIntRate()));
 	}	
 	
 
-	private void setTermStructureHis(Map<String, Map<String, Double>> iRateHisMap, List<IrCurveSpot> iRateBaseList) {			
+//	private void setTermStructureHis(Map<String, Map<String, Double>> iRateHisMap, List<IrCurveSpot> iRateBaseList) {			
+	private void setTermStructureHis(Map<String, Map<String, Double>> iRateHisMap, List<IRateInput> iRateBaseList) {			
 
 		Map<String, Map<Double, Double>> tsHis = new TreeMap<String, Map<Double, Double>>();
 		
@@ -185,7 +195,8 @@ public class AFNelsonSiegel extends IrModel {
 			}
 		}		
 		this.irCurveNm = iRateBaseList.get(0).getIrCurveNm();
-		setTermStructureBase(iRateBaseList);
+//		setTermStructureBase(iRateBaseList);
+		setTermStructure(iRateBaseList);
 		setTermStructureHis(tsHis, this.termStructureBase);		
 	}		
 
@@ -791,6 +802,20 @@ public class AFNelsonSiegel extends IrModel {
 			
 //			if(i==0) log.info("{}, {}, {}, {}", ts, ltfr, ltfrT, this.dayCountBasis);
 			SmithWilsonKics sw = new SmithWilsonKics(this.baseDate, ts, CMPD_MTD_CONT, true, ltfr, this.ltfrT, this.prjYear, 1, 100, this.dayCountBasis);			
+//			SmithWilsonKics sw = SmithWilsonKics.of()
+//					.baseDate       (this.baseDate)
+//					.irCurveHisList (ts)
+//					.cmpdType       (CMPD_MTD_CONT)
+//					.isRealNumber   (true)
+//					.ltfr           (ltfr)
+//					.ltfrT          (this.ltfrT)
+//					.prjYear        (this.prjYear)
+//					.prjInterval    (1)
+//					.alphaItrNum    (100)
+//					.dayCountBasis  (this.dayCountBasis)
+//					.build();
+			
+			
 			List<SmithWilsonRslt> swRslt = sw.getSmithWilsonResultList();			
 				
 			for(SmithWilsonRslt rslt : swRslt) {				
