@@ -11,6 +11,7 @@ import com.gof.entity.IrDcntRateBiz;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrDcntRateUsr;
 import com.gof.enums.EApplBizDv;
+import com.gof.interfaces.IRateInput;
 import com.gof.util.HibernateUtil;
 
 public class IrDcntRateDao extends DaoUtil {
@@ -29,7 +30,11 @@ public class IrDcntRateDao extends DaoUtil {
 				      .getResultList();
 	}	
 
-	
+	/**@param bssd
+	 * @param applBizDv
+	 * @param irCurveNm
+	 * @param irCurveSceNo
+	 * */
 	public static List<IrDcntRateBu> getIrDcntRateBuList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo){
 		
 		String query = "select a from IrDcntRateBu a "
@@ -54,7 +59,8 @@ public class IrDcntRateDao extends DaoUtil {
 	}
 	
 	
-	public static List<IrCurveSpot> getIrDcntRateBuToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
+//	public static List<IrCurveSpot> getIrDcntRateBuToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
+	public static List<IRateInput> getIrDcntRateBuToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
 		return getIrDcntRateBuList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream().map(s -> s.convertAdj()).collect(Collectors.toList());
 	}	
 

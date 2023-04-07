@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -13,6 +15,7 @@ import org.hibernate.annotations.Filters;
 import org.hibernate.annotations.ParamDef;
 
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -34,6 +37,8 @@ public class IrParamHwCalc implements Serializable, EntityIdentifier {
 
 	private static final long serialVersionUID = -3199922647182076353L;
 
+	private static final String String = null;
+
 	@Id
 	private String baseYymm;
 	
@@ -47,7 +52,9 @@ public class IrParamHwCalc implements Serializable, EntityIdentifier {
 	private String matCd;	
 
 	@Id
-	private String paramTypCd;
+	@Enumerated (EnumType.STRING)
+//	private String paramTypCd;
+	private EParamTypCd paramTypCd;
 	
 	private Double paramVal;	
 	private String lastModifiedBy;

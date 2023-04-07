@@ -296,16 +296,16 @@ public class Main {
 		}
 		
 		jobList.clear();
-//		jobList.add("110");
-//		jobList.add("120");
-//		jobList.add("130");		
-//		jobList.add("150");
+		jobList.add("110");
+		jobList.add("120");
+		jobList.add("130");		
+		jobList.add("150");
 //		
-//		jobList.add("210");
-//		jobList.add("220");
-//		jobList.add("230");
-//		jobList.add("240");
-//		jobList.add("250");
+		jobList.add("210");
+		jobList.add("220");
+		jobList.add("230");
+		jobList.add("240");
+		jobList.add("250");
 		jobList.add("260");
 		jobList.add("270");
 		jobList.add("280");
@@ -776,11 +776,11 @@ public class Main {
 						continue;
 					}					
 
-					List<IrCurveSpot> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
+					List<IRateInput> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
 //					curveHisList = curveHisList.stream().filter(s -> Integer.valueOf(s.getBaseDate()) >= 20110701).collect(toList());
 					
 					//Any curveBaseList result in same parameters and spreads.
-					List<IrCurveSpot> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
+					List<IRateInput> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
 					
 					if(curveBaseList.size()==0) {
 						log.warn("No IR Curve Data [IR_CURVE_NM: {}] for [{}]", irCurveNm, bssd);
@@ -1170,7 +1170,7 @@ public class Main {
 		
 					log.info("[{}] has been Deleted in Job:[{}] [IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrValidParamHw.class.getSimpleName()), jobLog.getJobId(), irCurveNm, delNum3);
 					
-					List<IrCurveSpot> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);
+					List<IRateInput> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);
 					
 					log.info("SPOT RATE: [ID: {}], [SIZE: {}]", irCurveNm, spotList.size());					
 					if(spotList.size()==0) {
@@ -1270,7 +1270,7 @@ public class Main {
 					
 					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamHwCalc.class.getSimpleName()), jobLog.getJobId(), irModelNmNsp, irCurveNm, delNum);
 
-					List<IrCurveSpot> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);
+					List<IRateInput> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);
 					
 					log.info("SPOT RATE: [ID: {}], [SIZE: {}]", irCurveNm, spotList.size());					
 					if(spotList.size()==0) {
@@ -1314,14 +1314,15 @@ public class Main {
 					//TODO: Market Data(Spot and Swaption Vol Stability Test for [Spot +1bp, Spot -1bp, Swaption Vol +1bp, Swaption Vol -1bp]
 					double[] hwInitParamMkt = new double[] {hw1fInitAlpha, hw1fInitAlpha, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma};				
 					
-					List<IrCurveSpot> spotListUp = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);
-					spotListUp.stream().forEach(s -> s.setSpotRate(s.getSpotRate() + 0.0001));
+					List<IRateInput> spotListUp = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList, 0.0001);
+					
+//					spotListUp.stream().forEach(s -> s.setSpotRate(s.getSpotRate() + 0.0001));
 					List<IrParamHwCalc> hwParamCalcSpotUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(bssd, irModelNmNsp + "_SPOT_UP", irCurveNm, spotListUp, swpnVolList, hwInitParamMkt, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
 					hwParamCalcSpotUp.forEach(s -> session.save(s));
 										
 					
-					List<IrCurveSpot> spotListDn = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
-					spotListDn.stream().forEach(s -> s.setSpotRate(s.getSpotRate() - 0.0001));
+					List<IRateInput> spotListDn = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList, -0.0001);					
+//					spotListDn.stream().forEach(s -> s.setSpotRate(s.getSpotRate() - 0.0001));
 					List<IrParamHwCalc> hwParamCalcSpotDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(bssd, irModelNmNsp + "_SPOT_DN", irCurveNm, spotListDn, swpnVolList, hwInitParamMkt, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
 					hwParamCalcSpotDn.forEach(s -> session.save(s));
 					

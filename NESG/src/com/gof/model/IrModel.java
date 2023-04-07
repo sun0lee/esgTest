@@ -23,10 +23,10 @@ import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
 
 import com.gof.entity.IrCurve;
-import com.gof.entity.IrCurveSpot;
-import com.gof.entity.IrCurveYtm;
-import com.gof.interfaces.Constant;
 import com.gof.interfaces.IRateInput;
+//import com.gof.entity.IrCurveSpot;
+//import com.gof.entity.IrCurveYtm;
+import com.gof.interfaces.Constant;
 import com.gof.model.entity.SmithWilsonRslt;
 import com.gof.util.DateUtil;
 
@@ -70,21 +70,18 @@ public abstract class IrModel implements Constant {
 	protected Map<String, Map<Double, Double>> termStructureHis     = new TreeMap<String, Map<Double, Double>>();	
 	
 
-	public void setTermStructureBase(List<IrCurveSpot> irCurveHisList) {
-		
-//		this.tenor = irCurveHis.stream().map(s -> Double.parseDouble(s.getMatCd().substring(1, 5)) / 12.0).mapToDouble(Double::doubleValue).toArray();
-		for(IrCurveSpot curve : irCurveHisList) 
-			this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getSpotRate());		
-		setTermStructureBase(this.termStructureBase);							
-	}
+//	public void setTermStructureBase(List<IrCurveSpot> irCurveHisList) {
+//		
+////		this.tenor = irCurveHis.stream().map(s -> Double.parseDouble(s.getMatCd().substring(1, 5)) / 12.0).mapToDouble(Double::doubleValue).toArray();
+//		for(IrCurveSpot curve : irCurveHisList) 
+//			this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getSpotRate());		
+//		setTermStructureBase(this.termStructureBase);							
+//	}
 	
-
-//	public void setTermStructureYtm(List<IrCurveYtm> ytmCurveHisList) {	
-	public void setTermStructureYtm(List<IRateInput> ytmCurveHisList) {	
-
-//		for(IrCurveYtm curve : ytmCurveHisList) 
-		for(IRateInput curve : ytmCurveHisList) 
-//			this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getYtm());		
+	// 23.04.07 add (ytm,spot rate 구분없이 사용하려는 목적 )
+	public void setTermStructure(List<IRateInput> CurveHisList) {	
+		
+		for(IRateInput curve : CurveHisList) 
 			this.termStructureBase.put(Double.parseDouble(curve.getMatCd().substring(1, 5)) / MONTH_IN_YEAR, curve.getRate());		
 		setTermStructureBase(this.termStructureBase);							
 	}	
@@ -474,39 +471,39 @@ public abstract class IrModel implements Constant {
 		return eigvMap;
 	}		
 	
-	
-	protected static List<IrCurveSpot> setIrCurveHisInt(String[] dateHis, String[] matCd, double[][] iRateHis) {
-		
-		List<IrCurveSpot> curveHis = new ArrayList<IrCurveSpot>();
-		
-		for(int i=0; i<dateHis.length; i++) {
-			for(int j=0; j<matCd.length; j++) {
-				IrCurveSpot crv = new IrCurveSpot();
-				crv.setBaseDate(dateHis[i]);
-				crv.setIrCurveNm("1111111");
-				crv.setMatCd(matCd[j]);
-				crv.setSpotRate(iRateHis[i][j]);
-				curveHis.add(crv);				
-			}
-		}		
-		return curveHis;
-	}
+//	@Deprecated
+//	protected static List<IrCurveSpot> setIrCurveHisInt(String[] dateHis, String[] matCd, double[][] iRateHis) {
+//		
+//		List<IrCurveSpot> curveHis = new ArrayList<IrCurveSpot>();
+//		
+//		for(int i=0; i<dateHis.length; i++) {
+//			for(int j=0; j<matCd.length; j++) {
+//				IrCurveSpot crv = new IrCurveSpot();
+//				crv.setBaseDate(dateHis[i]);
+//				crv.setIrCurveNm("1111111");
+//				crv.setMatCd(matCd[j]);
+//				crv.setSpotRate(iRateHis[i][j]);
+//				curveHis.add(crv);				
+//			}
+//		}		
+//		return curveHis;
+//	}
 
-	
-	protected static List<IrCurveSpot> setIrCurveHisBase(String baseDate, String[] matCd, double[] baseRate) {
-		
-		List<IrCurveSpot> curveHis = new ArrayList<IrCurveSpot>();
-		
-		for(int i=0; i<matCd.length; i++) {
-			IrCurveSpot crv = new IrCurveSpot();
-			crv.setBaseDate(baseDate);
-			crv.setIrCurveNm("1111111");
-			crv.setMatCd(matCd[i]);
-		    crv.setSpotRate(baseRate[i]);
-		    curveHis.add(crv);
-		}		
-		return curveHis;
-	}
+//	@Deprecated
+//	protected static List<IrCurveSpot> setIrCurveHisBase(String baseDate, String[] matCd, double[] baseRate) {
+//		
+//		List<IrCurveSpot> curveHis = new ArrayList<IrCurveSpot>();
+//		
+//		for(int i=0; i<matCd.length; i++) {
+//			IrCurveSpot crv = new IrCurveSpot();
+//			crv.setBaseDate(baseDate);
+//			crv.setIrCurveNm("1111111");
+//			crv.setMatCd(matCd[i]);
+//		    crv.setSpotRate(baseRate[i]);
+//		    curveHis.add(crv);
+//		}		
+//		return curveHis;
+//	}
 		
 
 

@@ -38,12 +38,22 @@ public class SmithWilsonKicsBts extends IrModel {
 	/**
 	 * 자산평가용 
 	 * @param IrCurveYtm 
-	 * @param ltfr = this.iRateBase[this.iRateBase.length-1] ; 마지막값  */
+	 * @param ltfr = iRateBase[this.iRateBase.length-1] ; 마지막값  
+	 * @param alphaApplied 0.1 
+	 * @param freq 이자지급주기 2  */
+	
 	@Builder(builderClassName="of", builderMethodName="of")
-	public SmithWilsonKicsBts(LocalDate baseDate, List<IRateInput> ytmCurveHisList, Double alphaApplied, Boolean isRealNumber, Integer freq, Double liqPrem) {				
+	public SmithWilsonKicsBts(LocalDate baseDate
+							, List<IRateInput> ytmCurveHisList
+							, Double alphaApplied
+							, Boolean isRealNumber
+							, Integer freq
+							, Double liqPrem) 
+	{				
 		super();		
-		this.baseDate = baseDate; // 날짜별로 처리하고 있기 때문에 굳이 가지고 들어올 필요가 없긴한데..
-		this.setTermStructureYtm(ytmCurveHisList);
+		this.baseDate = baseDate;
+//		this.setTermStructureYtm(ytmCurveHisList);
+		this.setTermStructure(ytmCurveHisList);
 		this.setLastLiquidPoint(this.tenor[this.tenor.length-1]);
 		this.isRealNumber = (isRealNumber == null ? true : isRealNumber);		
 		this.alphaApplied = (alphaApplied == null ? 0.1  : alphaApplied);		

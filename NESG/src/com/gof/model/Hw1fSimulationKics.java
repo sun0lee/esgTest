@@ -13,6 +13,7 @@ import org.apache.commons.math3.random.GaussianRandomGenerator;
 import org.apache.commons.math3.random.MersenneTwister;
 
 import com.gof.entity.IrParamHwRnd;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.Hw1fCalibParas;
 import com.gof.model.entity.IrModelBondYield;
 import com.gof.model.entity.IrModelSce;
@@ -84,12 +85,29 @@ public class Hw1fSimulationKics extends IrModel {
 	protected TreeMap<String, Double> sigmaMap = new TreeMap<String, Double>();	
 	
 
-	public Hw1fSimulationKics(LocalDate baseDate, List<IrCurveSpot> iRateBaseList, List<Hw1fCalibParas> hwParasList, int[] alphaPiece, int[] sigmaPiece, String mode, boolean priceAdj, int scenNum, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int dayCountBasis, int randomGenType) {				
+	public Hw1fSimulationKics(LocalDate baseDate
+//			                , List<IrCurveSpot> iRateBaseList
+			                , List<IRateInput> iRateBaseList
+			                , List<Hw1fCalibParas> hwParasList
+			                , int[] alphaPiece
+			                , int[] sigmaPiece
+			                , String mode
+			                , boolean priceAdj
+			                , int scenNum
+			                , char cmpdType
+			                , boolean isRealNumber
+			                , double ltfr
+			                , int ltfrT
+			                , int prjYear
+			                , int dayCountBasis
+			                , int randomGenType) 
+	{				
 
 		super();		
 		this.baseDate = baseDate;
 		this.isRealNumber = isRealNumber;		
-		this.setTermStructureBase(iRateBaseList);
+//		this.setTermStructureBase(iRateBaseList);
+		this.setTermStructure(iRateBaseList);
 		
 		Arrays.sort(alphaPiece);
 		Arrays.sort(sigmaPiece);		
@@ -114,12 +132,26 @@ public class Hw1fSimulationKics extends IrModel {
 	}	
 	
 	
-	public Hw1fSimulationKics(String bssd, List<IrCurveSpot> iRateBaseList, List<Hw1fCalibParas> hwParasList, int[] alphaPiece, int[] sigmaPiece, boolean priceAdj, int scenNum, double ltfr, int ltfrT, int prjYear, int randomGenType, int seedNum) {				
+	public Hw1fSimulationKics(String bssd
+//							, List<IrCurveSpot> iRateBaseList
+							, List<IRateInput> iRateBaseList
+							, List<Hw1fCalibParas> hwParasList
+							, int[] alphaPiece
+							, int[] sigmaPiece
+							, boolean priceAdj
+							, int scenNum
+							, double ltfr
+							, int ltfrT
+							, int prjYear
+							, int randomGenType
+							, int seedNum) 
+	{				
 
 		super();		
 		this.baseDate = DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth());
 		this.isRealNumber = true;		
-		this.setTermStructureBase(iRateBaseList);
+//		this.setTermStructureBase(iRateBaseList);
+		this.setTermStructure(iRateBaseList);
 		
 		Arrays.sort(alphaPiece);
 		Arrays.sort(sigmaPiece);		
@@ -145,12 +177,29 @@ public class Hw1fSimulationKics extends IrModel {
 	}	
 
 	
-	public Hw1fSimulationKics(LocalDate baseDate, List<IrCurveSpot> iRateBaseList, List<Hw1fCalibParas> hwParasList, int[] alphaPiece, int[] sigmaPiece, String mode, boolean priceAdj, int scenNum, char cmpdType, boolean isRealNumber, double ltfr, int ltfrT, int prjYear, int dayCountBasis, List<IrParamHwRnd> randScen) {		
+	public Hw1fSimulationKics(LocalDate baseDate
+//							, List<IrCurveSpot> iRateBaseList
+							, List<IRateInput> iRateBaseList
+							, List<Hw1fCalibParas> hwParasList
+							, int[] alphaPiece
+							, int[] sigmaPiece
+							, String mode
+							, boolean priceAdj
+							, int scenNum
+							, char cmpdType
+							, boolean isRealNumber
+							, double ltfr
+							, int ltfrT
+							, int prjYear
+							, int dayCountBasis
+							, List<IrParamHwRnd> randScen) 
+	{		
 
 		super();		
 		this.baseDate = baseDate;		
 		this.isRealNumber = isRealNumber;		
-		this.setTermStructureBase(iRateBaseList);
+//		this.setTermStructureBase(iRateBaseList);
+		this.setTermStructure(iRateBaseList);
 			
 		Arrays.sort(alphaPiece);
 		Arrays.sort(sigmaPiece);		
@@ -173,12 +222,14 @@ public class Hw1fSimulationKics extends IrModel {
 	}		
 	
 	
-	public Hw1fSimulationKics(String bssd, List<IrCurveSpot> iRateBaseList, List<Hw1fCalibParas> hwParasList, int[] alphaPiece, int[] sigmaPiece, boolean priceAdj, int scenNum, double ltfr, int ltfrT, int prjYear, List<IrParamHwRnd> randScen) {
+//	public Hw1fSimulationKics(String bssd, List<IrCurveSpot> iRateBaseList, List<Hw1fCalibParas> hwParasList, int[] alphaPiece, int[] sigmaPiece, boolean priceAdj, int scenNum, double ltfr, int ltfrT, int prjYear, List<IrParamHwRnd> randScen) {
+	public Hw1fSimulationKics(String bssd, List<IRateInput> iRateBaseList, List<Hw1fCalibParas> hwParasList, int[] alphaPiece, int[] sigmaPiece, boolean priceAdj, int scenNum, double ltfr, int ltfrT, int prjYear, List<IrParamHwRnd> randScen) {
 		
 		super();		
 		this.baseDate = DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth());
 		this.isRealNumber = true;		
-		this.setTermStructureBase(iRateBaseList);
+//		this.setTermStructureBase(iRateBaseList);
+		this.setTermStructure(iRateBaseList);
 		
 		Arrays.sort(alphaPiece);
 		Arrays.sort(sigmaPiece);		

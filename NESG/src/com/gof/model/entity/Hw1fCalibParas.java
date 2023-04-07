@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwCalc;
+import com.gof.enums.EParamTypCd;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -48,7 +49,8 @@ public class Hw1fCalibParas implements Serializable {
 			alphaRst.setIrModelId(irModelId);
 			alphaRst.setIrCurveId(irCurveId);
 			alphaRst.setMatCd(this.matCd);
-			alphaRst.setParamTypCd("ALPHA");			
+//			alphaRst.setParamTypCd("ALPHA");			
+			alphaRst.setParamTypCd(EParamTypCd.ALPHA);			
 			alphaRst.setParamVal(this.alpha);
 			rstList.add(alphaRst);
 		}
@@ -59,7 +61,8 @@ public class Hw1fCalibParas implements Serializable {
 			sigmaRst.setIrModelId(irModelId);
 			sigmaRst.setIrCurveId(irCurveId);
 			sigmaRst.setMatCd(this.matCd);
-			sigmaRst.setParamTypCd("SIGMA");
+//			sigmaRst.setParamTypCd("SIGMA");
+			sigmaRst.setParamTypCd(EParamTypCd.SIGMA);
 			sigmaRst.setParamVal(this.sigma);				
 			rstList.add(sigmaRst);
 		}
@@ -70,7 +73,8 @@ public class Hw1fCalibParas implements Serializable {
 			costRst.setIrModelId(irModelId);
 			costRst.setIrCurveId(irCurveId);
 			costRst.setMatCd(this.matCd);
-			costRst.setParamTypCd("COST");
+//			costRst.setParamTypCd("COST");
+			costRst.setParamTypCd(EParamTypCd.COST);
 			costRst.setParamVal(this.cost);				
 			rstList.add(costRst);
 		}
@@ -88,7 +92,8 @@ public class Hw1fCalibParas implements Serializable {
 			alphaRst.setIrModelId(irModelId);
 			alphaRst.setIrCurveId(irCurveId);
 			alphaRst.setMatCd(this.matCd);
-			alphaRst.setParamTypCd("ALPHA");			
+//			alphaRst.setParamTypCd("ALPHA");			
+			alphaRst.setParamTypCd(EParamTypCd.ALPHA);			
 			alphaRst.setParamVal(this.alpha);
 			rstList.add(alphaRst);
 		}
@@ -99,7 +104,8 @@ public class Hw1fCalibParas implements Serializable {
 			sigmaRst.setIrModelId(irModelId);
 			sigmaRst.setIrCurveId(irCurveId);
 			sigmaRst.setMatCd(this.matCd);
-			sigmaRst.setParamTypCd("SIGMA");
+//			sigmaRst.setParamTypCd("SIGMA");
+			sigmaRst.setParamTypCd(EParamTypCd.SIGMA);
 			sigmaRst.setParamVal(this.sigma);				
 			rstList.add(sigmaRst);
 		}
@@ -110,7 +116,8 @@ public class Hw1fCalibParas implements Serializable {
 			costRst.setIrModelId(irModelId);
 			costRst.setIrCurveId(irCurveId);
 			costRst.setMatCd(this.matCd);
-			costRst.setParamTypCd("COST");
+//			costRst.setParamTypCd("COST");
+			costRst.setParamTypCd(EParamTypCd.COST);
 			costRst.setParamVal(this.cost);				
 			rstList.add(costRst);
 		}
@@ -128,11 +135,11 @@ public class Hw1fCalibParas implements Serializable {
 		List<Hw1fCalibParas> rstList = new ArrayList<Hw1fCalibParas>();
 		int aplphaMatNum = Integer.valueOf(alphaMatCd.substring(1));
 		
-		double alpha1  = bizParam.stream().filter(s->s.getMatCd().equals(alphaMatCd) && s.getParamTypCd().equals("ALPHA")).mapToDouble(IrParamHwBiz::getParamVal).sum();
-		double alpha2  = bizParam.stream().filter(s->s.getMatCd().equals("M1200") && s.getParamTypCd().equals("ALPHA")).mapToDouble(IrParamHwBiz::getParamVal).sum();		
-		double sigmaLt = bizParam.stream().filter(s->s.getMatCd().equals("M1200") && s.getParamTypCd().equals("SIGMA")).mapToDouble(IrParamHwBiz::getParamVal).sum();		
+		double alpha1  = bizParam.stream().filter(s->s.getMatCd().equals(alphaMatCd) && s.getParamTypCd()==EParamTypCd.ALPHA).mapToDouble(IrParamHwBiz::getParamVal).sum();
+		double alpha2  = bizParam.stream().filter(s->s.getMatCd().equals("M1200")    && s.getParamTypCd()==EParamTypCd.ALPHA).mapToDouble(IrParamHwBiz::getParamVal).sum();		
+		double sigmaLt = bizParam.stream().filter(s->s.getMatCd().equals("M1200")    && s.getParamTypCd()==EParamTypCd.SIGMA).mapToDouble(IrParamHwBiz::getParamVal).sum();		
 	
-		List<IrParamHwBiz> sigmaList = bizParam.stream().filter(s-> s.getParamTypCd().equals("SIGMA")).collect(toList());				
+		List<IrParamHwBiz> sigmaList = bizParam.stream().filter(s-> s.getParamTypCd()==EParamTypCd.SIGMA).collect(toList());				
 		
 		for(IrParamHwBiz sigma : sigmaList) {
 			
@@ -147,7 +154,7 @@ public class Hw1fCalibParas implements Serializable {
 		}
 		
 		Set<String> sigmaMatCd = sigmaList.stream().map(s -> s.getMatCd()).collect(Collectors.toSet());		
-		List<IrParamHwBiz> alphaList = bizParam.stream().filter(s-> s.getParamTypCd().equals("ALPHA")).collect(toList());
+		List<IrParamHwBiz> alphaList = bizParam.stream().filter(s-> s.getParamTypCd()==EParamTypCd.ALPHA).collect(toList());
 		
 		for(IrParamHwBiz alpha : alphaList) {
 			if(!sigmaMatCd.contains(alpha.getMatCd())) {

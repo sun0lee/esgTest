@@ -13,6 +13,7 @@ import com.gof.entity.IrSprdCurve;
 import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.enums.EBoolean;
+import com.gof.interfaces.IRateInput;
 import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
 
@@ -393,7 +394,7 @@ public class IrCurveSpotDao extends DaoUtil {
 	}
 	
 
-	public static List<IrCurveSpot> getIrCurveSpot(String bssd, String irCurveNm, List<String> tenorList) {
+	public static List<IRateInput> getIrCurveSpot(String bssd, String irCurveNm, List<String> tenorList) {
 		
 		session.clear();
 		
@@ -405,12 +406,36 @@ public class IrCurveSpotDao extends DaoUtil {
 					 + " order by a.matCd              "
 					 ;
 		
-		List<IrCurveSpot> curveRst = session.createQuery(query, IrCurveSpot.class)
+		List<IRateInput> curveRst = session.createQuery(query, IRateInput.class)
 											.setParameter("irCurveNm", irCurveNm)
 											.setParameter("bssd", getMaxBaseDate(bssd, irCurveNm))
 											.setParameterList("matCdList", tenorList)
 											.getResultList()
 											;
+		return curveRst;
+	}	
+	
+	// 23.04.07 add 
+	public static List<IRateInput> getIrCurveSpot(String bssd, String irCurveNm, List<String> tenorList, Double adjSpred) {
+		
+		session.clear();
+		
+		String query = "select new com.gof.entity.IRateInput a.baseDate, a.irCurveNm, a.irCurveSid, a.matCd , a.spotRate + :adjSpread as spotRate  " // 이게 될까? 
+				+ "from IrCurveSpot a    "
+				+ " where 1=1                     "
+				+ "   and a.irCurveNm =:irCurveNm "
+				+ "   and a.baseDate  = :bssd	   "
+				+ "   and a.matCd in (:matCdList) "
+				+ " order by a.matCd              "
+				;
+		
+		List<IRateInput> curveRst = session.createQuery(query, IRateInput.class)
+				.setParameter("irCurveNm", irCurveNm)
+				.setParameter("bssd", getMaxBaseDate(bssd, irCurveNm))
+				.setParameterList("matCdList", tenorList)
+				.setParameter("adjSpread", adjSpred)
+				.getResultList()
+				;
 		return curveRst;
 	}	
 	

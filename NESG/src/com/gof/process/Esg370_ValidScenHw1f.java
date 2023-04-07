@@ -21,6 +21,8 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidSceSto;
 import com.gof.entity.StdAsstIrSceSto;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EParamTypCd;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.Hw1fSimulationKics;
 import com.gof.model.entity.Hw1fCalibParas;
 import com.gof.model.entity.IrModelSce;
@@ -53,7 +55,8 @@ public class Esg370_ValidScenHw1f extends Process {
 					continue;
 				}
 				
-				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());				
+//				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());				
+				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());				
 //				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());
 				if(adjSpotRate.isEmpty()) {
 					log.warn("No Spot Rate Data [ID: {}, SCE_NO: {}] for [{}] in [{}] Table", curveSwMap.getKey(), swSce.getKey(), bssd, Process.toPhysicalName(IrDcntRateBu.class.getSimpleName()));
@@ -68,9 +71,9 @@ public class Esg370_ValidScenHw1f extends Process {
 				List<Hw1fCalibParas> hwParasList = Hw1fCalibParas.convertFrom(paramHw);
 //				log.info("{}, {}", hwParasList);
 				
-				int[] alphaPiece = paramHw.stream().filter(s->s.getParamTypCd().equals("ALPHA") && s.getMatCd().equals("M0240"))
+				int[] alphaPiece = paramHw.stream().filter(s->s.getParamTypCd()==EParamTypCd.ALPHA && s.getMatCd().equals("M0240"))
 										  	       .mapToInt(s-> Integer.valueOf(s.getMatCd().split("M")[1])/12).toArray();
-				int[] sigmaPiece = paramHw.stream().filter(s->s.getParamTypCd().equals("SIGMA") && !s.getMatCd().equals("M1200") && !s.getMatCd().equals("M0240"))
+				int[] sigmaPiece = paramHw.stream().filter(s->s.getParamTypCd()==EParamTypCd.SIGMA && !s.getMatCd().equals("M1200") && !s.getMatCd().equals("M0240"))
 												   .mapToInt(s-> Integer.valueOf(s.getMatCd().split("M")[1])/12).toArray();	
 	//			log.info("{}, {}", alphaPiece, sigmaPiece);				
 				

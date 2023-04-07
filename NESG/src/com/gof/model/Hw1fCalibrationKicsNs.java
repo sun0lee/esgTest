@@ -30,6 +30,7 @@ import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrValidParamHw;
+import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.Hw1fCalibParas;
 import com.gof.model.entity.SmithWilsonRslt;
 import com.gof.model.entity.SwpnVolInfo;
@@ -79,12 +80,12 @@ public class Hw1fCalibrationKicsNs extends IrModel {
 	
 	protected List<SmithWilsonRslt> swRsltList = new ArrayList<SmithWilsonRslt>();	
 
-	public Hw1fCalibrationKicsNs(String bssd, List<IrCurveSpot> iRateBaseList, List<SwpnVolInfo> swpnVolInfo, int[] alphaPiece, int[] sigmaPiece, double[] initParas, int freq, double accuracy) {				
+	public Hw1fCalibrationKicsNs(String bssd, List<IRateInput> iRateBaseList, List<SwpnVolInfo> swpnVolInfo, int[] alphaPiece, int[] sigmaPiece, double[] initParas, int freq, double accuracy) {				
 		
 		super();		
 		this.baseDate = DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth());
 		this.isRealNumber = true;		
-		this.setTermStructureBase(iRateBaseList);
+		this.setTermStructure(iRateBaseList);
 		this.setSwpnVolInfo(swpnVolInfo);		
 		
 		Arrays.sort(alphaPiece);
@@ -109,12 +110,12 @@ public class Hw1fCalibrationKicsNs extends IrModel {
 		this.setLastLiquidPoint(this.tenor[this.tenor.length-1]);
 	}			
 	
-	public Hw1fCalibrationKicsNs(LocalDate baseDate, List<IrCurveSpot> iRateBaseList, List<SwpnVolInfo> swpnVolInfo, int[] alphaPiece, int[] sigmaPiece, double[] initParas, int freq, double notional,
+	public Hw1fCalibrationKicsNs(LocalDate baseDate, List<IRateInput> iRateBaseList, List<SwpnVolInfo> swpnVolInfo, int[] alphaPiece, int[] sigmaPiece, double[] initParas, int freq, double notional,
 			               char cmpdType, boolean isRealNumber, int prjInterval, int dayCountBasis, int itrMax, double accuracy) {				
 		super();		
 		this.baseDate = baseDate;
 		this.isRealNumber = isRealNumber;
-		this.setTermStructureBase(iRateBaseList);
+		this.setTermStructure(iRateBaseList);
 		this.setSwpnVolInfo(swpnVolInfo);
 		
 		Arrays.sort(alphaPiece);

@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import com.gof.dao.IrCurveYtmDao;
 import com.gof.dao.IrDcntRateDao;
-import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrDcntRate;
 import com.gof.entity.IrDcntRateBu;
@@ -25,7 +24,6 @@ import com.gof.model.SmithWilsonKics;
 import com.gof.model.SmithWilsonKicsBts;
 import com.gof.model.entity.SmithWilsonRslt;
 import com.gof.util.DateUtil;
-import com.gof.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,7 +54,7 @@ public class Esg270_IrDcntRate extends Process {
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
 				
 				log.info("BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", applBizDv, curveSwMap.getKey(), swSce.getKey());
-				List<IrCurveSpot> irCurveSpotList = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());
+				List<IRateInput>  irCurveSpotList = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());
 				
 				if(irCurveSpotList.size()==0) {
 					log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
@@ -65,9 +63,23 @@ public class Esg270_IrDcntRate extends Process {
 				
 				LocalDate baseDate = DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth());
 //				log.info("{}, {}, {}", swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear);
-
+				
 				// smith-wilson 변환 생성 (조정 금리커브)  
-				SmithWilsonKics swKics = new SmithWilsonKics(baseDate, irCurveSpotList, CMPD_MTD_DISC, true, swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear, 1, 100, DCB_MON_DIF);				
+//				SmithWilsonKics swKics = new SmithWilsonKics(baseDate, irCurveSpotList, CMPD_MTD_DISC, true, swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear, 1, 100, DCB_MON_DIF);	
+				
+				SmithWilsonKics swKics = SmithWilsonKics.of()
+										.baseDate       (baseDate)
+										.irCurveHisList (irCurveSpotList)
+										.cmpdType       (CMPD_MTD_DISC)
+										.isRealNumber   (true)
+										.ltfr           (swSce.getValue().getLtfr())
+										.ltfrT          (swSce.getValue().getLtfrCp())
+										.prjYear        (projectionYear)
+										.prjInterval    (1)
+										.alphaItrNum    (100)
+										.dayCountBasis  (DCB_MON_DIF)
+										.build();
+				
 				// dcntRate 들고 들어가서 변환함.
 				List<IrDcntRate> adjRateList = swKics.getSmithWilsonResultList().stream().map(s -> s.convert()).collect(Collectors.toList());
 				
@@ -77,7 +89,8 @@ public class Esg270_IrDcntRate extends Process {
 				TreeSet<Double> tenorList = adjRateList.stream().map(s -> Double.valueOf(1.0 * Integer.valueOf(s.getMatCd().substring(1)) / MONTH_IN_YEAR)).collect(Collectors.toCollection(TreeSet::new));
 				double[] prjTenor = tenorList.stream().mapToDouble(Double::doubleValue).toArray();				
 				
-				if(applBizDv.equals(EApplBizDv.KICS)) {
+				if(applBizDv==EApplBizDv.KICS) {
+					
 	  // KICS 기준시나리오 1 or 기타 별도 정의 6,7,8,9 
 					if( swSce.getKey()==1 || swSce.getKey() > 6) {
 						adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));										
@@ -91,11 +104,11 @@ public class Esg270_IrDcntRate extends Process {
 						}				
 						// 자산 할인율 산출을 위한 ytm smith-wilson 변환 
 						SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
-								.baseDate(baseDate)					
-								.ytmCurveHisList(ytmList)
-								.alphaApplied(swSce.getValue().getSwAlphaYtm())													 
-								.freq(StringUtil.objectToPrimitive(swSce.getValue().getFreq(), 2))
-								.build();						
+													.baseDate(baseDate)					
+													.ytmCurveHisList(ytmList)
+													.alphaApplied(swSce.getValue().getSwAlphaYtm())													 
+													.freq(swSce.getValue().getFreq())
+													.build();						
 						
 						baseRateSce1Map = swBts.getSmithWilsonResultList(prjTenor).stream().collect(Collectors.toMap(SmithWilsonRslt::getMatCd, Function.identity()));
 						
@@ -141,8 +154,8 @@ public class Esg270_IrDcntRate extends Process {
 					// 부채평가용 (조정 할인율 커브 :연속복리 spot rate사용 )
 					adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));		
 					
-//					List<IrCurveYtm> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
-					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
+					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey())
+											  .stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
 					if(ytmList.size()==0) {
 						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
 						continue;

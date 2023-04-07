@@ -112,7 +112,6 @@ public class IrCurveSpot  extends BaseEntity implements Serializable, IRateInput
 		copy.setSpotRate(org.getSpotRate());
 		
 		return copy;
-//		return org;
 	}
 	
 	
@@ -125,9 +124,19 @@ public class IrCurveSpot  extends BaseEntity implements Serializable, IRateInput
 		copy.setSpotRate( Math.log(1.0 + this.getSpotRate()));
 		
 		return copy;
-//		return org;
 	}
 	
+	public IRateInput convertToIRateInput() {
+		IrCurveSpot copy = new IrCurveSpot();
+		
+		copy.setBaseDate(this.getBaseDate());
+		copy.setIrCurve (this.getIrCurve());
+		copy.setIrCurveNm(this.getIrCurveNm());
+		copy.setMatCd(this.getMatCd());
+		copy.setSpotRate(this.getRate());
+		
+		return copy;
+	}
 
 //******************************************************Biz Method**************************************
 //	@Transient
