@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EIrModel;
 import com.gof.interfaces.EntityIdentifier;
 import com.gof.util.StringUtil;
 
@@ -40,7 +43,8 @@ public class IrSprdAfnsUsr  extends BaseEntity implements Serializable, EntityId
 
 	
 	private String baseYymm; 
-	private String irModelNm;
+	@Enumerated(EnumType.STRING)
+	private EIrModel irModelNm;
 	private String irCurveNm;	
 	private String matCd;	
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrVolSwpn;
 import com.gof.entity.IrVolSwpnUsr;
 import com.gof.util.FinUtils;
@@ -16,9 +17,9 @@ public class IrVolSwpnDao extends DaoUtil {
 	
 	private static Session session = HibernateUtil.getSessionFactory().openSession();
 	
-	public static List<IrVolSwpnUsr> getSwpnVolUsr(String bssd, String irCurveNm, List<String> swpnMatList) {
+	public static List<IrVolSwpnUsr> getSwpnVolUsr(String bssd, IrCurve irCurve, List<String> swpnMatList) {
 		
-		String baseDate = getMaxBaseDate(bssd, irCurveNm);
+		String baseDate = getMaxBaseDate(bssd, irCurve);
 //		23.02.27 왜 여기서 가만히 있지 ???
 //		String baseDate = "20210331";
 		
@@ -31,14 +32,14 @@ public class IrVolSwpnDao extends DaoUtil {
 		
 		return session.createQuery(query, IrVolSwpnUsr.class)
 					  .setParameter("baseDate", baseDate)
-					  .setParameter("irCurveNm", irCurveNm)
+					  .setParameter("irCurveNm", irCurve.getIrCurveNm())
 					  .setParameterList("swpnMatList", swpnMatList)
 					  .getResultList()
 					  ;
 	}
 	
 	
-	public static String getMaxBaseDate(String bssd, String irCurveNm) {
+	public static String getMaxBaseDate(String bssd, IrCurve irCurve) {
 		
 		String query = "select max(a.baseDate)               "
 					 + "from IrVolSwpnUsr a                  "
@@ -49,11 +50,11 @@ public class IrVolSwpnDao extends DaoUtil {
 		
 		Object maxDate = session.createQuery(query)					
 								.setParameter("bssd", bssd)
-				 			 	.setParameter("irCurveNm", irCurveNm)
+				 			 	.setParameter("irCurveNm", irCurve.getIrCurveNm())
 								.uniqueResult();
 		
 		if(maxDate == null) {
-			log.warn("Swaption Volatility is not found [IR_CURVE_NM: {}] at [{}]" , irCurveNm, bssd);
+			log.warn("Swaption Volatility is not found [IR_CURVE_NM: {}] at [{}]" , irCurve.getIrCurveNm(), bssd);
 			return bssd;
 		}		
 		

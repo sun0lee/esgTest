@@ -18,6 +18,8 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EBoolean;
+import com.gof.enums.EIrModel;
+import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -42,7 +44,8 @@ public class IrParamModel  extends BaseEntity implements Serializable {
 	@Id
 	private long id;
 
-	private String irModelNm;		
+	@Enumerated(EnumType.STRING)
+	private EIrModel irModelNm;		
 	private String irModelName;
 	
 	private String irCurveNm;
@@ -60,4 +63,10 @@ public class IrParamModel  extends BaseEntity implements Serializable {
 	@JoinColumn(name = "IR_CURVE_SID")
 	private IrCurve irCurve ;
 
+	
+		public Double getItrTol() {
+			return itrTol = StringUtil.objectToPrimitive(itrTol, 1E-8) ;	
+		}
+
+	
 }

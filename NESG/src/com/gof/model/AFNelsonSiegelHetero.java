@@ -35,6 +35,8 @@ import com.gof.entity.IrDcntSceDetBiz;
 import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamAfnsCalc;
 import com.gof.entity.IrSprdAfnsCalc;
+import com.gof.enums.EIrModel;
+import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 
@@ -47,7 +49,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AFNelsonSiegelHetero extends IrModel {		
 	
-	protected String        mode;
+//	protected String        mode;
+	protected EIrModel      mode;
 	protected double[]      inputParas;
 	protected double[]      initParas;
 	protected double[]      optParas;
@@ -91,15 +94,15 @@ public class AFNelsonSiegelHetero extends IrModel {
 	
 		
 	public AFNelsonSiegelHetero(LocalDate baseDate, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, double dt, double initSigma) {				
-		this(baseDate, "AFNS", null, iRateHisList, iRateBaseList, false       , CMPD_MTD_DISC, dt, initSigma, DCB_MON_DIF, 0.045, 0.045, 60  , 0.0032  , 1.0/12, 0.05, 2.0, 3, 140    , 1e-10, 100, 0.995, 0.001);		
+		this(baseDate, EIrModel.AFNS, null, iRateHisList, iRateBaseList, false       , CMPD_MTD_DISC, dt, initSigma, DCB_MON_DIF, 0.045, 0.045, 60  , 0.0032  , 1.0/12, 0.05, 2.0, 3, 140    , 1e-10, 100, 0.995, 0.001);		
 	}	
 	
-	public AFNelsonSiegelHetero(LocalDate baseDate, String mode, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
+	public AFNelsonSiegelHetero(LocalDate baseDate, EIrModel mode, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
 			              double ltfrL, double ltfrA, int ltfrT, double liqPrem, int prjYear) {		
 		this(baseDate, mode  , null, iRateHisList, iRateBaseList, isRealNumber, cmpdType     , dt, initSigma, DCB_MON_DIF, ltfrL, ltfrA, ltfrT, liqPrem, 1.0/12, 0.05, 2.0, 3, prjYear, 1e-10, 100, 0.995, 0.001);		
 	}
 	
-	public AFNelsonSiegelHetero(LocalDate baseDate, String mode, List<IrParamAfnsBiz> inputParas, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
+	public AFNelsonSiegelHetero(LocalDate baseDate, EIrModel mode, List<IrParamAfnsBiz> inputParas, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
 						  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
 
 		this.baseDate      = baseDate;
@@ -133,7 +136,7 @@ public class AFNelsonSiegelHetero extends IrModel {
 	}
 	
 	
-	public AFNelsonSiegelHetero(LocalDate baseDate, String mode, double[] inputParas, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
+	public AFNelsonSiegelHetero(LocalDate baseDate, EIrModel mode, double[] inputParas, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
 		                  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
 		
 		this.baseDate      = baseDate;		
@@ -269,27 +272,30 @@ public class AFNelsonSiegelHetero extends IrModel {
 			this.optLSC[2]    = -0.004801227043622508;
 		}
 		else {		
+//			Map<EParamTypCd, Double> paramMap = new HashMap<EParamTypCd, Double>();		
 			Map<String, Double> paramMap = new HashMap<String, Double>();		
 			paramMap = inputParas.stream().collect(Collectors.toMap(IrParamAfnsBiz::getParamTypCd, IrParamAfnsBiz::getParamVal));
 			
-			this.optParas[0]  = paramMap.getOrDefault("LAMBDA"  ,  1e-1);
-			this.optParas[1]  = paramMap.getOrDefault("THETA_1" ,  1e-2);
-			this.optParas[2]  = paramMap.getOrDefault("THETA_2" , -1e-3);
-			this.optParas[3]  = paramMap.getOrDefault("THETA_3" , -1e-3);
-			this.optParas[4]  = paramMap.getOrDefault("KAPPA_1" ,  1e-1);
-			this.optParas[5]  = paramMap.getOrDefault("KAPPA_2" ,  1e-1);
-			this.optParas[6]  = paramMap.getOrDefault("KAPPA_3" ,  1e-1);
-			this.optParas[7]  = paramMap.getOrDefault("SIGMA_11",  1e-2);
-			this.optParas[8]  = paramMap.getOrDefault("SIGMA_21",  0e-2);
-			this.optParas[9]  = paramMap.getOrDefault("SIGMA_22",  1e-2);
-			this.optParas[10] = paramMap.getOrDefault("SIGMA_31",  0e-2);
-			this.optParas[11] = paramMap.getOrDefault("SIGMA_32", -1e-2);
-			this.optParas[12] = paramMap.getOrDefault("SIGMA_33",  1e-2);
-			this.optParas[13] = paramMap.getOrDefault("EPSILON" ,  1e-1);
+			// TODO : ENUMSET 반복자로 정의할수 있을듯 
+			this.optParas[0]  = paramMap.getOrDefault(EParamTypCd.LAMBDA  ,  1e-1);
+			this.optParas[1]  = paramMap.getOrDefault(EParamTypCd.THETA_1 ,  1e-2);
+			this.optParas[2]  = paramMap.getOrDefault(EParamTypCd.THETA_2 , -1e-3);
+			this.optParas[3]  = paramMap.getOrDefault(EParamTypCd.THETA_3 , -1e-3);
+			this.optParas[4]  = paramMap.getOrDefault(EParamTypCd.KAPPA_1 ,  1e-1);
+			this.optParas[5]  = paramMap.getOrDefault(EParamTypCd.KAPPA_2 ,  1e-1);
+			this.optParas[6]  = paramMap.getOrDefault(EParamTypCd.KAPPA_3 ,  1e-1);
+			this.optParas[7]  = paramMap.getOrDefault(EParamTypCd.SIGMA_11,  1e-2);
+			this.optParas[8]  = paramMap.getOrDefault(EParamTypCd.SIGMA_21,  0e-2);
+			this.optParas[9]  = paramMap.getOrDefault(EParamTypCd.SIGMA_22,  1e-2);
+			this.optParas[10] = paramMap.getOrDefault(EParamTypCd.SIGMA_31,  0e-2);
+			this.optParas[11] = paramMap.getOrDefault(EParamTypCd.SIGMA_32, -1e-2);
+			this.optParas[12] = paramMap.getOrDefault(EParamTypCd.SIGMA_33,  1e-2);
+			this.optParas[13] = paramMap.getOrDefault(EParamTypCd.EPSILON ,  1e-1);
 			
-			this.optLSC[0]    = paramMap.getOrDefault("L0"      ,  1e-2);
-			this.optLSC[1]    = paramMap.getOrDefault("S0"      , -1e-3);
-			this.optLSC[2]    = paramMap.getOrDefault("C0"      , -1e-3);
+			this.optLSC[0]    = paramMap.getOrDefault(EParamTypCd.L0      ,  1e-2);
+			this.optLSC[1]    = paramMap.getOrDefault(EParamTypCd.S0      , -1e-3);
+			this.optLSC[2]    = paramMap.getOrDefault(EParamTypCd.C0      , -1e-3);
+
 		}			
 
 //		log.info("optParas:{}", this.optParas);
@@ -301,9 +307,6 @@ public class AFNelsonSiegelHetero extends IrModel {
 
 		List<IrParamAfnsCalc> paramList = new ArrayList<IrParamAfnsCalc>();
 		
-//		String[] optParaNames = new String[] {"LAMBDA"  , "THETA_1" , "THETA_2" , "THETA_3" , "KAPPA_1" , "KAPPA_2" , "KAPPA_3" , 
-//				                              "SIGMA_11", "SIGMA_21", "SIGMA_22", "SIGMA_31", "SIGMA_32", "SIGMA_33", "EPSILON" };		
-
 		String[] optParaNames = new String[] {"LAMBDA"  , "THETA_1" , "THETA_2"  , "THETA_3"  , "KAPPA_1"  , "KAPPA_2"  , "KAPPA_3" , 
 											  "SIGMA_11", "SIGMA_21", "SIGMA_22" , "SIGMA_31" , "SIGMA_32" , "SIGMA_33" , 
 											  "EPSILON1", "EPSILON2", "EPSILON3" , "EPSILON4" , "EPSILON5" , "EPSILON6" , "EPSILON7" ,

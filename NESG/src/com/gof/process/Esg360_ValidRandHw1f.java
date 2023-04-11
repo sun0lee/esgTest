@@ -21,6 +21,7 @@ import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidRnd;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.Hw1fSimulationKics;
@@ -35,7 +36,7 @@ public class Esg360_ValidRandHw1f extends Process {
 	public static final Esg360_ValidRandHw1f INSTANCE = new Esg360_ValidRandHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static List<IrParamHwRnd> createValidInputHw1f(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
+	public static List<IrParamHwRnd> createValidInputHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
 
 		List<IrParamHwRnd> randRst = new ArrayList<IrParamHwRnd>();
 		
@@ -93,7 +94,7 @@ public class Esg360_ValidRandHw1f extends Process {
 	}		
 	
 	
-	public static List<IrValidRnd> testRandNormality(String bssd, String irModelId, String irCurveId, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
+	public static List<IrValidRnd> testRandNormality(String bssd, EIrModel irModelId, String irCurveId, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
 		
 		List<IrValidRnd> rst = new ArrayList<IrValidRnd>();		
 		
@@ -207,7 +208,7 @@ public class Esg360_ValidRandHw1f extends Process {
 	}
 	
 	//TODO: Runs Test
-	public static List<IrValidRnd> testRandIndependency(String bssd, String irModelId, String irCurveId, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
+	public static List<IrValidRnd> testRandIndependency(String bssd, EIrModel irModelId, String irCurveId, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
 		
 		List<IrValidRnd> rst = new ArrayList<IrValidRnd>();		
 		

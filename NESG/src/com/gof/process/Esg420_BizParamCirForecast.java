@@ -8,6 +8,7 @@ import com.gof.dao.IrParamModelDao;
 import com.gof.entity.IrParamModelBiz;
 import com.gof.entity.IrParamModelCalc;
 import com.gof.entity.IrParamModelUsr;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class Esg420_BizParamCirForecast extends Process {
 	public static final Esg420_BizParamCirForecast INSTANCE = new Esg420_BizParamCirForecast();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrParamModelBiz> createBizCirForecastParam(String bssd, String irModelId, String irCurveId) {
+	public static List<IrParamModelBiz> createBizCirForecastParam(String bssd, EIrModel irModelId, String irCurveId) {
 		
 		List<IrParamModelBiz>  paramBiz  = new ArrayList<IrParamModelBiz>();
 		List<IrParamModelUsr>  paramUsr  = IrParamModelDao.getIrParamModelUsrList(bssd, irModelId, irCurveId);		

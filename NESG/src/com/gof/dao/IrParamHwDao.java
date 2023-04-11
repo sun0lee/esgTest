@@ -9,6 +9,7 @@ import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwCalc;
 import com.gof.entity.IrParamHwUsr;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
@@ -127,7 +128,7 @@ public class IrParamHwDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrParamHwBiz> getIrParamHwBizList(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId) {
+	public static List<IrParamHwBiz> getIrParamHwBizList(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId) {
 		
 		String query = " select a from IrParamHwBiz a    "
 				 	 + "  where 1=1                      " 

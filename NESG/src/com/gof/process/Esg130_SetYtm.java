@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.gof.dao.IrCurveYtmDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrCurveYtmUsr;
 import com.gof.entity.IrCurveYtmUsrHis;
@@ -22,11 +23,12 @@ public class Esg130_SetYtm extends Process {
 	public static final Esg130_SetYtm INSTANCE = new Esg130_SetYtm();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 
-	public static List<IRateInput> createYtmFromUsrHis(String bssd, String irCurveNm) {
+//	public static List<IRateInput> createYtmFromUsrHis(String bssd, String irCurveNm) {
+	public static List<IRateInput> createYtmFromUsrHis(String bssd, IrCurve irCurve) {
 				
 		List<IRateInput>       ytmList    = new ArrayList<IRateInput>();		
 		List<String>           ytmTen     = Arrays.asList("M0003", "M0006", "M0009", "M0012", "M0018", "M0024", "M0030", "M0036", "M0048", "M0060", "M0084", "M0120", "M0180", "M0240", "M0360", "M0600");		
-		List<IrCurveYtmUsrHis> ytmUsrList = IrCurveYtmDao.getIrCurveYtmUsrHis(bssd, irCurveNm);
+		List<IrCurveYtmUsrHis> ytmUsrList = IrCurveYtmDao.getIrCurveYtmUsrHis(bssd, irCurve);
 		
 		//Using Round Method: for avoiding truncation error in converting toReal Dimension
 		double toReal = 0.01;
@@ -39,7 +41,7 @@ public class Esg130_SetYtm extends Process {
 				IrCurveYtm ytm = new IrCurveYtm();			
 				
 				ytm.setBaseDate(usr.getBaseDate());				
-				ytm.setIrCurveNm(irCurveNm);				
+				ytm.setIrCurveNm(irCurve.getIrCurveNm());				
 				ytm.setIrCurve(usr.getIrCurve());				
 				ytm.setMatCd(ytmTen.get(i));
 					
@@ -111,9 +113,10 @@ public class Esg130_SetYtm extends Process {
 
 	
 	// 23.03.06 builder test
-	public static Stream<IRateInput> createYtmFromUsr(String bssd, String irCurveNm) {
+	public static Stream<IRateInput> createYtmFromUsr(String bssd, IrCurve irCurve) {
 
-		return IrCurveYtmDao.getIrCurveYtmUsr(bssd).filter(s->s.getIrCurveNm().equals(irCurveNm))
+//		return IrCurveYtmDao.getIrCurveYtmUsr(bssd).filter(s->s.getIrCurveNm().equals(irCurve.getIrCurveNm())) 
+		return IrCurveYtmDao.getIrCurveYtmUsr(bssd).filter(s->s.getIrCurve().equals(irCurve)) // nm 말고 irCurve자체로 비교 
 												   .map(s->Esg130_SetYtm.buildFromYtmUsr(s));
 	}
 	

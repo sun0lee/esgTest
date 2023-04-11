@@ -24,6 +24,7 @@ public class Esg240_LpSprd extends Process {
 	public static final Esg240_LpSprd INSTANCE = new Esg240_LpSprd();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
+
 	public static List<IrSprdLp> setLpFromSwMap(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
 		
 		List<IrSprdLp> rst = new ArrayList<IrSprdLp>();
@@ -42,7 +43,7 @@ public class Esg240_LpSprd extends Process {
 				int llp = swSce.getValue().getLlp();
 				for(String tenor : tenorList) {					
 //					log.info("tenor: {}, {}, {}", tenor, tenor.substring(1), swSce.getValue().getLlp());					
-
+					
 					if(Integer.valueOf(tenor.substring(1)) <=  llp * MONTH_IN_YEAR) {						
 						
 						IrSprdLp lp1 = new IrSprdLp();

@@ -44,7 +44,7 @@ public enum EApplBizDv {
 
   // static (정적) 메서드 : 인스턴스화 없이 클래스이름으로 직접 호출 가능함.
   // 객체와 무관하게 정의되므로 전역함수처럼 쓸 수 있음. 
-public static List<EApplBizDv> getUseBizList(){
+  public static List<EApplBizDv> getUseBizList(){
 	   List<EApplBizDv> rst = new ArrayList<EApplBizDv>();
 //	   rst = Stream.of(EApplBizDv.values()).filter(s->s.isUpperBizDv ==true).collect(toList());
 	   rst = Stream.of(EApplBizDv.values()).filter(s->s.isUpperBizDv ==true).collect(Collectors.toList());

@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 //import java.util.Map;
+import java.util.Map;
 
 import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrCurveYtm;
+import com.gof.entity.IrParamSw;
 import com.gof.enums.EJob;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.SmithWilsonKicsBts;
@@ -29,11 +31,14 @@ public class Esg150_YtmToSpotSw extends Process {
 	 * @param alphaApplied
 	 * @param freq
 	 * */
-	public static List<IrCurveSpot> createIrCurveSpot(List<IRateInput> ytmRst, Double alphaApplied, Integer freq) {		
+//	public static List<IrCurveSpot> createIrCurveSpot(List<IRateInput> ytmRst, Double alphaApplied, Integer freq) {		
+	public static List<IrCurveSpot> createIrCurveSpot(List<IRateInput> ytmRst, IrParamSw irparamSw ){		
 		
-		// 내부 변수로 정의 
-		String baseYmd   = ytmRst.get(0).getBaseDate();
-		IrCurve irCurve  = ytmRst.get(0).getIrCurve();
+		// 내부 변수로 정의 irCurveSwMap.get(irCurveNm)
+		String  baseYmd      = ytmRst.get(0).getBaseDate();
+		IrCurve irCurve      = ytmRst.get(0).getIrCurve();
+		Double  alphaApplied = irparamSw.getSwAlphaYtm();
+		Integer freq         = irparamSw.getFreq();
 		
 		
 		SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
@@ -73,7 +78,7 @@ public class Esg150_YtmToSpotSw extends Process {
 		spotRst.stream().forEach(s -> s.setModifiedBy("ESG150")); 			 // TODO : 작업마다 공통적으로 찍어주는 로그 처리
 		spotRst.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now())); // TODO : trigger 로 처리하기 
 //		
-		log.info("{}({}) creates [{}] results of [{}] in [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), spotRst.size(), baseYmd, toPhysicalName(IrCurveSpot.class.getSimpleName()));
+		log.info("{}({}) creates [{}] results of [{}] in [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), spotRst.size(), irCurve.getIrCurveNm(),baseYmd, toPhysicalName(IrCurveSpot.class.getSimpleName()));
 		
 		return spotRst;
 	}
