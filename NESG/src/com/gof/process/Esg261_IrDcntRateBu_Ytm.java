@@ -53,7 +53,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				
 	// 1. ytm -> spot 변환 (ytm에 직접 스프레드를 반영, 10.0 추가된 up down 시나리오 산출 부분 확인)
 				List<IRateInput> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
-//				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
+				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
 				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue())
 											.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
@@ -61,7 +61,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				// irCurveSid add 
 //				spotList.forEach(s-> s.setIrCurve(swSce.getValue().getIrCurve()));
 				spotList.forEach(s-> s.setIrCurve(irCurve));
-//				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));
+				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));
 				
 				TreeMap<String, Double> spotMap = spotList.stream()
 														  .collect(Collectors.toMap(IrCurveSpot::getMatCd

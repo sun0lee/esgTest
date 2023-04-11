@@ -294,15 +294,15 @@ public class Main {
 		
 		jobList.clear();
 //		jobList.add("110");
-		jobList.add("120");
-		jobList.add("130");		
-		jobList.add("150");
+//		jobList.add("120");
+//		jobList.add("130");		
+//		jobList.add("150");
 //		
-		jobList.add("210");
-		jobList.add("220");
-		jobList.add("230");
-		jobList.add("240");
-		jobList.add("250");
+//		jobList.add("210");
+//		jobList.add("220");
+//		jobList.add("230");
+//		jobList.add("240");
+//		jobList.add("250");
 		jobList.add("260");
 		jobList.add("270");
 		jobList.add("280");
@@ -867,11 +867,19 @@ public class Main {
 //				String irModelNm = "AFNS";		//for acquiring AFNS Shock Spread
 				EIrModel irModelNm = EIrModel.AFNS;
 
-				for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
+//				for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
 					// TODO : 260  
-					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  biz, bizIrParamSw.get(biz));				
+//					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  biz, bizIrParamSw.get(biz));				
+//					bizDcntRateBu.stream().forEach(s -> session.save(s));
+//				}
+					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  EApplBizDv.KICS, bizIrParamSw.get(EApplBizDv.KICS));				
 					bizDcntRateBu.stream().forEach(s -> session.save(s));
-				}
+					List<IrDcntRateBu> bizDcntRateBu1 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IFRS, bizIrParamSw.get(EApplBizDv.IFRS));				
+					bizDcntRateBu1.stream().forEach(s -> session.save(s));
+					List<IrDcntRateBu> bizDcntRateBu2 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.SAAS, bizIrParamSw.get(EApplBizDv.SAAS));				
+					bizDcntRateBu2.stream().forEach(s -> session.save(s));
+					List<IrDcntRateBu> bizDcntRateBu3 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IBIZ, bizIrParamSw.get(EApplBizDv.IBIZ));				
+					bizDcntRateBu3.stream().forEach(s -> session.save(s));
 				
 				session.flush();
 				session.clear();

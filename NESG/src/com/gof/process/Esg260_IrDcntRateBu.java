@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.gof.dao.IrCurveSpotDao;
 import com.gof.dao.IrSprdDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrParamSw;
@@ -27,33 +29,34 @@ public class Esg260_IrDcntRateBu extends Process {
 	public static final Esg260_IrDcntRateBu INSTANCE = new Esg260_IrDcntRateBu();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<IrCurve, Map<Integer, IrParamSw>> map) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {		
-			
-			List<IrCurveSpot> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, curveSwMap.getKey());
-//			List<IrCurveSpot> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, curveSwMap.getKey(), 20);	//for special purpose to fix llp to 20yrs(temp)
+		for(Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : map.entrySet()) {		
+			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
+			IrCurve irCurve = curveSwMap.getKey();
+			List<IrCurveSpot> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm);
+//			List<IrCurveSpot> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, 20);	//for special purpose to fix llp to 20yrs(temp)
 //			log.info("{}", spotList);
 			
 			TreeMap<String, Double> spotMap = spotList.stream().collect(Collectors.toMap(IrCurveSpot::getMatCd, IrCurveSpot::getSpotRate, (k, v) -> k, TreeMap::new));
 			
 			if(spotList.isEmpty()) {
-				log.warn("No IR Curve Spot Data [BIZ: {}, IR_CURVE_NM: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), toPhysicalName(IrCurveSpot.class.getSimpleName()), bssd);
+				log.warn("No IR Curve Spot Data [BIZ: {}, IR_CURVE_NM: {}] in [{}] for [{}]", applBizDv, irCurveNm, toPhysicalName(IrCurveSpot.class.getSimpleName()), bssd);
 				continue;
 			}
 
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 				
 				// (biz, irCurveNm) 만기별 유동성프리미엄 
-				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream()
+				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, irCurveNm, swSce.getKey()).stream()
 						                                   .collect(Collectors.toMap(IrSprdLpBiz::getMatCd, IrSprdLpBiz::getLiqPrem));
 
-//				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelId, curveSwMap.getKey(), swSce.getKey()).stream()
+//				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelId, irCurveNm, swSce.getKey()).stream()
 //															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 				// (biz, irCurveNm) 만기별 충격스프레드 
-				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, curveSwMap.getKey(), StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
+				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, irCurveNm, StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
 															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 				
 				//TODO: shallow copy vs deep copy
@@ -74,7 +77,7 @@ public class Esg260_IrDcntRateBu extends Process {
 				double addSprd  = swSce.getValue().getAddSprd();
 				int    llp      = swSce.getValue().getLlp();				
 				
-//				log.info("{}, {}, {}, {}, {}, {}, {}, {}, {}", applBizDv, curveSwMap.getKey(), swSce.getKey(), pvtMatCd, pvtRate, pvtMult, intMult, addSprd, llp);
+//				log.info("{}, {}, {}, {}, {}, {}, {}, {}, {}", applBizDv, irCurveNm, swSce.getKey(), pvtMatCd, pvtRate, pvtMult, intMult, addSprd, llp);
 				for(IrCurveSpot spot : spotSceList) {				
 					if(Integer.valueOf(spot.getMatCd().substring(1)) <= llp * MONTH_IN_YEAR) {
 						
@@ -109,8 +112,8 @@ public class Esg260_IrDcntRateBu extends Process {
 						
 						dcntRateBu.setBaseYymm(bssd);
 						dcntRateBu.setApplBizDv(applBizDv);
-						dcntRateBu.setIrCurveNm(curveSwMap.getKey());
-						dcntRateBu.setIrCurve(spot.getIrCurve()); // add 23.03.08
+						dcntRateBu.setIrCurveNm(irCurveNm);
+						dcntRateBu.setIrCurve(irCurve); 
 						dcntRateBu.setIrCurveSceNo(swSce.getKey());
 						dcntRateBu.setMatCd(spot.getMatCd());						
 						dcntRateBu.setSpotRateDisc(spotDisc);
