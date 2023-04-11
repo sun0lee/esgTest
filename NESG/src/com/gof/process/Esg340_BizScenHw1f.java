@@ -12,6 +12,7 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 import com.gof.dao.IrDcntRateDao;
 import com.gof.dao.IrParamHwDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrDcntSceStoBiz;
@@ -37,40 +38,47 @@ public class Esg340_BizScenHw1f extends Process {
 	public static final Esg340_BizScenHw1f INSTANCE = new Esg340_BizScenHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 
-	public static Map<String, List<?>> createScenHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear) {
+	public static Map<String, List<?>> createScenHw1f(String bssd
+													, EApplBizDv applBizDv
+													, EIrModel irModelId
+													, String irCurveId
+													, Integer irCurveSceNo
+													, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap
+													, Map<String, IrParamModel> modelMstMap
+													, Integer projectionYear) 
+	{
 		
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
 		List<IrParamHwRnd>    randRst = new ArrayList<IrParamHwRnd>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;				
 //				if(!applBizDv.equals("KICS") || !swSce.getKey().equals(1)) continue;
 				
-				if(!curveSwMap.getKey().equals(irCurveId) || !swSce.getKey().equals(irCurveSceNo)) continue;				
+				if(!irCurveNm.equals(irCurveId) || !swSce.getKey().equals(irCurveSceNo)) continue;				
 //				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", curveSwMap.getKey(), swSce.getKey());
 				
-				if(!modelMstMap.containsKey(curveSwMap.getKey())) {
-					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, curveSwMap.getKey(), Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+				if(!modelMstMap.containsKey(irCurveNm)) {
+					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
 					continue;
 				}
 				
-//				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());				
-				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());				
-//				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());  //Stochastic Scenarios of Base Spot are not necessary
+				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, swSce.getKey());				
 //				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());     //Do Not USE this Huge Array(SW reslt itself). Its Accuracy also have problems.				
 //				adjSpotRate.stream().forEach(s -> log.info("{}", s));
 				
 				if(adjSpotRate.isEmpty()) {
-					log.warn("No Spot Rate Data [ID: {}, SCE_NO: {}] for [{}] in [{}] Table", curveSwMap.getKey(), swSce.getKey(), bssd, Process.toPhysicalName(IrDcntRateBu.class.getSimpleName()));
+					log.warn("No Spot Rate Data [ID: {}, SCE_NO: {}] for [{}] in [{}] Table", irCurveNm, swSce.getKey(), bssd, Process.toPhysicalName(IrDcntRateBu.class.getSimpleName()));
 					continue;
 				}				
 									
-				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelId, curveSwMap.getKey());					
+				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelId, irCurveNm);					
 				if(paramHw.isEmpty()) {
-					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelId, curveSwMap.getKey(), Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
+					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
 					continue;
 				}
 				
@@ -86,25 +94,25 @@ public class Esg340_BizScenHw1f extends Process {
 				
 				boolean priceAdj      = false;
 				int     randomGenType = 1;
-				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(curveSwMap.getKey()).getTotalSceNo()), SCEN_NUM);						
-				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(curveSwMap.getKey()).getRndSeed())   , RANDOM_SEED);
-				double  ltfr          = StringUtil.objectToPrimitive(paramSwMap.get(curveSwMap.getKey()).get(swSce.getKey()).getLtfr()    , 0.0495);
-				int     ltfrCp        = StringUtil.objectToPrimitive(paramSwMap.get(curveSwMap.getKey()).get(swSce.getKey()).getLtfrCp()  , 60);
+				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getTotalSceNo()), SCEN_NUM);						
+				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getRndSeed())   , RANDOM_SEED);
+				double  ltfr          = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfr()    , 0.0495);
+				int     ltfrCp        = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfrCp()  , 60);
 				log.info("seedNum: {}, {}", seedNum, bssd);
 				
 				Hw1fSimulationKics hw1f = new Hw1fSimulationKics(bssd, adjSpotRate, hwParasList, alphaPiece, sigmaPiece, priceAdj, sceNum, ltfr, ltfrCp, projectionYear, randomGenType, seedNum);
-				List<IrDcntSceStoBiz> stoBizList  = hw1f.getIrModelHw1fList().stream().map(s -> s.convert(applBizDv, irModelId, curveSwMap.getKey(), swSce.getKey(), jobId)).collect(Collectors.toList());
+				List<IrDcntSceStoBiz> stoBizList  = hw1f.getIrModelHw1fList().stream().map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey(), jobId)).collect(Collectors.toList());
 				List<IrParamHwRnd>    randNumList = new ArrayList<IrParamHwRnd>();				
 				
 				//TODO:
-				if(applBizDv.equals("1KICS") && curveSwMap.getKey().equals("1010000") && swSce.getKey().equals(1)) {
+				if(applBizDv.equals("1KICS") && irCurveNm.equals("1010000") && swSce.getKey().equals(1)) {
 					
 //					String pathDir = "C:/Users/NHfire.DESKTOP-J5J0BJV/Desktop/";
 					String pathDir = "C:/Users/gof/Desktop/";
-					String path0 = pathDir + "SW_FWD_"        + curveSwMap.getKey() + "_" + swSce.getKey() + ".csv";
-					String path1 = pathDir + "HW_FWD_DISC_"   + curveSwMap.getKey() + "_" + swSce.getKey() + ".csv";
-					String path2 = pathDir + "HW_RANDOM_"     + curveSwMap.getKey() + "_" + swSce.getKey() + ".csv";
-					String path3 = pathDir + "HW_YIELD_DISC_" + curveSwMap.getKey() + "_" + swSce.getKey() + ".csv";
+					String path0 = pathDir + "SW_FWD_"        + irCurveNm + "_" + swSce.getKey() + ".csv";
+					String path1 = pathDir + "HW_FWD_DISC_"   + irCurveNm + "_" + swSce.getKey() + ".csv";
+					String path2 = pathDir + "HW_RANDOM_"     + irCurveNm + "_" + swSce.getKey() + ".csv";
+					String path3 = pathDir + "HW_YIELD_DISC_" + irCurveNm + "_" + swSce.getKey() + ".csv";
 					
 					try {
 						double[][] sw = new double[hw1f.getFwdDiscBase().length][3];
@@ -127,7 +135,7 @@ public class Esg340_BizScenHw1f extends Process {
 				}
 				
 				if(swSce.getKey().equals(1)) {
-					randNumList = hw1f.getRandomScenList().stream().map(s -> s.setKeys(irModelId, curveSwMap.getKey(), jobId)).collect(Collectors.toList());	
+					randNumList = hw1f.getRandomScenList().stream().map(s -> s.setKeys(irModelId, irCurveNm, jobId)).collect(Collectors.toList());	
 				}				
 				sceRst.addAll(stoBizList);
 				randRst.addAll(randNumList);

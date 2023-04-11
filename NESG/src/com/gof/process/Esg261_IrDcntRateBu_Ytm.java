@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 //import com.gof.dao.IrCurveSpotDao;
 import com.gof.dao.IrCurveYtmDao;
 import com.gof.dao.IrSprdDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrDcntRateBu;
@@ -35,15 +36,16 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 	 * @param irModelNm
 	 * @param applBizDv
 	 * @param paramSwMap*/
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {		
-			
+		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {	
+			IrCurve irCurve  = curveSwMap.getKey();
+			String irCurveNm = irCurve.getIrCurveNm();
 			
 			// ori ytm 
-			List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, curveSwMap.getKey());
+			List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, irCurveNm);
 //			ytmList.forEach(s-> log.info("ytm : {},{}", s.toString()));
 
 			
@@ -53,25 +55,29 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				List<IRateInput> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
 //				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
-//				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
 				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue())
 											.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
 		
 				// irCurveSid add 
-				spotList.forEach(s-> s.setIrCurve(swSce.getValue().getIrCurve()));
+//				spotList.forEach(s-> s.setIrCurve(swSce.getValue().getIrCurve()));
+				spotList.forEach(s-> s.setIrCurve(irCurve));
 //				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));
 				
-				TreeMap<String, Double> spotMap = spotList.stream().collect(Collectors.toMap(IrCurveSpot::getMatCd, IrCurveSpot::getSpotRate, (k, v) -> k, TreeMap::new));
+				TreeMap<String, Double> spotMap = spotList.stream()
+														  .collect(Collectors.toMap(IrCurveSpot::getMatCd
+																  				  , IrCurveSpot::getSpotRate
+																  				  , (k, v) -> k
+																  				  , TreeMap::new));
 				
 				if(spotList.isEmpty()) {
-					log.warn("No IR Curve Spot Data [BIZ: {}, IR_CURVE_NM: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), toPhysicalName(IrCurveSpot.class.getSimpleName()), bssd);
+					log.warn("No IR Curve Spot Data [BIZ: {}, IR_CURVE_NM: {}] in [{}] for [{}]", applBizDv, irCurveNm, toPhysicalName(IrCurveSpot.class.getSimpleName()), bssd);
 					continue;
 				}
 	// 2. 유동성 프리미엄 가져오기 			
-				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey()).stream()
+				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, irCurveNm,  swSce.getKey()).stream()
 						                                   .collect(Collectors.toMap(IrSprdLpBiz::getMatCd, IrSprdLpBiz::getLiqPrem));
-	// 3. 금리 충격스프레드 가져오기 
-				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, curveSwMap.getKey(), StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
+	// 3. 금리 충격스프레드 가져오기 시나리오번호도 디폴트 처리가 필요할까? 없으면 에러인데.
+				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, irCurveNm, StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
 															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 	// 4. 시나리오 적용할 준비 : spotSceList copy 			
 				List<IrCurveSpot> spotSceList = spotList.stream().map(s -> s.deepCopy(s)).collect(Collectors.toList());
@@ -87,10 +93,8 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 
 				String pvtMatCd = swSce.getValue().getPvtRateMatCd();
 				// 23.04.06 spotRate entity에서 값을 가져올때 이미 null 인 경우 에러를 return 하기 때문에 null인 채로 여기까지 올 수 없을텐데 또 default 처리가 된 이유가 뭘까.
-//				double pvtRate  = StringUtil.objectToPrimitive(spotMap.getOrDefault(pvtMatCd, 0.0), 0.0    );				
 				double pvtRate  = spotMap.getOrDefault(pvtMatCd, 0.0);				
 				double pvtMult  = swSce.getValue().getMultPvtRate();		
-//				double pvtMult  = StringUtil.objectToPrimitive(swSce.getValue().getMultPvtRate()  , 1.0    );
 				double addSprd  = swSce.getValue().getAddSprd();
 				int    llp      = swSce.getValue().getLlp();				
 				
@@ -115,8 +119,8 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 						
 						dcntRateBu.setBaseYymm(bssd);
 						dcntRateBu.setApplBizDv(applBizDv);
-						dcntRateBu.setIrCurveNm(curveSwMap.getKey());
-						dcntRateBu.setIrCurve(spot.getIrCurve()); // add 03.08
+						dcntRateBu.setIrCurveNm(irCurveNm);
+						dcntRateBu.setIrCurve(irCurve);
 						dcntRateBu.setIrCurveSceNo(swSce.getKey());
 						dcntRateBu.setMatCd(spot.getMatCd());						
 						dcntRateBu.setSpotRateDisc(spotDisc);

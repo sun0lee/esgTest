@@ -31,7 +31,6 @@ public class Esg150_YtmToSpotSw extends Process {
 	 * @param alphaApplied
 	 * @param freq
 	 * */
-//	public static List<IrCurveSpot> createIrCurveSpot(List<IRateInput> ytmRst, Double alphaApplied, Integer freq) {		
 	public static List<IrCurveSpot> createIrCurveSpot(List<IRateInput> ytmRst, IrParamSw irparamSw ){		
 		
 		// 내부 변수로 정의 irCurveSwMap.get(irCurveNm)

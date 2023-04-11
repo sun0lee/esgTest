@@ -22,6 +22,7 @@ import com.gof.model.RandomNumberKics;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Deprecated
 public class Esg430_BizScenCirForecast extends Process {	
 	
 	public static final Esg430_BizScenCirForecast INSTANCE = new Esg430_BizScenCirForecast();

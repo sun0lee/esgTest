@@ -13,6 +13,7 @@ import com.gof.model.CIRCalibrationForcast;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Deprecated
 public class Esg410_ParamCirForecast extends Process {	
 	
 	public static final Esg410_ParamCirForecast INSTANCE = new Esg410_ParamCirForecast();

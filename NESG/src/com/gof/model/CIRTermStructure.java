@@ -34,6 +34,7 @@ import umontreal.ssj.probdist.ChiSquareNoncentralDist;
 @Getter
 @Setter
 @Slf4j
+@Deprecated
 public class CIRTermStructure extends IrModel {
 	
 	protected double        initKappa;

@@ -14,6 +14,7 @@ import com.gof.enums.EJob;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Deprecated
 public class Esg420_BizParamCirForecast extends Process {	
 	
 	public static final Esg420_BizParamCirForecast INSTANCE = new Esg420_BizParamCirForecast();

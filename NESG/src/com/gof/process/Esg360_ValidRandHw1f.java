@@ -13,6 +13,7 @@ import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 
 import com.gof.dao.IrDcntRateDao;
 import com.gof.dao.IrParamHwDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrParamHwBiz;
@@ -36,34 +37,33 @@ public class Esg360_ValidRandHw1f extends Process {
 	public static final Esg360_ValidRandHw1f INSTANCE = new Esg360_ValidRandHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static List<IrParamHwRnd> createValidInputHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
+	public static List<IrParamHwRnd> createValidInputHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
 
 		List<IrParamHwRnd> randRst = new ArrayList<IrParamHwRnd>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;
 				
-				if(!curveSwMap.getKey().equals(irCurveId) || !swSce.getKey().equals(irCurveSceNo)) continue;				
-//				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", curveSwMap.getKey(), swSce.getKey());
+				if(!irCurveNm.equals(irCurveId) || !swSce.getKey().equals(irCurveSceNo)) continue;				
+//				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", irCurveNm, swSce.getKey());
 				
-				if(!modelMstMap.containsKey(curveSwMap.getKey())) {
-					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, curveSwMap.getKey(), Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+				if(!modelMstMap.containsKey(irCurveNm)) {
+					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
 					continue;
 				}
 				
-//				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());				
-				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());				
-//				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());
+				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, swSce.getKey());				
 				if(adjSpotRate.isEmpty()) {
-					log.warn("No Spot Rate Data [ID: {}, SCE_NO: {}] for [{}] in [{}] Table", curveSwMap.getKey(), swSce.getKey(), bssd, Process.toPhysicalName(IrDcntRateBu.class.getSimpleName()));
+					log.warn("No Spot Rate Data [ID: {}, SCE_NO: {}] for [{}] in [{}] Table", irCurveNm, swSce.getKey(), bssd, Process.toPhysicalName(IrDcntRateBu.class.getSimpleName()));
 					continue;
 				}				
 									
-				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelId, curveSwMap.getKey());					
+				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelId, irCurveNm);					
 				if(paramHw.isEmpty()) {
-					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelId, curveSwMap.getKey(), Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
+					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
 					continue;
 				}
 				List<Hw1fCalibParas> hwParasList = Hw1fCalibParas.convertFrom(paramHw);
@@ -77,10 +77,10 @@ public class Esg360_ValidRandHw1f extends Process {
 				
 				boolean priceAdj      = false;
 				int     randomGenType = 1;
-				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(curveSwMap.getKey()).getTotalSceNo()), SCEN_NUM);						
-				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(curveSwMap.getKey()).getRndSeed())   , RANDOM_SEED);
-				double  ltfr          = StringUtil.objectToPrimitive(paramSwMap.get(curveSwMap.getKey()).get(swSce.getKey()).getLtfr()    , 0.0495);
-				int     ltfrCp        = StringUtil.objectToPrimitive(paramSwMap.get(curveSwMap.getKey()).get(swSce.getKey()).getLtfrCp()  , 60);
+				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getTotalSceNo()), SCEN_NUM);						
+				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getRndSeed())   , RANDOM_SEED);
+				double  ltfr          = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfr()    , 0.0495);
+				int     ltfrCp        = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfrCp()  , 60);
 				log.info("seedNum: {}, {}", seedNum, bssd);		
 
 				Hw1fSimulationKics hw1f = new Hw1fSimulationKics(bssd, adjSpotRate, hwParasList, alphaPiece, sigmaPiece, priceAdj, sceNum, ltfr, ltfrCp, projectionYear, randomGenType, seedNum);

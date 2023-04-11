@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @Slf4j
+@Deprecated
 public class SmithWilsonDep1 extends IrModel {
 	
 	private final static int              NegativeDirection = -1;
