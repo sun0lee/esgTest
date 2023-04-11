@@ -101,9 +101,6 @@ public class IrParamSw extends BaseEntity implements Serializable {
 		return swAlphaYtm = StringUtil.objectToPrimitive(swAlphaYtm, 0.1) ; 
 	}
 	
-	public Double getMultIntRate() {
-		return multIntRate = StringUtil.objectToPrimitive(multIntRate , 1.0  );
-	}
 	
 	public Double getAddSprd() {
 		return addSprd =  StringUtil.objectToPrimitive(addSprd, 0.0);
