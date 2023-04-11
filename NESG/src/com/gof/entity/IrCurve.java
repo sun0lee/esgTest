@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @EqualsAndHashCode(callSuper=false)
 @SequenceGenerator (name = "IR_CURVE_SEQ_GEN",sequenceName = "IR_CURVE_SEQ",initialValue = 1, allocationSize = 1)
-public class IrCurve  extends BaseEntity implements Serializable {	
+public class IrCurve  extends BaseEntity implements Serializable, Comparable<IrCurve> {	
 	
 	private static final long serialVersionUID = -7079607534247603390L;
 
@@ -52,5 +52,11 @@ public class IrCurve  extends BaseEntity implements Serializable {
 				.append(useYn).append("]");
 		return builder.toString();
 	}
+    
+	@Override
+	public int compareTo(IrCurve aa) {
+	    return Long.compare(this.id, aa.id);
+	}
+
 	
 }

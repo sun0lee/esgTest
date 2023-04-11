@@ -294,18 +294,18 @@ public class Main {
 		
 		jobList.clear();
 //		jobList.add("110");
-//		jobList.add("120");
-//		jobList.add("130");		
-//		jobList.add("150");
+		jobList.add("120");
+		jobList.add("130");		
+		jobList.add("150");
 //		
-//		jobList.add("210");
+		jobList.add("210");
 		jobList.add("220");
 		jobList.add("230");
-//		jobList.add("240");
-//		jobList.add("250");
-//		jobList.add("260");
-//		jobList.add("270");
-//		jobList.add("280");
+		jobList.add("240");
+		jobList.add("250");
+		jobList.add("260");
+		jobList.add("270");
+		jobList.add("280");
 	}		
 	
 	//TODO: Start from E_IR_PARAM_SW_USR
