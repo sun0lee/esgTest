@@ -34,6 +34,8 @@ import org.ejml.simple.SimpleMatrix;
 import com.gof.entity.IrDcntSceDetBiz;
 import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamAfnsCalc;
+import com.gof.entity.IrParamModel;
+import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsCalc;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
@@ -93,82 +95,94 @@ public class AFNelsonSiegel extends IrModel {
 	protected List<IrDcntSceDetBiz> rsltList = new ArrayList<IrDcntSceDetBiz>();
 	
 		
-//	public AFNelsonSiegel(LocalDate baseDate, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, double dt, double initSigma) {				
-	public AFNelsonSiegel(LocalDate baseDate, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, double dt, double initSigma) {				
-		this(baseDate, EIrModel.AFNS, null, iRateHisList, iRateBaseList, false       , CMPD_MTD_DISC, dt, initSigma, DCB_MON_DIF, 0.045, 0.045, 60  , 0.0032  , 1.0/12, 0.05, 2.0, 3, 140    , 1e-10, 100, 0.995, 0.001);		
-	}	
+//	public AFNelsonSiegel(LocalDate baseDate, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, double dt, double initSigma) {				
+//		this(baseDate, EIrModel.AFNS, null, iRateHisList, iRateBaseList, false       , CMPD_MTD_DISC, dt, initSigma, DCB_MON_DIF, 0.045, 0.045, 60  , 0.0032  , 1.0/12, 0.05, 2.0, 3, 140    , 1e-10, 100, 0.995, 0.001);		
+//	}	
 	
-//	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
-	public AFNelsonSiegel(LocalDate baseDate, EIrModel mode, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
-			              double ltfrL, double ltfrA, int ltfrT, double liqPrem, int prjYear) {		
-		this(baseDate, mode  , null, iRateHisList, iRateBaseList, isRealNumber, cmpdType     , dt, initSigma, DCB_MON_DIF, ltfrL, ltfrA, ltfrT, liqPrem, 1.0/12, 0.05, 2.0, 3, prjYear, 1e-10, 100, 0.995, 0.001);		
-	}
+//	public AFNelsonSiegel(LocalDate baseDate, EIrModel mode, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
+//			              double ltfrL, double ltfrA, int ltfrT, double liqPrem, int prjYear) {		
+//		this(baseDate, mode  , null, iRateHisList, iRateBaseList, isRealNumber, cmpdType     , dt, initSigma, DCB_MON_DIF, ltfrL, ltfrA, ltfrT, liqPrem, 1.0/12, 0.05, 2.0, 3, prjYear, 1e-10, 100, 0.995, 0.001);		
+//	}
 	
-//	public AFNelsonSiegel(LocalDate baseDate, String mode, List<IrParamAfnsBiz> inputParas, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
-	public AFNelsonSiegel(LocalDate baseDate, EIrModel mode, List<IrParamAfnsBiz> inputParas, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
-						  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
-
-		this.baseDate      = baseDate;
-		this.mode          = mode;
-//		setTermStructureBase(iRateBaseList);		
-		setTermStructure(iRateBaseList);		
-		setAfnsParamList(inputParas);		
-		//TODO: iRateBaseList 가 null임을 고려해야함. dummy관점에서라도 irateBaseList는 null을 안넣는게 좋을듯
-		this.irCurveNm     = iRateBaseList.get(0).getIrCurveNm();
-		this.isRealNumber  = isRealNumber;
-		this.cmpdType      = cmpdType;		
-		this.dt            = dt;	
-		this.initSigma     = initSigma;
-		this.dayCountBasis = dayCountBasis;
-		this.ltfrL         = ltfrL;
-		this.ltfrA         = ltfrA;
-		this.ltfrT         = ltfrT;
-		this.liqPrem       = liqPrem;
-		this.term          = term;
-		this.minLambda     = minLambda;
-		this.maxLambda     = maxLambda;
-		this.nf            = nf;
-		this.prjYear       = prjYear;
-		this.accuracy      = accuracy;
-		this.itrMax        = itrMax;
-		this.confInterval  = confInterval;
-		this.epsilon       = epsilon;
+//	public AFNelsonSiegel(LocalDate baseDate, EIrModel mode, List<IrParamAfnsBiz> inputParas, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
+//						  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
+//
+//		this.baseDate      = baseDate;
+//		this.mode          = mode;
+////		setTermStructureBase(iRateBaseList);		
+//		setTermStructure(iRateBaseList);		
+//		setAfnsParamList(inputParas);		
+//		//TODO: iRateBaseList 가 null임을 고려해야함. dummy관점에서라도 irateBaseList는 null을 안넣는게 좋을듯
+//		this.irCurveNm     = iRateBaseList.get(0).getIrCurveNm();
+//		this.isRealNumber  = isRealNumber;
+//		this.cmpdType      = cmpdType;		
+//		this.dt            = dt;	
+//		this.initSigma     = initSigma;
+//		this.dayCountBasis = dayCountBasis;
+//		this.ltfrL         = ltfrL;
+//		this.ltfrA         = ltfrA;
+//		this.ltfrT         = ltfrT;
+//		this.liqPrem       = liqPrem;
+//		this.term          = term;
+//		this.minLambda     = minLambda;
+//		this.maxLambda     = maxLambda;
+//		this.nf            = nf;
+//		this.prjYear       = prjYear;
+//		this.accuracy      = accuracy;
+//		this.itrMax        = itrMax;
+//		this.confInterval  = confInterval;
+//		this.epsilon       = epsilon;
+//		
+//		for(int j=0; j<this.iRateBase.length; j++) {
+//			this.iRateBase[j] = (this.cmpdType == CMPD_MTD_DISC) ? irDiscToCont((this.isRealNumber ? 1 : 0.01) * this.iRateBase[j]) : (this.isRealNumber ? 1 : 0.01) * this.iRateBase[j];
+//		}
+//	}
+	
+	
+	public AFNelsonSiegel( String bssd
+					 	 , List<IRateInput> iRateHisList
+					 	 , List<IRateInput> iRateBaseList
+					 	 , IrParamModel irModelMst 
+					 	 , IrParamSw    irParamSw  
+					 	 , Map<String, String>  argInDBMap ) 
+	
+{		
+		// 모형에서 계산에 필요한 초기인수는 필요한 곳에서 풀어헤치기 
+		double errorTolerance                 = irModelMst.getItrTol();
+		double ltfr                           = irParamSw.getLtfr();
+		int    ltfrT                          = irParamSw.getLtfrCp();
 		
-		for(int j=0; j<this.iRateBase.length; j++) {
-			this.iRateBase[j] = (this.cmpdType == CMPD_MTD_DISC) ? irDiscToCont((this.isRealNumber ? 1 : 0.01) * this.iRateBase[j]) : (this.isRealNumber ? 1 : 0.01) * this.iRateBase[j];
-		}
-	}
-	
-	
-//	public AFNelsonSiegel(LocalDate baseDate, String mode, double[] inputParas, List<IrCurveSpot> iRateHisList, List<IrCurveSpot> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
-	public AFNelsonSiegel(LocalDate baseDate, EIrModel mode, double[] inputParas, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
-		                  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
+		double confInterval    = Double. valueOf((String) argInDBMap.getOrDefault("AFNS_CONF_INTERVAL"   , "0.995"));
+		int    kalmanItrMax    = Integer.valueOf((String) argInDBMap.getOrDefault("AFNS_KALMAN_ITR_MAX"  , "100"));			
+		double sigmaInit       = Double. valueOf((String) argInDBMap.getOrDefault("AFNS_SIGMA_INIT"      , "0.05"));
+		double epsilonInit     = Double. valueOf((String) argInDBMap.getOrDefault("AFNS_EPSILON_INIT"    , "0.001"));	
+		int    prjYear         = Integer.valueOf((String) argInDBMap.getOrDefault("PROJECTION_YEAR"      , "120"));
 		
-		this.baseDate      = baseDate;		
-		this.mode          = mode;
-		this.inputParas    = inputParas;		
+		
+		this.baseDate      =  IrModel.stringToDate(bssd);		
+		this.mode          =  irModelMst.getIrModelNm() ;
+		this.inputParas    =  null;		
 		this.setTermStructureHis(iRateHisList, iRateBaseList);
-		this.isRealNumber  = isRealNumber;
-		this.cmpdType      = cmpdType;		
-		this.dt            = dt;	
-		this.initSigma     = initSigma;
-		this.dayCountBasis = dayCountBasis;
-		this.ltfrL         = ltfrL;
-		this.ltfrA         = ltfrA;
+		this.isRealNumber  = true;
+		this.cmpdType      = 'D';		
+		this.dt            = 1.0 /52.0 ;	//weekly only
+		this.initSigma     = sigmaInit;
+		this.dayCountBasis = DCB_MON_DIF;
+		this.ltfrL         = ltfr;
+		this.ltfrA         = 0;
 		this.ltfrT         = ltfrT;
-		this.liqPrem       = liqPrem;
-		this.term          = term;
-		this.minLambda     = minLambda;
-		this.maxLambda     = maxLambda;
-		this.nf            = nf;
+		this.liqPrem       = 0.0;
+		this.term          = 1.0 / 12;
+		this.minLambda     = 0.05;
+		this.maxLambda     = 2.0;
+		this.nf            = 3;
 		this.prjYear       = prjYear;
-		this.accuracy      = accuracy;
-		this.itrMax        = itrMax;
+		this.accuracy      = errorTolerance;
+		this.itrMax        = kalmanItrMax;
 		this.confInterval  = confInterval;
-		this.epsilon       = epsilon;
+		this.epsilon       = epsilonInit;
 		this.setIrmodelAttributes();
-	}
-	
+}
 
 	//TODO:
 	public void setTermStructureHis(List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList) {		
@@ -234,97 +248,97 @@ public class AFNelsonSiegel extends IrModel {
 	}
 	
 	
-	public void setTermStructureHis(String[] date, double[] tenor, double[][] iRateHis, double[] iRateBase) {
-		
-		int numObs        = date .length;
-		int numTenor      = tenor.length;
-		
-		this.iRateDateHis = new LocalDate[numObs];		
-		this.iRateHis     = new double   [numObs][numTenor];
-		this.tenor        = tenor;
-		this.iRateBase    = iRateBase;		
-		
-		for(int i=0; i<numObs; i++) {					
-			this.iRateDateHis[i] = stringToDate(date[i]);			
-			for(int j=0; j<numTenor; j++) this.iRateHis[i][j] = iRateHis[i][j];
-		}	
-	}		
+//	public void setTermStructureHis(String[] date, double[] tenor, double[][] iRateHis, double[] iRateBase) {
+//		
+//		int numObs        = date .length;
+//		int numTenor      = tenor.length;
+//		
+//		this.iRateDateHis = new LocalDate[numObs];		
+//		this.iRateHis     = new double   [numObs][numTenor];
+//		this.tenor        = tenor;
+//		this.iRateBase    = iRateBase;		
+//		
+//		for(int i=0; i<numObs; i++) {					
+//			this.iRateDateHis[i] = stringToDate(date[i]);			
+//			for(int j=0; j<numTenor; j++) this.iRateHis[i][j] = iRateHis[i][j];
+//		}	
+//	}		
 
 	
-	public void setAfnsParamList(List<IrParamAfnsBiz> inputParas) {
-		
-		this.optParasFlag = true;		
-		this.optParas = new double[14];
-		this.optLSC   = new double[3];
-		
-		if(inputParas == null) {
-			this.optParas[0]  = 0.4397764671040283;
-			this.optParas[1]  = 0.03238093323059146;
-			this.optParas[2]  = -0.01816932435509963;
-			this.optParas[3]  = -0.0012340100084967927;
-			this.optParas[4]  =  0.07011881997655274;
-			this.optParas[5]  =  0.31428423540308786;
-			this.optParas[6]  =  0.41032947646397744;
-			this.optParas[7]  =  0.004594675150093352;
-			this.optParas[8]  = -0.004372406977548432;
-			this.optParas[9]  =  0.0027771993513785245;
-			this.optParas[10] =  6.773607124233114E-4;
-			this.optParas[11] = -5.426876995115856E-4;
-			this.optParas[12] =  0.00976325443053842;
-			this.optParas[13] =  0.38292135421347995;
-			
-			this.optLSC[0]    =  0.01935128249313093;
-			this.optLSC[1]    = -0.00667992698106652;
-			this.optLSC[2]    = -0.004801227043622508;
-		}
-		else {		
-//			Map<EParamTypCd, Double> paramMap = new HashMap<EParamTypCd, Double>();		
-			Map<String, Double> paramMap = new HashMap<String, Double>();		
-			paramMap = inputParas.stream().collect(Collectors.toMap(IrParamAfnsBiz::getParamTypCd, IrParamAfnsBiz::getParamVal));
-			
-			// TODO : ENUMSET 반복자로 정의할수 있을듯 
-			this.optParas[0]  = paramMap.getOrDefault("LAMBDA"  ,  1e-1);
-			this.optParas[1]  = paramMap.getOrDefault("THETA_1" ,  1e-2);
-			this.optParas[2]  = paramMap.getOrDefault("THETA_2" , -1e-3);
-			this.optParas[3]  = paramMap.getOrDefault("THETA_3" , -1e-3);
-			this.optParas[4]  = paramMap.getOrDefault("KAPPA_1" ,  1e-1);
-			this.optParas[5]  = paramMap.getOrDefault("KAPPA_2" ,  1e-1);
-			this.optParas[6]  = paramMap.getOrDefault("KAPPA_3" ,  1e-1);
-			this.optParas[7]  = paramMap.getOrDefault("SIGMA_11",  1e-2);
-			this.optParas[8]  = paramMap.getOrDefault("SIGMA_21",  0e-2);
-			this.optParas[9]  = paramMap.getOrDefault("SIGMA_22",  1e-2);
-			this.optParas[10] = paramMap.getOrDefault("SIGMA_31",  0e-2);
-			this.optParas[11] = paramMap.getOrDefault("SIGMA_32", -1e-2);
-			this.optParas[12] = paramMap.getOrDefault("SIGMA_33",  1e-2);
-			this.optParas[13] = paramMap.getOrDefault("EPSILON" ,  1e-1);
-			
-			this.optLSC[0]    = paramMap.getOrDefault("L0"      ,  1e-2);
-			this.optLSC[1]    = paramMap.getOrDefault("S0"      , -1e-3);
-			this.optLSC[2]    = paramMap.getOrDefault("C0"      , -1e-3);
-			
-//			this.optParas[0]  = paramMap.getOrDefault(EParamTypCd.LAMBDA  ,  1e-1);
-//			this.optParas[1]  = paramMap.getOrDefault(EParamTypCd.THETA_1 ,  1e-2);
-//			this.optParas[2]  = paramMap.getOrDefault(EParamTypCd.THETA_2 , -1e-3);
-//			this.optParas[3]  = paramMap.getOrDefault(EParamTypCd.THETA_3 , -1e-3);
-//			this.optParas[4]  = paramMap.getOrDefault(EParamTypCd.KAPPA_1 ,  1e-1);
-//			this.optParas[5]  = paramMap.getOrDefault(EParamTypCd.KAPPA_2 ,  1e-1);
-//			this.optParas[6]  = paramMap.getOrDefault(EParamTypCd.KAPPA_3 ,  1e-1);
-//			this.optParas[7]  = paramMap.getOrDefault(EParamTypCd.SIGMA_11,  1e-2);
-//			this.optParas[8]  = paramMap.getOrDefault(EParamTypCd.SIGMA_21,  0e-2);
-//			this.optParas[9]  = paramMap.getOrDefault(EParamTypCd.SIGMA_22,  1e-2);
-//			this.optParas[10] = paramMap.getOrDefault(EParamTypCd.SIGMA_31,  0e-2);
-//			this.optParas[11] = paramMap.getOrDefault(EParamTypCd.SIGMA_32, -1e-2);
-//			this.optParas[12] = paramMap.getOrDefault(EParamTypCd.SIGMA_33,  1e-2);
-//			this.optParas[13] = paramMap.getOrDefault(EParamTypCd.EPSILON ,  1e-1);
+//	public void setAfnsParamList(List<IrParamAfnsBiz> inputParas) {
+//		
+//		this.optParasFlag = true;		
+//		this.optParas = new double[14];
+//		this.optLSC   = new double[3];
+//		
+//		if(inputParas == null) {
+//			this.optParas[0]  = 0.4397764671040283;
+//			this.optParas[1]  = 0.03238093323059146;
+//			this.optParas[2]  = -0.01816932435509963;
+//			this.optParas[3]  = -0.0012340100084967927;
+//			this.optParas[4]  =  0.07011881997655274;
+//			this.optParas[5]  =  0.31428423540308786;
+//			this.optParas[6]  =  0.41032947646397744;
+//			this.optParas[7]  =  0.004594675150093352;
+//			this.optParas[8]  = -0.004372406977548432;
+//			this.optParas[9]  =  0.0027771993513785245;
+//			this.optParas[10] =  6.773607124233114E-4;
+//			this.optParas[11] = -5.426876995115856E-4;
+//			this.optParas[12] =  0.00976325443053842;
+//			this.optParas[13] =  0.38292135421347995;
 //			
-//			this.optLSC[0]    = paramMap.getOrDefault(EParamTypCd.L0      ,  1e-2);
-//			this.optLSC[1]    = paramMap.getOrDefault(EParamTypCd.S0      , -1e-3);
-//			this.optLSC[2]    = paramMap.getOrDefault(EParamTypCd.C0      , -1e-3);
-		}			
-
-//		log.info("optParas:{}", this.optParas);
-//		log.info("optLSC:{}", this.optLSC);		
-	}
+//			this.optLSC[0]    =  0.01935128249313093;
+//			this.optLSC[1]    = -0.00667992698106652;
+//			this.optLSC[2]    = -0.004801227043622508;
+//		}
+//		else {		
+////			Map<EParamTypCd, Double> paramMap = new HashMap<EParamTypCd, Double>();		
+//			Map<String, Double> paramMap = new HashMap<String, Double>();		
+//			paramMap = inputParas.stream().collect(Collectors.toMap(IrParamAfnsBiz::getParamTypCd, IrParamAfnsBiz::getParamVal));
+//			
+//			// TODO : ENUMSET 반복자로 정의할수 있을듯 
+//			this.optParas[0]  = paramMap.getOrDefault("LAMBDA"  ,  1e-1);
+//			this.optParas[1]  = paramMap.getOrDefault("THETA_1" ,  1e-2);
+//			this.optParas[2]  = paramMap.getOrDefault("THETA_2" , -1e-3);
+//			this.optParas[3]  = paramMap.getOrDefault("THETA_3" , -1e-3);
+//			this.optParas[4]  = paramMap.getOrDefault("KAPPA_1" ,  1e-1);
+//			this.optParas[5]  = paramMap.getOrDefault("KAPPA_2" ,  1e-1);
+//			this.optParas[6]  = paramMap.getOrDefault("KAPPA_3" ,  1e-1);
+//			this.optParas[7]  = paramMap.getOrDefault("SIGMA_11",  1e-2);
+//			this.optParas[8]  = paramMap.getOrDefault("SIGMA_21",  0e-2);
+//			this.optParas[9]  = paramMap.getOrDefault("SIGMA_22",  1e-2);
+//			this.optParas[10] = paramMap.getOrDefault("SIGMA_31",  0e-2);
+//			this.optParas[11] = paramMap.getOrDefault("SIGMA_32", -1e-2);
+//			this.optParas[12] = paramMap.getOrDefault("SIGMA_33",  1e-2);
+//			this.optParas[13] = paramMap.getOrDefault("EPSILON" ,  1e-1);
+//			
+//			this.optLSC[0]    = paramMap.getOrDefault("L0"      ,  1e-2);
+//			this.optLSC[1]    = paramMap.getOrDefault("S0"      , -1e-3);
+//			this.optLSC[2]    = paramMap.getOrDefault("C0"      , -1e-3);
+//			
+////			this.optParas[0]  = paramMap.getOrDefault(EParamTypCd.LAMBDA  ,  1e-1);
+////			this.optParas[1]  = paramMap.getOrDefault(EParamTypCd.THETA_1 ,  1e-2);
+////			this.optParas[2]  = paramMap.getOrDefault(EParamTypCd.THETA_2 , -1e-3);
+////			this.optParas[3]  = paramMap.getOrDefault(EParamTypCd.THETA_3 , -1e-3);
+////			this.optParas[4]  = paramMap.getOrDefault(EParamTypCd.KAPPA_1 ,  1e-1);
+////			this.optParas[5]  = paramMap.getOrDefault(EParamTypCd.KAPPA_2 ,  1e-1);
+////			this.optParas[6]  = paramMap.getOrDefault(EParamTypCd.KAPPA_3 ,  1e-1);
+////			this.optParas[7]  = paramMap.getOrDefault(EParamTypCd.SIGMA_11,  1e-2);
+////			this.optParas[8]  = paramMap.getOrDefault(EParamTypCd.SIGMA_21,  0e-2);
+////			this.optParas[9]  = paramMap.getOrDefault(EParamTypCd.SIGMA_22,  1e-2);
+////			this.optParas[10] = paramMap.getOrDefault(EParamTypCd.SIGMA_31,  0e-2);
+////			this.optParas[11] = paramMap.getOrDefault(EParamTypCd.SIGMA_32, -1e-2);
+////			this.optParas[12] = paramMap.getOrDefault(EParamTypCd.SIGMA_33,  1e-2);
+////			this.optParas[13] = paramMap.getOrDefault(EParamTypCd.EPSILON ,  1e-1);
+////			
+////			this.optLSC[0]    = paramMap.getOrDefault(EParamTypCd.L0      ,  1e-2);
+////			this.optLSC[1]    = paramMap.getOrDefault(EParamTypCd.S0      , -1e-3);
+////			this.optLSC[2]    = paramMap.getOrDefault(EParamTypCd.C0      , -1e-3);
+//		}			
+//
+////		log.info("optParas:{}", this.optParas);
+////		log.info("optLSC:{}", this.optLSC);		
+//	}
 	
 	
 	public List<IrParamAfnsCalc> getAfnsParamList() {

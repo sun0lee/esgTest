@@ -84,7 +84,7 @@ public class IrCurveYtmDao extends DaoUtil {
 		return curveRst;
 	}
 	
-	
+	@Deprecated
 	public static List<IrCurveYtm> getIrCurveYtm(String bssd, String irCurveNm, List<String> tenorList) {
 		
 		String query = "select a from IrCurveYtm a "
@@ -105,7 +105,7 @@ public class IrCurveYtmDao extends DaoUtil {
 		return curveRst;
 	}	
 	
-	
+	@Deprecated
 	public static List<IrCurveYtm> getIrCurveYtmHis(String bssd, String irCurveNm, int monthNum, String matCd) {
 		
 		String query = "select a from IrCurveYtm a                    "
@@ -143,7 +143,7 @@ public class IrCurveYtmDao extends DaoUtil {
 		
 		return curveRst;
 	}	
-	
+	@Deprecated
 	public static List<IrCurveYtm> getIrCurveYtmMonth(String bssd, String irCurveNm, List<String> tenorList) {
 		
 		String query = "select a from IrCurveYtm a "
@@ -196,21 +196,6 @@ public class IrCurveYtmDao extends DaoUtil {
 		return q.stream();
 	}	
 	
-//	public static List<IrCurveYtmUsr> getIrCurveYtmUsr(String bssd, String irCurveNm) {
-//		
-//		String query = " select a from IrCurveYtmUsr a         " 
-//					 + "  where 1=1                            "
-//					 + "    and substr(a.baseDate,1,6) = :bssd "
-//					 + "    and a.irCurveNm = :irCurveNm       "
-//					 + "  order by a.baseDate                  "				
-//		 		 	 ;
-//		
-//		return session.createQuery(query, IrCurveYtmUsr.class)
-//					  .setParameter("bssd", bssd)
-//					  .setParameter("irCurveNm", irCurveNm)
-//					  .getResultList()
-//					  ;
-//	}	// 2023.03.06 삭제 검토 =>filter 이용하면 사용할때에 조건을 추가로 주는건 문제가 안됨. 성능땜에 조건별로 조회하는 것인가 ??
 
 	// 23.03.06 기준일자로만 가져오기 
 	public static Stream<IrCurveYtmUsr> getIrCurveYtmUsr(String bssd) {
@@ -225,10 +210,6 @@ public class IrCurveYtmDao extends DaoUtil {
 			q.setParameter("bssd",bssd) ;
 		return q.stream();
 		
-//		return session.createQuery(query, IrCurveYtmUsr.class)
-//		  .setParameter("bssd", bssd)
-//		  .getResultList()
-//		  ;
 	}	
 	
 }

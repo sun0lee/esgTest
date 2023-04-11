@@ -49,12 +49,12 @@ public class IrParamHwDao extends DaoUtil {
 				      .getResultList();
 	}		
 	
-
+@Deprecated
 	public static List<IrParamHwBiz> getIrParamHwBizFromUsrList(String bssd) {		
 		return getIrParamHwUsrList(bssd).stream().map(s -> s.convert()).collect(Collectors.toList());
 	}		
 
-	
+	@Deprecated
 	public static List<IrParamHwCalc> getIrParamHwCalcList(String bssd) {
 		
 		String query = " select a from IrParamHwCalc a "

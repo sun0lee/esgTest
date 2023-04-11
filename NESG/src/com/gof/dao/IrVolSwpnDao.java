@@ -20,8 +20,6 @@ public class IrVolSwpnDao extends DaoUtil {
 	public static List<IrVolSwpnUsr> getSwpnVolUsr(String bssd, IrCurve irCurve, List<String> swpnMatList) {
 		
 		String baseDate = getMaxBaseDate(bssd, irCurve);
-//		23.02.27 왜 여기서 가만히 있지 ???
-//		String baseDate = "20210331";
 		
 		String query = " select a from IrVolSwpnUsr a       " 
 		 		 	 + "  where a.baseDate  = :baseDate     "
@@ -77,7 +75,7 @@ public class IrVolSwpnDao extends DaoUtil {
 					  ;
 	}
 	
-	
+	@Deprecated
 	public static List<IrVolSwpn> getSwpnVol(String bssd, int monthNum, String irCurveNm) {
 		
 		String query = " select a from IrVolSwpn a            "
@@ -93,7 +91,7 @@ public class IrVolSwpnDao extends DaoUtil {
 					  ;
 	}
 	
-	
+	@Deprecated
 	public static List<IrVolSwpn> getSwpnVol(String bssd, int monthNum) {
 		
 		String query = " select a from IrVolSwpn a            "

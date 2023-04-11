@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import com.gof.dao.IrCurveYtmDao;
 import com.gof.dao.IrDcntRateDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrDcntRate;
 import com.gof.entity.IrDcntRateBu;
@@ -39,11 +40,13 @@ public class Esg270_IrDcntRate extends Process {
 	 * @param paramSwMap
 	 * @param projectionYear
 	 * */
-	public static List<IrDcntRate> createIrDcntRate(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap, Integer projectionYear) {	
+	public static List<IrDcntRate> createIrDcntRate(String bssd, EApplBizDv applBizDv, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap, Integer projectionYear) {	
 		
 		List<IrDcntRate> rst = new ArrayList<IrDcntRate>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {			
+		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {	
+			IrCurve irCurve = curveSwMap.getKey();
+			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 
 			Map<String, IrDcntRate> adjRateSce1Map       = new TreeMap<String, IrDcntRate>();
 			Map<String, SmithWilsonRslt> baseRateSce1Map = new TreeMap<String, SmithWilsonRslt>();  			//for using SmithWilsonKicsBts not SmithWilsonKics
@@ -53,11 +56,11 @@ public class Esg270_IrDcntRate extends Process {
 			
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
 				
-				log.info("BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", applBizDv, curveSwMap.getKey(), swSce.getKey());
-				List<IRateInput>  irCurveSpotList = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());
+				log.info("BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", applBizDv, irCurveNm, swSce.getKey());
+				List<IRateInput>  irCurveSpotList = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, swSce.getKey());
 				
 				if(irCurveSpotList.size()==0) {
-					log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
+					log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
 					continue;
 				}				
 				
@@ -96,10 +99,10 @@ public class Esg270_IrDcntRate extends Process {
 						adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));										
 						
 //						List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, curveSwMap.getKey());
-						List<IRateInput> ytmList = IrCurveYtmDao.getIrCurveYtm2(bssd, curveSwMap.getKey());
+						List<IRateInput> ytmList = IrCurveYtmDao.getIrCurveYtm2(bssd, irCurveNm);
 						
 						if(ytmList.size()==0) {
-							log.warn("No Historical YTM Data exist for [{}, {}] in [{}]", bssd, curveSwMap.getKey(), jobId);
+							log.warn("No Historical YTM Data exist for [{}, {}] in [{}]", bssd, irCurveNm, jobId);
 							continue;
 						}				
 						// 자산 할인율 산출을 위한 ytm smith-wilson 변환 
@@ -154,10 +157,10 @@ public class Esg270_IrDcntRate extends Process {
 					// 부채평가용 (조정 할인율 커브 :연속복리 spot rate사용 )
 					adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));		
 					
-					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey())
+					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, irCurveNm, swSce.getKey())
 											  .stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
 					if(ytmList.size()==0) {
-						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, curveSwMap.getKey(), swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
+						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
 						continue;
 					}
 					
@@ -182,8 +185,8 @@ public class Esg270_IrDcntRate extends Process {
 				for(IrDcntRate rslt : adjRateList) {
 					rslt.setBaseYymm(bssd);
 					rslt.setApplBizDv(applBizDv);
-					rslt.setIrCurveNm(curveSwMap.getKey());
-					rslt.setIrCurve(swSce.getValue().getIrCurve()); //add 03.08 
+					rslt.setIrCurveNm(irCurveNm);
+					rslt.setIrCurve(irCurve);  
 					rslt.setIrCurveSceNo(swSce.getKey());
 					rslt.setModifiedBy(jobId);
 					rslt.setUpdateDate(LocalDateTime.now());
@@ -193,7 +196,7 @@ public class Esg270_IrDcntRate extends Process {
 				for(IrDcntRate dcnt : adjRateList) {
 					if(dcnt.getSpotRate().isNaN() || dcnt.getSpotRate().isInfinite() || dcnt.getAdjSpotRate().isNaN() || dcnt.getAdjSpotRate().isInfinite()) {
 //						log.info("{}, {}, {}", curveSwMap.getKey(), swSce.getKey(), dcnt);
-						log.error("Smith-Wilson Interpolation is failed. Check Shock Spread Data in [{}] Table for [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), applBizDv, curveSwMap.getKey(), swSce.getKey(), bssd);
+						log.error("Smith-Wilson Interpolation is failed. Check Shock Spread Data in [{}] Table for [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), applBizDv, irCurveNm, swSce.getKey(), bssd);
 						try {
 							throw new Exception();
 						} catch (Exception e) {

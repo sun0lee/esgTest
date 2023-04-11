@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @Slf4j
+@Deprecated
 public class CIRSimulationForcast extends IrModel {
 	
 	protected double        dt;	

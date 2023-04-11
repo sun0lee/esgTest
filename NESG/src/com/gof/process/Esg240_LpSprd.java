@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.gof.dao.IrCurveSpotDao;
 import com.gof.dao.IrSprdDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdCurve;
@@ -25,13 +26,16 @@ public class Esg240_LpSprd extends Process {
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
 
-	public static List<IrSprdLp> setLpFromSwMap(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
+	public static List<IrSprdLp> setLpFromSwMap(String bssd
+											  , EApplBizDv applBizDv
+											  , Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap) {
+		 										// irCurve , ScenNo , IrParamSw
 		
 		List<IrSprdLp> rst = new ArrayList<IrSprdLp>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
 			
-			List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, curveSwMap.getKey());
+			List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, curveSwMap.getKey().getIrCurveNm());
 			if(tenorList.isEmpty()) {
 				log.warn("No IR Curve Data [IR_CURVE_NM: {}] in [{}] for [{}]", curveSwMap.getKey(), toPhysicalName(IrCurveSpot.class.getSimpleName()), bssd);
 				continue;
@@ -51,8 +55,8 @@ public class Esg240_LpSprd extends Process {
 						lp1.setBaseYymm(bssd);
 						lp1.setDcntApplModelCd("BU1");
 						lp1.setApplBizDv(applBizDv);
-						lp1.setIrCurveNm(curveSwMap.getKey());
-						lp1.setIrCurve(swSce.getValue().getIrCurve());
+						lp1.setIrCurveNm(curveSwMap.getKey().getIrCurveNm());
+						lp1.setIrCurve(curveSwMap.getKey());
 						lp1.setIrCurveSceNo(swSce.getKey());
 						lp1.setMatCd(tenor);
 						lp1.setLiqPrem(swSce.getValue().getLiqPrem());
@@ -70,13 +74,13 @@ public class Esg240_LpSprd extends Process {
 	}
 	
 	
-	public static List<IrSprdLp> setLpFromCrdSprd(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap, String lpCurveId) {
+	public static List<IrSprdLp> setLpFromCrdSprd(String bssd, EApplBizDv applBizDv, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap, String lpCurveId) {
 		
 		List<IrSprdLp> rst = new ArrayList<IrSprdLp>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {			
+		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {			
 			
-			List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, curveSwMap.getKey());
+			List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, curveSwMap.getKey().getIrCurveNm());
 			if(tenorList.isEmpty()) {
 				log.warn("No IR Curve Data [IR_CURVE_NM: {}] in [{}] for [{}]", curveSwMap.getKey(), toPhysicalName(IrCurveSpot.class.getSimpleName()), bssd);
 				continue;
@@ -93,8 +97,8 @@ public class Esg240_LpSprd extends Process {
 						lp2.setBaseYymm(bssd);
 						lp2.setDcntApplModelCd("BU2");
 						lp2.setApplBizDv(applBizDv);
-						lp2.setIrCurveNm(curveSwMap.getKey());
-						lp2.setIrCurve(swSce.getValue().getIrCurve());
+						lp2.setIrCurveNm(curveSwMap.getKey().getIrCurveNm());
+						lp2.setIrCurve(curveSwMap.getKey());
 						lp2.setIrCurveSceNo(swSce.getKey());
 						lp2.setMatCd(lpCrv.getMatCd());
 						lp2.setLiqPrem(lpCrv.getCrdSprd());
@@ -112,16 +116,19 @@ public class Esg240_LpSprd extends Process {
 	}
 	
 	
-	public static List<IrSprdLp> setLpFromUsr(String bssd, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {
+	public static List<IrSprdLp> setLpFromUsr(String bssd, EApplBizDv applBizDv, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap) {
 		
 		List<IrSprdLp> rst = new ArrayList<IrSprdLp>();
 		
-		for(Map.Entry<String, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {			
+		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {	
+			
+			IrCurve irCurve = curveSwMap.getKey() ;
+			String irCurveNm = curveSwMap.getKey().getIrCurveNm() ;
 			
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 
 				int llp = swSce.getValue().getLlp();				
-				List<IrSprdLpUsr> lpUsr = IrSprdDao.getIrSprdLpUsrList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());
+				List<IrSprdLpUsr> lpUsr = IrSprdDao.getIrSprdLpUsrList(bssd, applBizDv, irCurveNm, swSce.getKey());
 				
 				for(IrSprdLpUsr usr : lpUsr) {
 					if(Integer.valueOf(usr.getMatCd().substring(1)) <= llp * MONTH_IN_YEAR) {
@@ -131,8 +138,8 @@ public class Esg240_LpSprd extends Process {
 						lp3.setBaseYymm(bssd);
 						lp3.setDcntApplModelCd("BU3");
 						lp3.setApplBizDv(applBizDv);
-						lp3.setIrCurveNm(curveSwMap.getKey());
-						lp3.setIrCurve(swSce.getValue().getIrCurve());
+						lp3.setIrCurveNm(irCurveNm);
+						lp3.setIrCurve(irCurve);
 						lp3.setIrCurveSceNo(swSce.getKey());
 						lp3.setMatCd(usr.getMatCd());
 						lp3.setLiqPrem(usr.getLiqPrem());

@@ -35,6 +35,7 @@ import umontreal.ssj.probdist.ChiSquareNoncentralDist;
 @Getter
 @Setter
 @Slf4j
+@Deprecated
 public class CIRCalibrationForcast extends IrModel {
 	
 	protected double        initAlpha;

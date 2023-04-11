@@ -33,7 +33,7 @@ public class IrParamModelDao extends DaoUtil {
 				.getResultList();
 	}
 	
-	
+	@Deprecated
 	public static List<IrParamModelBiz> getParamModelBizList(String bssd, EIrModel irModelNm, String irCurveNm) {
 		
 		String q = " select a from IrParamModelBiz a  "
@@ -50,7 +50,7 @@ public class IrParamModelDao extends DaoUtil {
 					  .getResultList();
 	}	
 	
-	
+	@Deprecated
 	public static List<IrParamModelUsr> getIrParamModelUsrList(String bssd, EIrModel irModelNm, String irCurveNm) {
 		
 		String query = " select a from IrParamModelUsr a                    "
@@ -67,7 +67,7 @@ public class IrParamModelDao extends DaoUtil {
 				      .getResultList();
 	}	
 	
-	
+	@Deprecated
 	public static List<IrParamModelCalc> getIrParamModelCalcList(String bssd, EIrModel irModelNm, String irCurveNm) {
 		
 		String query = " select a from IrParamModelCalc a   "

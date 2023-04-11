@@ -8,7 +8,7 @@ import com.gof.entity.IrDcntSceStoBiz;
 import com.gof.entity.IrParamHwRnd;
 import com.gof.enums.EApplBizDv;
 import com.gof.util.HibernateUtil;
-
+@Deprecated
 public class IrParamHwRndDao extends DaoUtil {
 	
 	private static Session session = HibernateUtil.getSessionFactory().openSession();
@@ -30,7 +30,6 @@ public class IrParamHwRndDao extends DaoUtil {
 					  .getResultList();
 	}
 	
-	
 	public static List<IrParamHwRnd> getIrParamHwRndList(String bssd, String irModelId, String irCurveId, String lastMatCd){
 		
 		String query = "select a from IrParamHwRnd a "
@@ -49,7 +48,6 @@ public class IrParamHwRndDao extends DaoUtil {
 			      	  .setParameter("lastMatCd", lastMatCd)
 					  .getResultList();
 	}	
-	
 	
 	public static List<IrDcntSceStoBiz> getIrDcntSceStoBizList(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo){
 		
