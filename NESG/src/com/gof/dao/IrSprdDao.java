@@ -11,6 +11,7 @@ import com.gof.entity.IrSprdLp;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.entity.IrSprdLpUsr;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.util.HibernateUtil;
 
 public class IrSprdDao extends DaoUtil {
@@ -79,7 +80,7 @@ public class IrSprdDao extends DaoUtil {
 	}
 	
 
-	public static List<IrSprdAfnsBiz> getIrSprdAfnsBizList(String bssd, String irModelNm, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrSprdAfnsBiz> getIrSprdAfnsBizList(String bssd, EIrModel irModelNm, String irCurveNm, Integer irCurveSceNo){
 		
 		String query = "select a from IrSprdAfnsBiz a         "
 					 + " where 1=1                            "
@@ -99,7 +100,7 @@ public class IrSprdDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrSprdAfnsCalc> getIrSprdAfnsCalcList(String bssd, String irModelNm, String irCurveNm){
+	public static List<IrSprdAfnsCalc> getIrSprdAfnsCalcList(String bssd, EIrModel irModelNm, String irCurveNm){
 		
 		String query = "select a from IrSprdAfnsCalc a        "
 					 + " where 1=1                            "
@@ -117,7 +118,7 @@ public class IrSprdDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrSprdAfnsUsr> getIrSprdAfnsUsrList(String bssd, String irModelNm, String irCurveNm){
+	public static List<IrSprdAfnsUsr> getIrSprdAfnsUsrList(String bssd, EIrModel irModelNm, String irCurveNm){
 		
 		String query = "select a from IrSprdAfnsUsr a "
 					 + " where 1=1 "

@@ -100,27 +100,27 @@ public class LogNormal4jOld {
 		return rstList;
 	}
 	
-	
+	@Deprecated // 23.04.10 사용하지 않는듯해서 주석처리 
 	public List<IrParamHwRnd> getRandomScenList() {
 		
 		List<IrParamHwRnd> randList = new ArrayList<IrParamHwRnd>();
-			
-		for(int i=0; i<this.randomNum.length; i++) {
-			for(int j=0; j<this.randomNum[i].length; j++) {
-				
-				IrParamHwRnd rand = new IrParamHwRnd();				
-				rand.setBaseYymm(this.baseYymm);
-				rand.setIrModelId("KOSPI200");
-				rand.setIrCurveId("KOSPI200");
-				rand.setMatCd(String.format("%s%04d", IrModel.TIME_UNIT_MONTH, (i+1)));				
-				rand.setSceNo(Integer.valueOf(j+1));				
-				rand.setRndNum(this.randomNum[i][j]);
-				rand.setLastModifiedBy("ESG");
-				rand.setLastUpdateDate(LocalDateTime.now());
-				
-				randList.add(rand);				
-			}
-		}		
+//			
+//		for(int i=0; i<this.randomNum.length; i++) {
+//			for(int j=0; j<this.randomNum[i].length; j++) {
+//				
+//				IrParamHwRnd rand = new IrParamHwRnd();				
+//				rand.setBaseYymm(this.baseYymm);
+//				rand.setIrModelId("KOSPI200"); // TODO : 확인필요 !
+//				rand.setIrCurveId("KOSPI200");
+//				rand.setMatCd(String.format("%s%04d", IrModel.TIME_UNIT_MONTH, (i+1)));				
+//				rand.setSceNo(Integer.valueOf(j+1));				
+//				rand.setRndNum(this.randomNum[i][j]);
+//				rand.setLastModifiedBy("ESG");
+//				rand.setLastUpdateDate(LocalDateTime.now());
+//				
+//				randList.add(rand);				
+//			}
+//		}		
 		return randList;
 	}		
 	

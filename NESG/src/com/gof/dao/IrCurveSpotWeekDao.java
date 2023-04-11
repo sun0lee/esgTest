@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpotWeek;
 import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
@@ -111,17 +112,17 @@ public class IrCurveSpotWeekDao extends DaoUtil {
 	}
 	
 	
-	public static List<IrCurveSpotWeek> getIrCurveSpotWeekHis(String bssd, String stBssd, String irCurveNm, List<String> tenorList) {
-		return getIrCurveSpotWeekHis(bssd, stBssd, irCurveNm, tenorList, 5, false);
+	public static List<IrCurveSpotWeek> getIrCurveSpotWeekHis(String bssd, String stBssd, IrCurve irCurve, List<String> tenorList) {
+		return getIrCurveSpotWeekHis(bssd, stBssd, irCurve, tenorList, 5, false);
 	}
 	
 	
-	public static List<IrCurveSpotWeek> getIrCurveSpotWeekHis(String bssd, String stBssd, String irCurveNm, List<String> tenorList, Integer weekDay) {
-		return getIrCurveSpotWeekHis(bssd, stBssd, irCurveNm, tenorList, weekDay, false);
+	public static List<IrCurveSpotWeek> getIrCurveSpotWeekHis(String bssd, String stBssd, IrCurve irCurve, List<String> tenorList, Integer weekDay) {
+		return getIrCurveSpotWeekHis(bssd, stBssd, irCurve, tenorList, weekDay, false);
 	}
 	
 
-	public static List<IrCurveSpotWeek> getIrCurveSpotWeekHis(String bssd, String stBssd, String irCurveNm, List<String> tenorList, Integer weekDay, Boolean bizDayOnly){
+	public static List<IrCurveSpotWeek> getIrCurveSpotWeekHis(String bssd, String stBssd, IrCurve irCurve, List<String> tenorList, Integer weekDay, Boolean bizDayOnly){
 		
 		String weekName = getWeekDayName(weekDay); 
 		String query = null;
@@ -153,7 +154,7 @@ public class IrCurveSpotWeekDao extends DaoUtil {
 		return session.createQuery(query, IrCurveSpotWeek.class)
 					  .setParameter("bssd", FinUtils.toEndOfMonth(bssd))
 					  .setParameter("stBssd", stBssd)
-					  .setParameter("irCurveNm", irCurveNm)								
+					  .setParameter("irCurveNm", irCurve.getIrCurveNm())								
 					  .setParameterList("matCdList", tenorList)
 					  .setParameter("weekName", weekName)
 					  .getResultList()

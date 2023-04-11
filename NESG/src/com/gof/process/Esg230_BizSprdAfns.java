@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.linear.EigenDecomposition;
+
 import com.gof.dao.IrSprdDao;
 import com.gof.entity.IrSprdAfnsCalc;
 import com.gof.entity.IrSprdAfnsUsr;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
 import com.gof.entity.IrSprdAfnsBiz;
@@ -20,7 +23,7 @@ public class Esg230_BizSprdAfns extends Process {
 	public static final Esg230_BizSprdAfns INSTANCE = new Esg230_BizSprdAfns();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 
-	public static List<IrSprdAfnsBiz> createBizAfnsShockScenario(String bssd, String irModelNm, String irCurveNm) {
+	public static List<IrSprdAfnsBiz> createBizAfnsShockScenario(String bssd, EIrModel irModelNm, String irCurveNm) {
 				
 		List<IrSprdAfnsBiz>  irShockBiz  = new ArrayList<IrSprdAfnsBiz>();
 		List<IrSprdAfnsCalc> irShockCalc = IrSprdDao.getIrSprdAfnsCalcList(bssd, irModelNm, irCurveNm);		

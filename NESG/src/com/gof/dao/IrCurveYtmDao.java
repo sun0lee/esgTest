@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveYtm;
 import com.gof.entity.IrCurveYtmUsr;
 import com.gof.entity.IrCurveYtmUsrHis;
@@ -164,7 +165,7 @@ public class IrCurveYtmDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrCurveYtmUsrHis> getIrCurveYtmUsrHis(String bssd, String irCurveNm) {
+	public static List<IrCurveYtmUsrHis> getIrCurveYtmUsrHis(String bssd, IrCurve irCurve) {
 		
 		String query = " select a from IrCurveYtmUsrHis a      " 
 					 + "  where 1=1                            "
@@ -175,7 +176,7 @@ public class IrCurveYtmDao extends DaoUtil {
 		
 		return session.createQuery(query, IrCurveYtmUsrHis.class)
 					  .setParameter("bssd", bssd)
-					  .setParameter("irCurveNm", irCurveNm)
+					  .setParameter("irCurveNm", irCurve.getIrCurveNm())
 					  .getResultList()
 					  ;
 	}	

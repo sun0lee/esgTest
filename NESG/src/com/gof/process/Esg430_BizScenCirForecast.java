@@ -14,6 +14,7 @@ import com.gof.entity.IrParamModelBiz;
 import com.gof.entity.IrParamModelRnd;
 import com.gof.entity.IrQvalSce;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.model.CIRSimulationForcast;
 import com.gof.model.RandomNumberKics;
@@ -26,7 +27,7 @@ public class Esg430_BizScenCirForecast extends Process {
 	public static final Esg430_BizScenCirForecast INSTANCE = new Esg430_BizScenCirForecast();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrDcntSceStoGnr> createScenCir(String bssd, String irModelId, String irCurveId, List<IrParamModelBiz> irParamModelBizList, Double dt, Integer prjYear, Integer scenNum, Integer seed) {	
+	public static List<IrDcntSceStoGnr> createScenCir(String bssd, EIrModel irModelId, String irCurveId, List<IrParamModelBiz> irParamModelBizList, Double dt, Integer prjYear, Integer scenNum, Integer seed) {	
 
 		List<IrDcntSceStoGnr> rst = new ArrayList<IrDcntSceStoGnr>();
 		
@@ -60,7 +61,7 @@ public class Esg430_BizScenCirForecast extends Process {
 	}
 	
 	
-	public static List<IrParamModelRnd> createRandCir(String bssd, String irModelNm, String irCurveNm, Integer prjYear, Integer scenNum, Integer seed) {	
+	public static List<IrParamModelRnd> createRandCir(String bssd, EIrModel irModelNm, String irCurveNm, Integer prjYear, Integer scenNum, Integer seed) {	
 
 		List<IrParamModelRnd> rst = new ArrayList<IrParamModelRnd>();		
 		
@@ -101,7 +102,7 @@ public class Esg430_BizScenCirForecast extends Process {
 	}	
 	
 	
-	public static List<IrQvalSce> createQuantileValue(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> cirSceMap) {		
+	public static List<IrQvalSce> createQuantileValue(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> cirSceMap) {		
 		
 		List<IrQvalSce> rst = new ArrayList<IrQvalSce>();		
 		

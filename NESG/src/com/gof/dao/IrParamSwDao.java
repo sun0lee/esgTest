@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 
+import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrParamSwUsr;
 import com.gof.enums.EApplBizDv;
+import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
 
 public class IrParamSwDao extends DaoUtil {
@@ -48,13 +50,29 @@ public class IrParamSwDao extends DaoUtil {
 				      .getResultList();
 	}	
 	
+//	public static List<IrParamSwBiz> getIrParamSwBizList(String bssd){
+//		
+//		String query = 	"select new com.gof.entity.IrParamSwBiz (a.baseYymm , a.applBizDv , a.irCurveNm, a.curCd , a.llp, a.irCurve) "
+//					+ "from IrParamSw a "
+//					+ "where 1=1 "
+//					+ "and a.baseYymm = :bssd	"
+//					+ "group by a.baseYymm , a.applBizDv , a.irCurveNm, a.curCd , a.llp, a.irCurve " 
+//					;
+//		
+//		List<IrParamSwBiz> paramSwBiz = session.createQuery(query, IrParamSwBiz.class)
+//											.setParameter("bssd", bssd)
+//											.getResultList();
+//		
+//		return paramSwBiz;
+//	}
 	
+	@Deprecated
 	//Currently this method is only used for job110	
 	public static List<IrParamSw> getIrParamSwList(String bssd, List<String> irCurveNmList) {
 		return getIrParamSwUsrList(bssd, irCurveNmList).stream().map(s -> s.convert(bssd)).collect(Collectors.toList());
 	}
 
-	
+	@Deprecated
 	public static List<IrParamSwUsr> getIrParamSwUsrList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {
 		
 		String applStYymm = getAppliedYymm(bssd, applBizDv, irCurveNm, irCurveSceNo);
@@ -78,7 +96,7 @@ public class IrParamSwDao extends DaoUtil {
 				      .getResultList();
 	}		
 	
-	
+	@Deprecated
 	public static List<IrParamSw> getIrParamSwList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {
 		return getIrParamSwUsrList(bssd, applBizDv, irCurveNm, irCurveSceNo)
 				.stream()

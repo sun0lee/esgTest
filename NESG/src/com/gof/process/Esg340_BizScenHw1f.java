@@ -21,6 +21,7 @@ import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidSceSto;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.IRateInput;
@@ -36,7 +37,7 @@ public class Esg340_BizScenHw1f extends Process {
 	public static final Esg340_BizScenHw1f INSTANCE = new Esg340_BizScenHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 
-	public static Map<String, List<?>> createScenHw1f(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear) {
+	public static Map<String, List<?>> createScenHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<String, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear) {
 		
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
@@ -144,7 +145,7 @@ public class Esg340_BizScenHw1f extends Process {
 	}		
 	
 	
-	public static List<IrValidSceSto> createQuantileValue(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap) {		
+	public static List<IrValidSceSto> createQuantileValue(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap) {		
 		
 		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();		
 		

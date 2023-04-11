@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EIrModel;
+import com.gof.enums.ENamingConvention;
+import com.gof.enums.EParamTypCd;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,8 +44,11 @@ public class IrParamAfnsCalc extends BaseEntity  implements Serializable {
 	private long id;
 
 	private String baseYymm; 
-	private String irModelNm;
+	@Enumerated(EnumType.STRING)
+	private EIrModel irModelNm;
 	private String irCurveNm;
+//	@Enumerated(EnumType.STRING)
+//	private EParamTypCd paramTypCd;
 	private String paramTypCd;
 	
 	private Double paramVal;	

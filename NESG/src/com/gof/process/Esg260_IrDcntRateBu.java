@@ -15,6 +15,7 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsBiz;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
 
@@ -26,7 +27,7 @@ public class Esg260_IrDcntRateBu extends Process {
 	public static final Esg260_IrDcntRateBu INSTANCE = new Esg260_IrDcntRateBu();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -37,7 +38,8 @@ public class IrDcntSceStoGnr implements Serializable, EntityIdentifier {
 	private EApplBizDv applBizDv;
 
     @Id
-	private String irModelId;	
+    @Enumerated(EnumType.STRING)
+	private EIrModel irModelId;	
 	
 	@Id
 	private String irCurveId;

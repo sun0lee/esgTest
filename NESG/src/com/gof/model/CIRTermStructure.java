@@ -97,7 +97,20 @@ public class CIRTermStructure extends IrModel {
 
 	
 	@Builder(builderClassName="of", builderMethodName="of")
-	public CIRTermStructure(String bssd, List<IRateInput> iRateBaseList, Character cmpdType, Boolean isRealNumber, Integer prjYear, Integer prjInterval, Double ltfr, Integer ltfrT, Double liqPrem, Integer dayCountBasis, Integer itrMax, Double accuracy) {				
+	public CIRTermStructure(
+							String bssd
+						  , List<IRateInput> iRateBaseList
+						  , Character cmpdType
+						  , Boolean isRealNumber
+						  , Integer prjYear
+						  , Integer prjInterval
+						  , Double ltfr
+						  , Integer ltfrT
+						  , Double liqPrem
+						  , Integer dayCountBasis
+						  , Integer itrMax
+						  , Double accuracy) 
+	{				
 		super();		
 		
 		this.baseDate = (baseDate == null ? LocalDate.now() : DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth()));

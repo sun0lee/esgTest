@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.EntityIdentifier;
 
@@ -42,7 +43,8 @@ public class IrParamModelUsr extends BaseEntity  implements Serializable, Entity
 
 	private String applStYymm;
 	private String applEdYymm;
-	private String irModelNm;
+	@Enumerated(EnumType.STRING)
+	private EIrModel irModelNm;
 	private String irCurveNm;
 	@Enumerated(EnumType.STRING)
 	private EParamTypCd paramTypCd;	

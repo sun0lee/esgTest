@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrParamModelCalc;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.model.CIRCalibrationForcast;
 
@@ -17,7 +18,7 @@ public class Esg410_ParamCirForecast extends Process {
 	public static final Esg410_ParamCirForecast INSTANCE = new Esg410_ParamCirForecast();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrParamModelCalc> createCirParam(String bssd, String irModelNm, String irCurveNm, Double dt, List<IrCurveSpot> spotList, Double accuracy) {	
+	public static List<IrParamModelCalc> createCirParam(String bssd, EIrModel irModelNm, String irCurveNm, Double dt, List<IrCurveSpot> spotList, Double accuracy) {	
 		
 		List<IrParamModelCalc> rst = new ArrayList<IrParamModelCalc>();
 		

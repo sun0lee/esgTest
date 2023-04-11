@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import com.gof.dao.IrCurveSpotDao;
+import com.gof.entity.IrCurve;
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrCurveSpotWeek;
 import com.gof.enums.EJob;
@@ -29,18 +30,18 @@ public class Esg210_SpotWeek extends Process {
 	public static final Esg210_SpotWeek INSTANCE = new Esg210_SpotWeek();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 
-	public static List<IrCurveSpotWeek> setupIrCurveSpotWeek(String bssd, String stBssd, String irCurveNm, List<String> tenorList) {	
+	public static List<IrCurveSpotWeek> setupIrCurveSpotWeek(String bssd, String stBssd, IrCurve irCurve, List<String> tenorList) {	
 		
 		List<IrCurveSpotWeek> rstList  = new ArrayList<IrCurveSpotWeek>();
-		List<IrCurveSpot> curveHisList = IrCurveSpotDao.getIrCurveSpotListHis(bssd, stBssd, irCurveNm, tenorList);
+		List<IrCurveSpot> curveHisList = IrCurveSpotDao.getIrCurveSpotListHis(bssd, stBssd, irCurve, tenorList);
 		
 		if(curveHisList.size()==0) {
-			log.warn("IR Curve History of {} Data is not found at from {} to {}", irCurveNm, stBssd, bssd);
+			log.warn("IR Curve History of {} Data is not found at from {} to {}", irCurve.getIrCurveNm(), stBssd, bssd);
 			return rstList;
 		}	
 //		23.03.03 1000개의 의미 ? 
 		if(curveHisList.size() < 1000) {
-			log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] from {} to {}", irCurveNm, curveHisList.size(), stBssd, FinUtils.toEndOfMonth(bssd));			
+			log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] from {} to {}", irCurve.getIrCurveNm(), curveHisList.size(), stBssd, FinUtils.toEndOfMonth(bssd));			
 			return rstList;
 		}			
 		
@@ -97,12 +98,12 @@ public class Esg210_SpotWeek extends Process {
 	}
 	
 	
-	public static List<IrCurveSpotWeek> setupIrCurveSpotWeek(String bssd, String stBssd, String irCurveNm, List<String> tenorList, DayOfWeek dayOfWeek) {		
+	public static List<IrCurveSpotWeek> setupIrCurveSpotWeek(String bssd, String stBssd, IrCurve irCurve, List<String> tenorList, DayOfWeek dayOfWeek) {		
 
-		List<IrCurveSpot> curveHisList  = IrCurveSpotDao.getIrCurveSpotListHis(bssd, stBssd, irCurveNm, tenorList);
+		List<IrCurveSpot> curveHisList  = IrCurveSpotDao.getIrCurveSpotListHis(bssd, stBssd, irCurve, tenorList);
 		
 		if(curveHisList.size()==0) {
-			log.warn("IR Curve History of {} Data is not found at from {} to {}", irCurveNm, stBssd, bssd);
+			log.warn("IR Curve History of {} Data is not found at from {} to {}", irCurve.getIrCurveNm(), stBssd, bssd);
 			return null;
 		}
 		

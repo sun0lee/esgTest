@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.gof.enums.EIrModel;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -30,7 +33,8 @@ public class IrParamHwRnd implements Serializable, EntityIdentifier {
 	private String baseYymm;
 	
 	@Id	
-	private String irModelId;
+	@Enumerated(EnumType.STRING)
+	private EIrModel irModelId;
 	
 	@Id	
 	private String irCurveId;
@@ -45,7 +49,7 @@ public class IrParamHwRnd implements Serializable, EntityIdentifier {
 	private String lastModifiedBy;
 	private LocalDateTime lastUpdateDate;		
 	
-	public IrParamHwRnd setKeys(String irModelId, String irCurveId, String jobId) {		
+	public IrParamHwRnd setKeys(EIrModel irModelId, String irCurveId, String jobId) {		
 		IrParamHwRnd rst = new IrParamHwRnd();
 		
 		rst.setBaseYymm(this.baseYymm);		

@@ -17,6 +17,7 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsBiz;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.interfaces.IRateInput;
 import com.gof.util.StringUtil;
@@ -34,7 +35,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 	 * @param irModelNm
 	 * @param applBizDv
 	 * @param paramSwMap*/
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, String irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<String, Map<Integer, IrParamSw>> paramSwMap) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		
@@ -52,7 +53,8 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 				List<IRateInput> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
 //				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
-				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
+//				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue().getSwAlphaYtm(), swSce.getValue().getFreq())
+				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue())
 											.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
 		
 				// irCurveSid add 

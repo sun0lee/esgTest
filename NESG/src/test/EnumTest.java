@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
+import com.gof.enums.EParamTypCd;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
@@ -23,18 +25,21 @@ public class EnumTest {
 //					 , aa.ordinal());
 //		}
 		
-//		for(EApplBizDv aa : EApplBizDv.getUseBizList()) {
-//
-//			 log.info("aaa : {},{},{}"
-//					 , aa.name()
-//					 , aa.isBizDv()
-//					 , aa.ordinal());
-//		}
+		for(EApplBizDv aa : EApplBizDv.getUseBizList()) {
+
+			 log.info("test : {},{},{}"
+					 , aa.name()
+					 , aa.isUpperBizDv()
+					 , aa.ordinal());
+		}
         
 		log.info("aaa : {}" , EApplBizDv.getApplBizDetDv(EApplBizDv.KICS, "A"));
 		
 		EnumSet<EApplBizDv> bizDvs = EnumSet.of(EApplBizDv.KICS);
 		log.info("aa : {}", bizDvs.size());
+		
+
 	}
+
 	
 }
