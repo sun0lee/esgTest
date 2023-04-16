@@ -42,11 +42,14 @@ public class Esg240_LpSprd extends Process {
 			}
 			
 			// swSce , IrParamSw
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
+			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+				Integer irCurveSceNo = swSce.getKey();
+				IrParamSw irParamSw = swSce.getValue();
+
 				
-				int llp = swSce.getValue().getLlp();
+				int llp = irParamSw.getLlp();
 				for(String tenor : tenorList) {					
-//					log.info("tenor: {}, {}, {}", tenor, tenor.substring(1), swSce.getValue().getLlp());					
+//					log.info("tenor: {}, {}, {}", tenor, tenor.substring(1), irParamSw.getLlp());					
 					
 					if(Integer.valueOf(tenor.substring(1)) <=  llp * MONTH_IN_YEAR) {						
 						
@@ -57,9 +60,9 @@ public class Esg240_LpSprd extends Process {
 						lp1.setApplBizDv(applBizDv);
 						lp1.setIrCurveNm(curveSwMap.getKey().getIrCurveNm());
 						lp1.setIrCurve(curveSwMap.getKey());
-						lp1.setIrCurveSceNo(swSce.getKey());
+						lp1.setIrCurveSceNo(irCurveSceNo);
 						lp1.setMatCd(tenor);
-						lp1.setLiqPrem(swSce.getValue().getLiqPrem());
+						lp1.setLiqPrem(irParamSw.getLiqPrem());
 						lp1.setModifiedBy(jobId);						
 						lp1.setUpdateDate(LocalDateTime.now());
 						
@@ -87,8 +90,11 @@ public class Esg240_LpSprd extends Process {
 			}
 			
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+				Integer irCurveSceNo = swSce.getKey();
+				IrParamSw irParamSw = swSce.getValue();
 
-				int llp = swSce.getValue().getLlp();				
+
+				int llp = irParamSw.getLlp();				
 				for(IrSprdCurve lpCrv : IrCurveSpotDao.getIrSprdCurve(bssd, lpCurveId)) {
 					if(Integer.valueOf(lpCrv.getMatCd().substring(1)) <= llp * MONTH_IN_YEAR) {
 						
@@ -99,7 +105,7 @@ public class Esg240_LpSprd extends Process {
 						lp2.setApplBizDv(applBizDv);
 						lp2.setIrCurveNm(curveSwMap.getKey().getIrCurveNm());
 						lp2.setIrCurve(curveSwMap.getKey());
-						lp2.setIrCurveSceNo(swSce.getKey());
+						lp2.setIrCurveSceNo(irCurveSceNo);
 						lp2.setMatCd(lpCrv.getMatCd());
 						lp2.setLiqPrem(lpCrv.getCrdSprd());
 						lp2.setModifiedBy(jobId);						
@@ -126,9 +132,12 @@ public class Esg240_LpSprd extends Process {
 			String irCurveNm = curveSwMap.getKey().getIrCurveNm() ;
 			
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+				Integer irCurveSceNo = swSce.getKey();
+				IrParamSw irParamSw = swSce.getValue();
 
-				int llp = swSce.getValue().getLlp();				
-				List<IrSprdLpUsr> lpUsr = IrSprdDao.getIrSprdLpUsrList(bssd, applBizDv, irCurveNm, swSce.getKey());
+
+				int llp = irParamSw.getLlp();				
+				List<IrSprdLpUsr> lpUsr = IrSprdDao.getIrSprdLpUsrList(bssd, applBizDv, irCurveNm, irCurveSceNo);
 				
 				for(IrSprdLpUsr usr : lpUsr) {
 					if(Integer.valueOf(usr.getMatCd().substring(1)) <= llp * MONTH_IN_YEAR) {
@@ -140,7 +149,7 @@ public class Esg240_LpSprd extends Process {
 						lp3.setApplBizDv(applBizDv);
 						lp3.setIrCurveNm(irCurveNm);
 						lp3.setIrCurve(irCurve);
-						lp3.setIrCurveSceNo(swSce.getKey());
+						lp3.setIrCurveSceNo(irCurveSceNo);
 						lp3.setMatCd(usr.getMatCd());
 						lp3.setLiqPrem(usr.getLiqPrem());
 						lp3.setModifiedBy(jobId);						

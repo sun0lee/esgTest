@@ -301,8 +301,8 @@ public class Main {
 //		jobList.add("210");
 //		jobList.add("220");
 //		jobList.add("230");
-//		jobList.add("240");
-//		jobList.add("250");
+		jobList.add("240");
+		jobList.add("250");
 		jobList.add("260");
 		jobList.add("270");
 		jobList.add("280");
@@ -867,19 +867,21 @@ public class Main {
 //				String irModelNm = "AFNS";		//for acquiring AFNS Shock Spread
 				EIrModel irModelNm = EIrModel.AFNS;
 
-//				for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
+				for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
 					// TODO : 260  
-//					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  biz, bizIrParamSw.get(biz));				
-//					bizDcntRateBu.stream().forEach(s -> session.save(s));
-//				}
-					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  EApplBizDv.KICS, bizIrParamSw.get(EApplBizDv.KICS));				
+					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  biz, bizIrParamSw.get(biz));				
 					bizDcntRateBu.stream().forEach(s -> session.save(s));
-					List<IrDcntRateBu> bizDcntRateBu1 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IFRS, bizIrParamSw.get(EApplBizDv.IFRS));				
-					bizDcntRateBu1.stream().forEach(s -> session.save(s));
-					List<IrDcntRateBu> bizDcntRateBu2 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.SAAS, bizIrParamSw.get(EApplBizDv.SAAS));				
-					bizDcntRateBu2.stream().forEach(s -> session.save(s));
-					List<IrDcntRateBu> bizDcntRateBu3 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IBIZ, bizIrParamSw.get(EApplBizDv.IBIZ));				
-					bizDcntRateBu3.stream().forEach(s -> session.save(s));
+				}
+//					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  EApplBizDv.KICS, bizIrParamSw.get(EApplBizDv.KICS));				
+//					bizDcntRateBu.stream().forEach(s -> session.save(s));
+//					List<IrDcntRateBu> bizDcntRateBu1 = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IFRS, bizIrParamSw.get(EApplBizDv.IFRS));				
+//					bizDcntRateBu1.stream().forEach(s -> session.save(s));
+//					List<IrDcntRateBu> bizDcntRateBu4 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IFRS, bizIrParamSw.get(EApplBizDv.IFRS));				
+//					bizDcntRateBu4.stream().forEach(s -> session.save(s));
+//					List<IrDcntRateBu> bizDcntRateBu2 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.SAAS, bizIrParamSw.get(EApplBizDv.SAAS));				
+//					bizDcntRateBu2.stream().forEach(s -> session.save(s));
+//					List<IrDcntRateBu> bizDcntRateBu3 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IBIZ, bizIrParamSw.get(EApplBizDv.IBIZ));				
+//					bizDcntRateBu3.stream().forEach(s -> session.save(s));
 				
 				session.flush();
 				session.clear();
@@ -1146,7 +1148,8 @@ public class Main {
 //					Integer freq = StringUtil.objectToPrimitive(irCurveSwMap.get(irCurveNm).getFreq(), 2);				
 					Integer freq = commIrParamSw.get(irCurveNm).getFreq();
 					
-					double errTol = StringUtil.objectToPrimitive(modelMstMap.get(irCurveNm).getItrTol(), 1E-8);
+//					double errTol = StringUtil.objectToPrimitive(modelMstMap.get(irCurveNm).getItrTol(), 1E-8);
+					double errTol = modelMstMap.get(irCurveNm).getItrTol();
 					log.info("freq: {}, errTol: {}", freq, errTol);
 			
 					//TODO: Initial Parameter(Sigma) Stability Test for SIGMA: [0.001, 0.010, 0.020, 0.030, 0.040, 0.050]
@@ -1236,11 +1239,13 @@ public class Main {
 					String hwAlphaAvgMatCd = argInDBMap.getOrDefault("HW_ALPHA_AVG_MAT_CD", "M0240").trim().toUpperCase();
 					String hwSigmaAvgMatCd = argInDBMap.getOrDefault("HW_SIGMA_AVG_MAT_CD", "M0120").trim().toUpperCase();					
 					
-					Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.KICS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));					
-					Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.IFRS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
-					Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.IBIZ, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
-					Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.SAAS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
-
+					for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
+						Esg330_BizParamHw1f.createBizHw1fParam(bssd, biz, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));					
+//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.KICS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));					
+//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.IFRS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
+//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.IBIZ, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
+//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.SAAS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
+					}
 					session.flush();
 					session.clear();					
 				}				
@@ -1313,11 +1318,14 @@ public class Main {
 				for(Map.Entry<EApplBizDv, Map<IrCurve, Map<Integer, IrParamSw>>> biz : totalSwMap.entrySet()) {
 					
 					for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : biz.getValue().entrySet()) {
+						String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 						for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+							Integer irCurveSceNo = swSce.getKey();
+
 							
-//							if(!biz.getKey().equals("KICS") || !swSce.getKey().equals(1)) continue;
-							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), biz.getKey(), curveSwMap.getKey(), swSce.getKey());
-							Map<String, List<?>> hw1fResult = Esg340_BizScenHw1f.createScenHw1f(bssd, biz.getKey(), irModelNm, curveSwMap.getKey().getIrCurveNm(), swSce.getKey(), biz.getValue(), modelMstMap, projectionYear);
+//							if(!biz.getKey().equals("KICS") || !irCurveSceNo.equals(1)) continue;
+							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), biz.getKey(), irCurveNm, irCurveSceNo);
+							Map<String, List<?>> hw1fResult = Esg340_BizScenHw1f.createScenHw1f(bssd, biz.getKey(), irModelNm, irCurveNm, irCurveSceNo, biz.getValue(), modelMstMap, projectionYear);
 						
 							@SuppressWarnings("unchecked")
 							List<IrDcntSceStoBiz> stoSceList = (List<IrDcntSceStoBiz>) hw1fResult.get("SCE");				
@@ -1328,7 +1336,7 @@ public class Main {
 							stoSceMap = stoSceList.stream().collect(Collectors.groupingBy(s -> Integer.valueOf(s.getMatCd().substring(1))
 													               , TreeMap::new, Collectors.toMap(s -> Integer.valueOf(s.getSceNo()), IrDcntSceStoBiz::getFwdRate, (k, v) -> k, TreeMap::new)));
 							
-							Esg340_BizScenHw1f.createQuantileValue(bssd, biz.getKey(), irModelNm, curveSwMap.getKey().getIrCurveNm(), swSce.getKey(), stoSceMap).forEach(s -> session.save(s));							
+							Esg340_BizScenHw1f.createQuantileValue(bssd, biz.getKey(), irModelNm, irCurveNm, irCurveSceNo, stoSceMap).forEach(s -> session.save(s));							
 							
 							int sceCnt = 1;
 							for (IrDcntSceStoBiz sce : stoSceList) {						
@@ -1338,7 +1346,7 @@ public class Main {
 									session.clear();
 								}
 								if (sceCnt % logSize == 0) {
-									log.info("Stochastic TermStructure of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, biz.getKey(), curveSwMap.getKey(), swSce.getKey(), sceCnt, stoSceList.size(), jobLog.getJobId());
+									log.info("Stochastic TermStructure of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, biz.getKey(), irCurveNm, irCurveSceNo, sceCnt, stoSceList.size(), jobLog.getJobId());
 								}
 								sceCnt++;
 							}					
@@ -1352,7 +1360,7 @@ public class Main {
 										session.clear();
 									}
 									if (rndCnt % logSize == 0) {
-										log.info("Stochastic Random Number of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, biz.getKey(), curveSwMap.getKey(), swSce.getKey(), rndCnt, randHwList.size(), jobLog.getJobId());
+										log.info("Stochastic Random Number of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, biz.getKey(), irCurveSceNo, irCurveSceNo, rndCnt, randHwList.size(), jobLog.getJobId());
 									}
 									rndCnt++;
 								}

@@ -4,25 +4,26 @@ import lombok.Getter;
 
 @Getter
 public enum EDetSceNo {
-	 SCE01 (1  )
-	,SCE02 (2  )
-	,SCE03 (3  )
-	,SCE04 (4  )
-	,SCE05 (5  )
-	,SCE06 (6  )
-;
-	private final Integer SceNo ;
+	 SCE00 (0) // 현재 미사용 base는 보통 0번 아닌가? 일단 esg에서는 1번이 기본임. 
+	,SCE01 (1)
+	,SCE02 (2)
+	,SCE03 (3)
+	,SCE04 (4)
+	,SCE05 (5)
+	,SCE06 (6);
 	
-
-	EDetSceNo(Integer SceNo ) {
-		this.SceNo = SceNo;
-			}
-	public static Integer getBaseScenNo() {
-	    return EDetSceNo.SCE01.SceNo;
+	private final Integer sceNo ;
+	
+	private EDetSceNo(Integer sceNo ) {
+		this.sceNo = sceNo;
+	}
+	public Integer getSceNo() {
+		return sceNo ;
 	}
 	
-//	public static Integer getScenNo(sceNo) {
-//		return EDetSceNo(sceNo);
-//	}
+	public Integer getBaseScenNo() {
+	    return EDetSceNo.SCE01.sceNo;
+	}
+	
 }
  

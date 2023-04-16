@@ -30,14 +30,17 @@ public class Esg250_BizLpSprd extends Process {
 			IrCurve irCurve  = curveSwMap.getKey();
 			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
+			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {	
+				Integer irCurveSceNo = swSce.getKey();
+				IrParamSw irParamSw = swSce.getValue();
+
 				
 				// 최종 적용 기준 : IR_PARAM_SW 의 liqPremApplDv (유동성프리미엄적용구분) 설정에 따라 결정함.  
-				String dcntApplModelCd = "BU" + swSce.getValue().getLiqPremApplDv();
+				String dcntApplModelCd = "BU" + irParamSw.getLiqPremApplDv();
 				
-				List<IrSprdLp> sprdLpList = IrSprdDao.getIrSprdLpList(bssd, dcntApplModelCd, applBizDv, irCurveNm, swSce.getKey());
+				List<IrSprdLp> sprdLpList = IrSprdDao.getIrSprdLpList(bssd, dcntApplModelCd, applBizDv, irCurveNm, irCurveSceNo);
 				if(sprdLpList.isEmpty()) {
-					log.warn("No IR Spread Data [IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", irCurveNm, swSce.getKey(), toPhysicalName(IrSprdLp.class.getSimpleName()), bssd);
+					log.warn("No IR Spread Data [IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", irCurveNm, irCurveSceNo, toPhysicalName(IrSprdLp.class.getSimpleName()), bssd);
 					continue;
 				}
 
@@ -48,7 +51,7 @@ public class Esg250_BizLpSprd extends Process {
 					sprdLpBiz.setApplBizDv(applBizDv);
 					sprdLpBiz.setIrCurveNm(irCurveNm);
 					sprdLpBiz.setIrCurve(irCurve);
-					sprdLpBiz.setIrCurveSceNo(swSce.getKey());
+					sprdLpBiz.setIrCurveSceNo(irCurveSceNo);
 					sprdLpBiz.setMatCd(sprdLp.getMatCd());
 					sprdLpBiz.setLiqPrem(sprdLp.getLiqPrem());
 					sprdLpBiz.setModifiedBy(jobId);						

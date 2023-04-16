@@ -50,7 +50,6 @@ public class SmithWilsonKics extends IrModel {
 	
 	
 	public SmithWilsonKics(LocalDate baseDate
-//						 , List<IrCurveSpot> irCurveHisList
 						 , List<IRateInput> irCurveHisList
 						 , boolean isRealNumber
 						 , double ltfr
@@ -70,7 +69,6 @@ public class SmithWilsonKics extends IrModel {
 	}	
 
 	public SmithWilsonKics(LocalDate baseDate
-//						 , List<IrCurveSpot> irCurveHisList
 						 , List<IRateInput> irCurveHisList
 						 , char cmpdType
 						 , boolean isRealNumber
@@ -98,7 +96,6 @@ public class SmithWilsonKics extends IrModel {
 	
 	@Builder(builderClassName="of", builderMethodName="of")
 	public SmithWilsonKics(LocalDate baseDate
-//					, List<IrCurveSpot> irCurveHisList
 					, List<IRateInput> irCurveHisList
 					, char cmpdType
 					, boolean isRealNumber
@@ -111,7 +108,6 @@ public class SmithWilsonKics extends IrModel {
 	{				
 		super();		
 		this.baseDate = baseDate;		
-//		this.setTermStructureBase(irCurveHisList);
 		this.setTermStructure(irCurveHisList);
 		this.setLastLiquidPoint(this.tenor[this.tenor.length-1]);
 		this.cmpdType = cmpdType; // D

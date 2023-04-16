@@ -33,7 +33,7 @@ import lombok.ToString;
 @Entity
 @Table(name ="IR_DCNT_RATE_BU")
 @NoArgsConstructor
-@FilterDef(name="IR_FILTER", parameters= { @ParamDef(name="baseYymm", type="string"), @ParamDef(name="irCurveId", type="string") })
+@FilterDef(name="IR_FILTER", parameters= { @ParamDef(name="baseYymm", type="string"), @ParamDef(name="irCurveNm", type="string") })
 @Filters( { @Filter(name ="IR_FILTER", condition="BASE_YYMM = :baseYymm"),  @Filter(name ="IR_FILTER", condition="IR_CURVE_ID like :irCurveId") } )
 @Getter
 @Setter

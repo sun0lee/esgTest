@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSceNo;
 import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
@@ -48,6 +49,8 @@ public class IrParamSw extends BaseEntity implements Serializable {
 //	private String applBizDv;	
 	private EApplBizDv applBizDv;	
 	private String irCurveNm;	
+//	@Enumerated(EnumType.ORDINAL)
+//	private EDetSceNo irCurveSceNo;
 	private Integer irCurveSceNo;
 	
 	private String  irCurveSceNm;

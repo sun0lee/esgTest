@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSceNo;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 
@@ -25,20 +26,30 @@ public class EnumTest {
 //					 , aa.ordinal());
 //		}
 		
-		for(EApplBizDv aa : EApplBizDv.getUseBizList()) {
+//		for(EApplBizDv aa : EApplBizDv.getUseBizList()) {
+//
+//			 log.info("test : {},{},{}"
+//					 , aa.name()
+//					 , aa.isUpperBizDv()
+//					 , aa.ordinal());
+//		}
+//		log.info("aaa : {}" , EApplBizDv.getApplBizDetDv(EApplBizDv.KICS, "A"));
+		
+//		EnumSet<EApplBizDv> bizDvs = EnumSet.of(EApplBizDv.KICS);
+//		log.info("aa : {}", bizDvs.size());
+		
+//		log.info("aaa : {}" , EDetSceNo.getValue());
+		
+		for(EDetSceNo aa : EDetSceNo.values()) {
 
-			 log.info("test : {},{},{}"
+			 log.info("aaa : {},{},{},{}"
 					 , aa.name()
-					 , aa.isUpperBizDv()
+					 , aa.getSceNo()
+					 , aa.getBaseScenNo()
 					 , aa.ordinal());
 		}
-        
-		log.info("aaa : {}" , EApplBizDv.getApplBizDetDv(EApplBizDv.KICS, "A"));
 		
-		EnumSet<EApplBizDv> bizDvs = EnumSet.of(EApplBizDv.KICS);
-		log.info("aa : {}", bizDvs.size());
 		
-
 	}
 
 	

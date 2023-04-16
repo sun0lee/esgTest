@@ -50,18 +50,18 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 
 			
 			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+				Integer irCurveSceNo = swSce.getKey();
+				IrParamSw irParamSw = swSce.getValue();
 				
 	// 1. ytm -> spot 변환 (ytm에 직접 스프레드를 반영, 10.0 추가된 up down 시나리오 산출 부분 확인)
-				List<IRateInput> ytmAddList = ytmList.stream().map(s->s.addSpread(swSce.getValue().getYtmSpread())).collect(Collectors.toList());
-				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
+				List<IRateInput> ytmAddList = ytmList.stream().map(s->s.addSpread(irParamSw.getYtmSpread())).collect(Collectors.toList());
+//				ytmAddList.forEach(s-> log.info("ytm1 : {},{}", s.toString()));
 				
-				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, swSce.getValue())
+				List<IrCurveSpot> spotList = Esg150_YtmToSpotSw.createIrCurveSpot(ytmAddList, irParamSw)
 											.stream().map(s-> s.convertToCont()).collect(Collectors.toList());
 		
-				// irCurveSid add 
-//				spotList.forEach(s-> s.setIrCurve(swSce.getValue().getIrCurve()));
 				spotList.forEach(s-> s.setIrCurve(irCurve));
-				spotList.forEach(s-> log.info("zzzz : {},{}", swSce.getKey(), s.toString()));
+				spotList.forEach(s-> log.info("zzzz : {},{}", irCurveSceNo, s.toString()));
 				
 				TreeMap<String, Double> spotMap = spotList.stream()
 														  .collect(Collectors.toMap(IrCurveSpot::getMatCd
@@ -74,16 +74,16 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 					continue;
 				}
 	// 2. 유동성 프리미엄 가져오기 			
-				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, irCurveNm,  swSce.getKey()).stream()
+				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream()
 						                                   .collect(Collectors.toMap(IrSprdLpBiz::getMatCd, IrSprdLpBiz::getLiqPrem));
 	// 3. 금리 충격스프레드 가져오기 시나리오번호도 디폴트 처리가 필요할까? 없으면 에러인데.
-				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, irCurveNm, StringUtil.objectToPrimitive(swSce.getValue().getShkSprdSceNo(), 1)).stream()
+				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, irCurveNm, StringUtil.objectToPrimitive(irParamSw.getShkSprdSceNo(), 1)).stream()
 															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 	// 4. 시나리오 적용할 준비 : spotSceList copy 			
 				List<IrCurveSpot> spotSceList = spotList.stream().map(s -> s.deepCopy(s)).collect(Collectors.toList());
 				
 				
-				String fwdMatCd = swSce.getValue().getFwdMatCd();				
+				String fwdMatCd = irParamSw.getFwdMatCd();				
 				if(!fwdMatCd.equals("M0000")) {
 					// spot -> fwd 변환 
 					Map<String, Double> fwdSpotMap = irSpotDiscToFwdMap(bssd, spotMap, fwdMatCd);
@@ -91,14 +91,14 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 					spotSceList.stream().forEach(s -> s.setSpotRate(fwdSpotMap.get(s.getMatCd())));					
 				}				
 
-				String pvtMatCd = swSce.getValue().getPvtRateMatCd();
+				String pvtMatCd = irParamSw.getPvtRateMatCd();
 				// 23.04.06 spotRate entity에서 값을 가져올때 이미 null 인 경우 에러를 return 하기 때문에 null인 채로 여기까지 올 수 없을텐데 또 default 처리가 된 이유가 뭘까.
 				double pvtRate  = spotMap.getOrDefault(pvtMatCd, 0.0);				
-				double pvtMult  = swSce.getValue().getMultPvtRate();		
-				double addSprd  = swSce.getValue().getAddSprd();
-				int    llp      = swSce.getValue().getLlp();				
+				double pvtMult  = irParamSw.getMultPvtRate();		
+				double addSprd  = irParamSw.getAddSprd();
+				int    llp      = irParamSw.getLlp();				
 				
-//				log.info("{}, {}, {}, {}, {}, {}, {}, {}, {}", applBizDv, curveSwMap.getKey(), swSce.getKey(), pvtMatCd, pvtRate, pvtMult, intMult, addSprd, llp);
+//				log.info("{}, {}, {}, {}, {}, {}, {}, {}, {}", applBizDv, curveSwMap.getKey(),irCurveSceNo , pvtMatCd, pvtRate, pvtMult, intMult, addSprd, llp);
 				for(IrCurveSpot spot : spotSceList) {				
 					if(Integer.valueOf(spot.getMatCd().substring(1)) <= llp * MONTH_IN_YEAR) {
 						
@@ -121,7 +121,7 @@ public class Esg261_IrDcntRateBu_Ytm extends Process {
 						dcntRateBu.setApplBizDv(applBizDv);
 						dcntRateBu.setIrCurveNm(irCurveNm);
 						dcntRateBu.setIrCurve(irCurve);
-						dcntRateBu.setIrCurveSceNo(swSce.getKey());
+						dcntRateBu.setIrCurveSceNo(irCurveSceNo);
 						dcntRateBu.setMatCd(spot.getMatCd());						
 						dcntRateBu.setSpotRateDisc(spotDisc);
 						dcntRateBu.setSpotRateCont(spotCont);

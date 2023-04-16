@@ -27,9 +27,7 @@ public class Esg150_YtmToSpotSw extends Process {
 //	23.03.31 매개변수 줄이기 
 //	public static List<IrCurveSpot> createIrCurveSpot(String baseYmd, String irCurveNm, List<IrCurveYtm> ytmRst, Double alphaApplied, Integer freq) {
 	/** ytm -> spot
-	 * @param ytmRst
-	 * @param alphaApplied
-	 * @param freq
+	 * @param 
 	 * */
 	public static List<IrCurveSpot> createIrCurveSpot(List<IRateInput> ytmRst, IrParamSw irparamSw ){		
 		

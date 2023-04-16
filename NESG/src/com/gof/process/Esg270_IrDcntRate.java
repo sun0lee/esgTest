@@ -54,29 +54,32 @@ public class Esg270_IrDcntRate extends Process {
 //			double ltfr1 = 0.0;
 //			double shift = 0.0;
 			
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
+			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {	
+				Integer irCurveSceNo = swSce.getKey();
+				IrParamSw irParamSw = swSce.getValue();
+
 				
-				log.info("BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", applBizDv, irCurveNm, swSce.getKey());
-				List<IRateInput>  irCurveSpotList = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, swSce.getKey());
+				log.info("BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", applBizDv, irCurveNm, irCurveSceNo);
+				List<IRateInput>  irCurveSpotList = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, irCurveSceNo);
 				
 				if(irCurveSpotList.size()==0) {
-					log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
+					log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, irCurveSceNo, toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
 					continue;
 				}				
 				
 				LocalDate baseDate = DateUtil.convertFrom(bssd).with(TemporalAdjusters.lastDayOfMonth());
-//				log.info("{}, {}, {}", swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear);
+//				log.info("{}, {}, {}", irParamSw.getLtfr(), irParamSw.getLtfrCp(), projectionYear);
 				
 				// smith-wilson 변환 생성 (조정 금리커브)  
-//				SmithWilsonKics swKics = new SmithWilsonKics(baseDate, irCurveSpotList, CMPD_MTD_DISC, true, swSce.getValue().getLtfr(), swSce.getValue().getLtfrCp(), projectionYear, 1, 100, DCB_MON_DIF);	
+//				SmithWilsonKics swKics = new SmithWilsonKics(baseDate, irCurveSpotList, CMPD_MTD_DISC, true, irParamSw.getLtfr(), irParamSw.getLtfrCp(), projectionYear, 1, 100, DCB_MON_DIF);	
 				
 				SmithWilsonKics swKics = SmithWilsonKics.of()
 										.baseDate       (baseDate)
 										.irCurveHisList (irCurveSpotList)
 										.cmpdType       (CMPD_MTD_DISC)
 										.isRealNumber   (true)
-										.ltfr           (swSce.getValue().getLtfr())
-										.ltfrT          (swSce.getValue().getLtfrCp())
+										.ltfr           (irParamSw.getLtfr())
+										.ltfrT          (irParamSw.getLtfrCp())
 										.prjYear        (projectionYear)
 										.prjInterval    (1)
 										.alphaItrNum    (100)
@@ -95,7 +98,7 @@ public class Esg270_IrDcntRate extends Process {
 				if(applBizDv==EApplBizDv.KICS) {
 					
 	  // KICS 기준시나리오 1 or 기타 별도 정의 6,7,8,9 
-					if( swSce.getKey()==1 || swSce.getKey() > 6) {
+					if( irCurveSceNo==1 || irCurveSceNo > 6) {
 						adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));										
 						
 //						List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, curveSwMap.getKey());
@@ -109,8 +112,8 @@ public class Esg270_IrDcntRate extends Process {
 						SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 													.baseDate(baseDate)					
 													.ytmCurveHisList(ytmList)
-													.alphaApplied(swSce.getValue().getSwAlphaYtm())													 
-													.freq(swSce.getValue().getFreq())
+													.alphaApplied(irParamSw.getSwAlphaYtm())													 
+													.freq(irParamSw.getFreq())
 													.build();						
 						
 						baseRateSce1Map = swBts.getSmithWilsonResultList(prjTenor).stream().collect(Collectors.toMap(SmithWilsonRslt::getMatCd, Function.identity()));
@@ -125,7 +128,7 @@ public class Esg270_IrDcntRate extends Process {
 					}
 	 // KICS 결정론적 시나리오 2~5 				
 					//for KICS: Asset Discount Rate Scenario after scen#1 is generated from Above Insurance Discount Rate + Difference Rate of Insurance - Asset at SCE#1
-					else if(swSce.getKey() <= 6) {
+					else if(irCurveSceNo <= 6) {
 						TreeMap<String, Double> spotRateMap = new TreeMap<String, Double>();
 						TreeMap<String, Double> fwdRateMap  = new TreeMap<String, Double>();
 						
@@ -157,10 +160,10 @@ public class Esg270_IrDcntRate extends Process {
 					// 부채평가용 (조정 할인율 커브 :연속복리 spot rate사용 )
 					adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));		
 					
-					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, irCurveNm, swSce.getKey())
+					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, irCurveNm, irCurveSceNo)
 											  .stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
 					if(ytmList.size()==0) {
-						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, swSce.getKey(), toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
+						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, irCurveSceNo, toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
 						continue;
 					}
 					
@@ -168,7 +171,7 @@ public class Esg270_IrDcntRate extends Process {
 					SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
 							 									 .baseDate(baseDate)					
 							 									 .ytmCurveHisList(ytmList)
-							 									 .alphaApplied(swSce.getValue().getSwAlphaYtm())													 
+							 									 .alphaApplied(irParamSw.getSwAlphaYtm())													 
 							 									 .freq(0)
 							 									 .build();						
 
@@ -187,7 +190,7 @@ public class Esg270_IrDcntRate extends Process {
 					rslt.setApplBizDv(applBizDv);
 					rslt.setIrCurveNm(irCurveNm);
 					rslt.setIrCurve(irCurve);  
-					rslt.setIrCurveSceNo(swSce.getKey());
+					rslt.setIrCurveSceNo(irCurveSceNo);
 					rslt.setModifiedBy(jobId);
 					rslt.setUpdateDate(LocalDateTime.now());
 				}				
@@ -195,8 +198,8 @@ public class Esg270_IrDcntRate extends Process {
 				
 				for(IrDcntRate dcnt : adjRateList) {
 					if(dcnt.getSpotRate().isNaN() || dcnt.getSpotRate().isInfinite() || dcnt.getAdjSpotRate().isNaN() || dcnt.getAdjSpotRate().isInfinite()) {
-//						log.info("{}, {}, {}", curveSwMap.getKey(), swSce.getKey(), dcnt);
-						log.error("Smith-Wilson Interpolation is failed. Check Shock Spread Data in [{}] Table for [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), applBizDv, irCurveNm, swSce.getKey(), bssd);
+//						log.info("{}, {}, {}", curveSwMap.getKey(), irCurveSceNo, dcnt);
+						log.error("Smith-Wilson Interpolation is failed. Check Shock Spread Data in [{}] Table for [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}]", Process.toPhysicalName(IrCurveYtm.class.getSimpleName()), applBizDv, irCurveNm, irCurveSceNo, bssd);
 						try {
 							throw new Exception();
 						} catch (Exception e) {
