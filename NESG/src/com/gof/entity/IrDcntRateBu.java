@@ -22,6 +22,7 @@ import org.hibernate.annotations.ParamDef;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.interfaces.IRateDcnt;
 
 import lombok.EqualsAndHashCode;
@@ -33,8 +34,8 @@ import lombok.ToString;
 @Entity
 @Table(name ="IR_DCNT_RATE_BU")
 @NoArgsConstructor
-@FilterDef(name="IR_FILTER", parameters= { @ParamDef(name="baseYymm", type="string"), @ParamDef(name="irCurveId", type="string") })
-@Filters( { @Filter(name ="IR_FILTER", condition="BASE_YYMM = :baseYymm"),  @Filter(name ="IR_FILTER", condition="IR_CURVE_ID like :irCurveId") } )
+@FilterDef(name="IR_FILTER", parameters= { @ParamDef(name="baseYymm", type="string"), @ParamDef(name="irCurveNm", type="string") })
+@Filters( { @Filter(name ="IR_FILTER", condition="BASE_YYMM = :baseYymm"),  @Filter(name ="IR_FILTER", condition="IR_CURVE_NM like :irCurveNm") } )
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper=false)
@@ -53,7 +54,8 @@ public class IrDcntRateBu extends BaseEntity implements Serializable, IRateDcnt 
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv; 
 	private String irCurveNm;
-	private Integer irCurveSceNo;
+	@Enumerated(EnumType.ORDINAL)
+	private EDetSce irCurveSceNo;
 	private String matCd;	
 	
 	private Double spotRateDisc;

@@ -11,6 +11,7 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdLp;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
 
@@ -22,22 +23,25 @@ public class Esg250_BizLpSprd extends Process {
 	public static final Esg250_BizLpSprd INSTANCE = new Esg250_BizLpSprd();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static List<IrSprdLpBiz> setLpSprdBiz(String bssd, EApplBizDv applBizDv, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap) {
+	public static List<IrSprdLpBiz> setLpSprdBiz(String bssd, EApplBizDv applBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap) {
 		
 		List<IrSprdLpBiz> rst = new ArrayList<IrSprdLpBiz>();
 		
-		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {	
+		for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {	
 			IrCurve irCurve  = curveSwMap.getKey();
 			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
+			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {	
+				EDetSce  irCurveSce = swSce.getKey();
+				IrParamSw irParamSw = swSce.getValue();
+
 				
 				// 최종 적용 기준 : IR_PARAM_SW 의 liqPremApplDv (유동성프리미엄적용구분) 설정에 따라 결정함.  
-				String dcntApplModelCd = "BU" + swSce.getValue().getLiqPremApplDv();
+				String dcntApplModelCd = "BU" + irParamSw.getLiqPremApplDv();
 				
-				List<IrSprdLp> sprdLpList = IrSprdDao.getIrSprdLpList(bssd, dcntApplModelCd, applBizDv, irCurveNm, swSce.getKey());
+				List<IrSprdLp> sprdLpList = IrSprdDao.getIrSprdLpList(bssd, dcntApplModelCd, applBizDv, irCurveNm, irCurveSce);
 				if(sprdLpList.isEmpty()) {
-					log.warn("No IR Spread Data [IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", irCurveNm, swSce.getKey(), toPhysicalName(IrSprdLp.class.getSimpleName()), bssd);
+					log.warn("No IR Spread Data [IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", irCurveNm, irCurveSce.getSceNo(), toPhysicalName(IrSprdLp.class.getSimpleName()), bssd);
 					continue;
 				}
 
@@ -48,7 +52,7 @@ public class Esg250_BizLpSprd extends Process {
 					sprdLpBiz.setApplBizDv(applBizDv);
 					sprdLpBiz.setIrCurveNm(irCurveNm);
 					sprdLpBiz.setIrCurve(irCurve);
-					sprdLpBiz.setIrCurveSceNo(swSce.getKey());
+					sprdLpBiz.setIrCurveSceNo(irCurveSce);
 					sprdLpBiz.setMatCd(sprdLp.getMatCd());
 					sprdLpBiz.setLiqPrem(sprdLp.getLiqPrem());
 					sprdLpBiz.setModifiedBy(jobId);						

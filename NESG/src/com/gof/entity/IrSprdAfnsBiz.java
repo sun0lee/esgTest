@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 
 import lombok.EqualsAndHashCode;
@@ -45,7 +46,8 @@ public class IrSprdAfnsBiz extends BaseEntity  implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private EIrModel irModelNm;
 	private String irCurveNm;	
-	private Integer irCurveSceNo;
+	@Enumerated(EnumType.ORDINAL)
+	private EDetSce irCurveSceNo;
 	private String matCd;	
 	
 	private Double shkSprdCont;	

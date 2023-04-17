@@ -22,6 +22,7 @@ import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidRnd;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.IRateInput;
@@ -36,14 +37,25 @@ public class Esg360_ValidRandHw1f extends Process {
 	
 	public static final Esg360_ValidRandHw1f INSTANCE = new Esg360_ValidRandHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
-	
-	public static List<IrParamHwRnd> createValidInputHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
+	/**
+	 * @param*/
+	public static List<IrParamHwRnd> createValidInputHw1f(
+			String bssd
+		  , EApplBizDv applBizDv
+		  , EIrModel irModelId
+		  , String irCurveId
+		  , Integer irCurveSceNo
+		  , Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap
+		  , Map<String, IrParamModel> modelMstMap
+		  , Integer projectionYear
+		  , Double targetDuration) 
+	{
 
 		List<IrParamHwRnd> randRst = new ArrayList<IrParamHwRnd>();
 		
-		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+		for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
 			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;
 				

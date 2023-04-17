@@ -22,6 +22,7 @@ import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidSceSto;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.enums.EParamTypCd;
@@ -43,23 +44,23 @@ public class Esg340_BizScenHw1f extends Process {
 													, EIrModel irModelId
 													, String irCurveId
 													, Integer irCurveSceNo
-													, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap
+													, Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap
 													, Map<String, IrParamModel> modelMstMap
 													, Integer projectionYear) 
 	{
-		
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
 		List<IrParamHwRnd>    randRst = new ArrayList<IrParamHwRnd>();
 		
-		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+		for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
 			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+				
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;				
 //				if(!applBizDv.equals("KICS") || !swSce.getKey().equals(1)) continue;
 				
-				if(!irCurveNm.equals(irCurveId) || !swSce.getKey().equals(irCurveSceNo)) continue;				
+				if(!irCurveNm.equals(irCurveId) || !swSce.getKey().getSceNo().equals(irCurveSceNo)) continue;				
 //				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", curveSwMap.getKey(), swSce.getKey());
 				
 				if(!modelMstMap.containsKey(irCurveNm)) {
@@ -101,7 +102,7 @@ public class Esg340_BizScenHw1f extends Process {
 				log.info("seedNum: {}, {}", seedNum, bssd);
 				
 				Hw1fSimulationKics hw1f = new Hw1fSimulationKics(bssd, adjSpotRate, hwParasList, alphaPiece, sigmaPiece, priceAdj, sceNum, ltfr, ltfrCp, projectionYear, randomGenType, seedNum);
-				List<IrDcntSceStoBiz> stoBizList  = hw1f.getIrModelHw1fList().stream().map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey(), jobId)).collect(Collectors.toList());
+				List<IrDcntSceStoBiz> stoBizList  = hw1f.getIrModelHw1fList().stream().map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey().getSceNo(), jobId)).collect(Collectors.toList());
 				List<IrParamHwRnd>    randNumList = new ArrayList<IrParamHwRnd>();				
 				
 				//TODO:

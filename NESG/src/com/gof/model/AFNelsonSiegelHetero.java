@@ -35,6 +35,7 @@ import com.gof.entity.IrDcntSceDetBiz;
 import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamAfnsCalc;
 import com.gof.entity.IrSprdAfnsCalc;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.IRateInput;
@@ -361,7 +362,8 @@ public class AFNelsonSiegelHetero extends IrModel {
 					shock.setIrModelNm(this.mode);
 					shock.setIrCurveNm(this.irCurveNm);				
 //					shock.setIrCurveSceNo(this.IntShockName[i]);
-					shock.setIrCurveSceNo(Integer.valueOf(this.IntShockName[i]));
+//					shock.setIrCurveSceNo(Integer.valueOf(this.IntShockName[i]));
+					shock.setIrCurveSceNo(EDetSce.getEDetSce(i));
 					shock.setMatCd(String.format("%s%04d", 'M', (int) round(this.tenor[j] * MONTH_IN_YEAR, 0)));
 					//shock.setMatCd(String.valueOf((int) round(this.tenor[j] * MONTH_IN_YEAR, 0) ));
 					shock.setShkSprdCont(this.IntShock.get(j,i));

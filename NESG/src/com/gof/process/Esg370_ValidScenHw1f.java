@@ -22,6 +22,7 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrValidSceSto;
 import com.gof.entity.StdAsstIrSceSto;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.IRateInput;
@@ -38,15 +39,15 @@ public class Esg370_ValidScenHw1f extends Process {
 	public static final Esg370_ValidScenHw1f INSTANCE = new Esg370_ValidScenHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static Map<String, List<?>> createValidInputHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<IrCurve, Map<Integer, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
+	public static Map<String, List<?>> createValidInputHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
 		
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
 		List<StdAsstIrSceSto> yldRst  = new ArrayList<StdAsstIrSceSto>();
 		
-		for(Map.Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
+		for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
 			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;
 				
@@ -89,7 +90,7 @@ public class Esg370_ValidScenHw1f extends Process {
 				Hw1fSimulationKics hw1f = new Hw1fSimulationKics(bssd, adjSpotRate, hwParasList, alphaPiece, sigmaPiece, priceAdj, sceNum, ltfr, ltfrCp, projectionYear, randomGenType, seedNum);				
 				
 				List<IrModelSce>       hwResult    = hw1f.getIrModelHw1fList();
-				List<IrDcntSceStoBiz>  stoBizList  = hwResult.stream().map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey(), jobId)).collect(Collectors.toList());
+				List<IrDcntSceStoBiz>  stoBizList  = hwResult.stream().map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey().getSceNo(), jobId)).collect(Collectors.toList());
 //				List<IrDcntSceStoBiz>  stoBizList  = hwResult.stream().filter(s -> !s.getSceNo().equals("0")).map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey(), jobId)).collect(Collectors.toList());
 				List<StdAsstIrSceSto>  stoYldList  = hw1f.getIrModelHw1fBondYield(hwResult, targetDuration).stream().map(s -> s.convert(applBizDv, irCurveId, irCurveSceNo, jobId)).collect(Collectors.toList());			
 				

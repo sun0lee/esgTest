@@ -116,7 +116,7 @@ public class SmithWilsonKicsBts extends IrModel {
 	 * C : YTM Cashflow </br>
 	 * p : ZCB Price(i.e. SPOT) </br>
 	 * 
-	 * @param alpha
+	 * @param 
 	 */	
 	private void smithWilsonZeta(double alpha) {		
 		
@@ -191,7 +191,7 @@ public class SmithWilsonKicsBts extends IrModel {
 	
 	//TODO:
 	/**
-	 * @param alpha, prjTenor
+	 * @param 
 	 * @return swResultlList
 	 * @see smithWilsonZeta
 */
@@ -238,7 +238,7 @@ public class SmithWilsonKicsBts extends IrModel {
 	
 	/**
 	 * symmetric wilson W(i,j) function 
-	 * @param prjYearFrac, tenorYearFrac, alpha, ltfrCont
+	 * @param 
 	 * @return weight matrix
 	 * @see swProjectionList
 */

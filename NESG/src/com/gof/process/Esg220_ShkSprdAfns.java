@@ -26,7 +26,7 @@ public class Esg220_ShkSprdAfns extends Process {
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
 	/** <p> AFNS 충격시나리오 생성 </br> 
-	 * @param bssd, mode, curveHisList, curveBaseList, tenorList, dt, initSigma, ltfr, ltfrT, prjYear, errorTolerance, itrMax, confInterval, epsilon
+	 * @param 
 	 * @See getAfnsResultList
 	 * */
 	public static Map<String, List<?>> createAfnsShockScenario(String bssd

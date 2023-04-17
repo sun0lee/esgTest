@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -49,7 +50,9 @@ public class IrParamSwUsr extends BaseEntity implements Serializable {
 	
 //	private long irCurveSid;
 	private String irCurveNm;
-	private Integer irCurveSceNo;
+	@Enumerated (EnumType.ORDINAL)
+	private EDetSce irCurveSceNo;
+//	private Integer irCurveSceNo;
 	
 	private String irCurveSceNm;	
 	private String curCd;
@@ -59,10 +62,15 @@ public class IrParamSwUsr extends BaseEntity implements Serializable {
 	private Integer ltfrCp;
 	private Double liqPrem;
 	private String liqPremApplDv;
-	private Integer shkSprdSceNo;
+	@Enumerated(EnumType.ORDINAL)
+	private EDetSce shkSprdSceNo;
 	private Double swAlphaYtm;
 	private String stoSceGenYn;	
-	private String fwdMatCd;	
+	private String fwdMatCd;
+	
+	// 23.04.17 add 
+    private Double ytmSpread ;
+	
 	private Double multIntRate;
 	private Double addSprd;	
 	private String pvtRateMatCd;	
@@ -95,6 +103,7 @@ public class IrParamSwUsr extends BaseEntity implements Serializable {
 		paramSw.setSwAlphaYtm(this.swAlphaYtm);
 		paramSw.setStoSceGenYn(this.stoSceGenYn);
 		paramSw.setFwdMatCd(this.fwdMatCd);
+		paramSw.setYtmSpread(this.ytmSpread); // add 23.04.17
 		paramSw.setMultIntRate(this.multIntRate);		
 		paramSw.setAddSprd(this.addSprd);
 		paramSw.setPvtRateMatCd(this.pvtRateMatCd);
