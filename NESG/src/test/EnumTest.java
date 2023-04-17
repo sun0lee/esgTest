@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 import com.gof.enums.EApplBizDv;
-import com.gof.enums.EDetSceNo;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 
@@ -40,12 +40,12 @@ public class EnumTest {
 		
 //		log.info("aaa : {}" , EDetSceNo.getValue());
 		
-		for(EDetSceNo aa : EDetSceNo.values()) {
+		for(EDetSce aa : EDetSce.values()) {
 
 			 log.info("aaa : {},{},{},{}"
 					 , aa.name()
 					 , aa.getSceNo()
-					 , aa.getBaseScenNo()
+//					 , aa.getBaseScenNo()
 					 , aa.ordinal());
 		}
 		

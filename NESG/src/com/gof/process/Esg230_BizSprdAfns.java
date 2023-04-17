@@ -10,6 +10,7 @@ import org.apache.commons.math3.linear.EigenDecomposition;
 import com.gof.dao.IrSprdDao;
 import com.gof.entity.IrSprdAfnsCalc;
 import com.gof.entity.IrSprdAfnsUsr;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
@@ -46,12 +47,10 @@ public class Esg230_BizSprdAfns extends Process {
 					biz.setIrModelNm   (usr.getIrModelNm());
 					biz.setIrCurve     (usr.getIrCurve());
 					biz.setIrCurveNm   (usr.getIrCurveNm());
-					biz.setIrCurveSceNo(i+1);
+					biz.setIrCurveSceNo(EDetSce.getEDetSce(i+1));
 					biz.setMatCd       (usr.getMatCd());
 					
-					if(i==0) { 
-						biz.setShkSprdCont(0.0);
-					}
+					if(i==0) { 	   biz.setShkSprdCont(0.0);}
 					else if(i==1) {biz.setShkSprdCont(usr.getMeanSprd() );}
 					else if(i==2) {biz.setShkSprdCont(usr.getUpSprd()   );}
 					else if(i==3) {biz.setShkSprdCont(usr.getDownSprd() );}

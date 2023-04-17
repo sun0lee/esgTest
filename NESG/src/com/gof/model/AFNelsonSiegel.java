@@ -37,6 +37,7 @@ import com.gof.entity.IrParamAfnsCalc;
 import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsCalc;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 import com.gof.interfaces.IRateInput;
@@ -60,7 +61,8 @@ public class AFNelsonSiegel extends IrModel {
 	protected boolean       optParasFlag = false;
 		
 	protected SimpleMatrix  IntShock;
-	protected String[]      IntShockName;
+//	protected String[]      IntShockName;
+//	protected Integer[]      IntDetSceList;
 	
 	protected int           nf;
 	protected double        dt; 
@@ -400,7 +402,7 @@ public class AFNelsonSiegel extends IrModel {
 					shock.setIrModelNm(this.mode);
 					shock.setIrCurveNm(this.irCurveNm);				
 //					shock.setIrCurveSceNo(this.IntShockName[i]);
-					shock.setIrCurveSceNo(Integer.valueOf(this.IntShockName[i]));
+					shock.setIrCurveSceNo(EDetSce.getEDetSce(i));
 					shock.setMatCd(String.format("%s%04d", 'M', (int) round(this.tenor[j] * MONTH_IN_YEAR, 0)));
 					//shock.setMatCd(String.valueOf((int) round(this.tenor[j] * MONTH_IN_YEAR, 0) ));
 					shock.setShkSprdCont(this.IntShock.get(j,i));
@@ -826,10 +828,11 @@ public class AFNelsonSiegel extends IrModel {
 //				                                             .concatColumns(TwistShock.scale(+twistScale)).concatColumns(TwistShock.scale(-twistScale));
 		
 //		this.IntShockName       = new String[] {"BASE", "MEAN", "UP", "DOWN", "FLAT", "STEEP"};
-		this.IntShockName       = new String[] {"1", "2", "3", "4", "5", "6"};
+//		this.IntShockName       = new String[] {"1", "2", "3", "4", "5", "6"};
+//		this.IntDetSceList       = new Integer[] {1, 2, 3, 4, 5, 6};
 	}		
 	
-
+@Deprecated
 	protected List<IrDcntSceDetBiz> applySmithWilsonInterpoloation(double ltfr, double liqPrem, String type) {
 
 		List<IrDcntSceDetBiz> curveList = new ArrayList<IrDcntSceDetBiz>();

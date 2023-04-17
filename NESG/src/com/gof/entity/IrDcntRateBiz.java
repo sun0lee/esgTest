@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.interfaces.EntityIdentifier;
 import com.gof.interfaces.IRateDcnt;
 
@@ -47,7 +48,8 @@ public class IrDcntRateBiz extends BaseEntity implements Serializable, EntityIde
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv; 
 	private String irCurveNm;
-	private Integer irCurveSceNo;
+	@Enumerated(EnumType.ORDINAL)
+	private EDetSce irCurveSceNo;
 	private String matCd;
 	
 	private Double spotRate;	

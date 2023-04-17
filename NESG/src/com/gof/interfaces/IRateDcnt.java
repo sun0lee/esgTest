@@ -2,6 +2,7 @@ package com.gof.interfaces;
 
 import com.gof.entity.IrCurve;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 /**
  * <p> 이전 작업의 rst로 받는 금리 데이터</p> 
  * IrDcntRate, IrDcntRateBiz, IrDcntRateBu, IrDcntRateUsr </br>
@@ -14,7 +15,7 @@ public interface IRateDcnt {
 	public EApplBizDv  getApplBizDv();
 	public IrCurve getIrCurve();
 	public String  getIrCurveNm();
-	public Integer getIrCurveSceNo();
+	public EDetSce getIrCurveSceNo();
 	public String  getMatCd();
 	public Double  getSpotRate(); 
 

@@ -11,8 +11,11 @@ import com.gof.entity.IrDcntRateBiz;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrDcntRateUsr;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.interfaces.IRateInput;
 import com.gof.util.HibernateUtil;
+
+import jmetal.metaheuristics.singleObjective.differentialEvolution.DE;
 
 public class IrDcntRateDao extends DaoUtil {
 	
@@ -35,7 +38,7 @@ public class IrDcntRateDao extends DaoUtil {
 	 * @param irCurveNm
 	 * @param irCurveSceNo
 	 * */
-	public static List<IrDcntRateBu> getIrDcntRateBuList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrDcntRateBu> getIrDcntRateBuList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce){
 		
 		String query = "select a from IrDcntRateBu a "
 					 + " where 1=1 "
@@ -49,7 +52,7 @@ public class IrDcntRateDao extends DaoUtil {
 			      	  .setParameter("bssd", bssd)
 			      	  .setParameter("applBizDv", applBizDv)
 			      	  .setParameter("irCurveNm", irCurveNm)			      	  
-			      	  .setParameter("irCurveSceNo", irCurveSceNo)
+			      	  .setParameter("irCurveSceNo", irCurveSce)
 					  .getResultList();
 	}
 	
@@ -60,8 +63,8 @@ public class IrDcntRateDao extends DaoUtil {
 	
 	
 //	public static List<IrCurveSpot> getIrDcntRateBuToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
-	public static List<IRateInput> getIrDcntRateBuToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
-		return getIrDcntRateBuList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream().map(s -> s.convertAdj()).collect(Collectors.toList());
+	public static List<IRateInput> getIrDcntRateBuToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce) {		
+		return getIrDcntRateBuList(bssd, applBizDv, irCurveNm, irCurveSce).stream().map(s -> s.convertAdj()).collect(Collectors.toList());
 	}	
 
 
@@ -75,15 +78,15 @@ public class IrDcntRateDao extends DaoUtil {
 	 * @param irCurveNm
 	 * @param irCurveSceNo
 	 * */
-	public static List<IrCurveSpot> getIrDcntRateBuToBaseSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
-		return getIrDcntRateBuList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream().map(s -> s.convertBase()).collect(Collectors.toList());
+	public static List<IrCurveSpot> getIrDcntRateBuToBaseSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce) {		
+		return getIrDcntRateBuList(bssd, applBizDv, irCurveNm, irCurveSce).stream().map(s -> s.convertBase()).collect(Collectors.toList());
 	}	
 	
 	
 	/////////////////////////////////////////////////////////////////////////
 	
-	public static List<IrCurveSpot> getIrDcntRateToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {		
-		return getIrDcntRateList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream().map(s -> s.convertAdjSpot()).collect(Collectors.toList());
+	public static List<IrCurveSpot> getIrDcntRateToAdjSpotList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce) {		
+		return getIrDcntRateList(bssd, applBizDv, irCurveNm, irCurveSce).stream().map(s -> s.convertAdjSpot()).collect(Collectors.toList());
 	}	
 	
 	
@@ -132,7 +135,7 @@ public class IrDcntRateDao extends DaoUtil {
 	}
 	
 	
-	public static List<IrDcntRate> getIrDcntRateList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrDcntRate> getIrDcntRateList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce){
 		
 		String query = "select a from IrDcntRate a "
 					 + " where 1=1 "
@@ -146,12 +149,12 @@ public class IrDcntRateDao extends DaoUtil {
 			      	  .setParameter("bssd", bssd)
 			      	  .setParameter("applBizDv", applBizDv)
 			      	  .setParameter("irCurveNm", irCurveNm)			      	  
-			      	  .setParameter("irCurveSceNo", irCurveSceNo)
+			      	  .setParameter("irCurveSceNo", irCurveSce)
 					  .getResultList();
 	}
 	
 
-	public static List<IrDcntRate> getIrDcntRateList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo, List<String> tenorList){
+	public static List<IrDcntRate> getIrDcntRateList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce, List<String> tenorList){
 		
 		String query = "select a from IrDcntRate a "
 					 + " where 1=1 "
@@ -166,7 +169,7 @@ public class IrDcntRateDao extends DaoUtil {
 			      	  .setParameter("bssd", bssd)
 			      	  .setParameter("applBizDv", applBizDv)
 			      	  .setParameter("irCurveNm", irCurveNm)			      	  
-			      	  .setParameter("irCurveSceNo", irCurveSceNo)
+			      	  .setParameter("irCurveSceNo", irCurveSce)
 			      	  .setParameterList("matCdList", tenorList)
 					  .getResultList();
 	}

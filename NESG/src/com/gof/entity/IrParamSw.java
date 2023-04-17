@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
-import com.gof.enums.EDetSceNo;
+import com.gof.enums.EDetSce;
 import com.gof.util.StringUtil;
 
 import lombok.EqualsAndHashCode;
@@ -49,9 +49,9 @@ public class IrParamSw extends BaseEntity implements Serializable {
 //	private String applBizDv;	
 	private EApplBizDv applBizDv;	
 	private String irCurveNm;	
-//	@Enumerated(EnumType.ORDINAL)
-//	private EDetSceNo irCurveSceNo;
-	private Integer irCurveSceNo;
+	@Enumerated(EnumType.ORDINAL)
+	private EDetSce irCurveSceNo;
+//	private Integer irCurveSceNo;
 	
 	private String  irCurveSceNm;
 	private String  curCd;
@@ -61,14 +61,16 @@ public class IrParamSw extends BaseEntity implements Serializable {
 	private Integer ltfrCp;
 	private Double  liqPrem;
 	private String  liqPremApplDv;
-	private Integer shkSprdSceNo;
+	@Enumerated(EnumType.ORDINAL)
+	private EDetSce shkSprdSceNo;
 	private Double  swAlphaYtm;		
 	private String  stoSceGenYn;	
 	private String  fwdMatCd;	
 	
-	@Column(name = "MULT_INT_RATE")
-	private Double multIntRate;   //ytmSpread
-	
+	// 23.04.17 add 
+    private Double ytmSpread ;
+    
+	private Double multIntRate;   //ytmSpread 컬럼 별도 생성 
 	private Double addSprd;
 	private String pvtRateMatCd;	
 	private Double multPvtRate;	
@@ -80,7 +82,7 @@ public class IrParamSw extends BaseEntity implements Serializable {
 	private IrCurve irCurve ;
 	
 	public double getYtmSpread() {
-		return multIntRate == null ? 0.0 : multIntRate.doubleValue();
+		return ytmSpread == null ? 0.0 : ytmSpread.doubleValue();
 	}
 	
 	
@@ -88,7 +90,6 @@ public class IrParamSw extends BaseEntity implements Serializable {
 	
 	public Integer getFreq() {
 		return freq = StringUtil.objectToPrimitive(freq, 2) ;
-		
 	}
 	
 	public String getFwdMatCd() {
@@ -100,11 +101,20 @@ public class IrParamSw extends BaseEntity implements Serializable {
 	public String getLiqPremApplDv() {
 		return liqPremApplDv = StringUtil.objectToPrimitive(liqPremApplDv, "1");
 	}
+	public EDetSce getShkSprdSceNo() {
+		if (shkSprdSceNo == null) return EDetSce.SCE01 ;
+		else return shkSprdSceNo ;
+//		return shkSprdSceNo = objectToPrimitive(shkSprdSceNo,1);
+	}
 	public Double getSwAlphaYtm() {
 		return swAlphaYtm = StringUtil.objectToPrimitive(swAlphaYtm, 0.1) ; 
 	}
 	
 	
+	// 23.04.17 어디에서도 사용하지 않음!!  이것과 getMultPvtRate와 차이는 ????
+	public Double getMultIntRate() {
+		return multIntRate = StringUtil.objectToPrimitive(multIntRate,1.0);
+	}
 	public Double getAddSprd() {
 		return addSprd =  StringUtil.objectToPrimitive(addSprd, 0.0);
 	}

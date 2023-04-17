@@ -20,6 +20,7 @@ import org.hibernate.annotations.ParamDef;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -50,7 +51,8 @@ public class IrSprdLp extends BaseEntity implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;
 	private String irCurveNm;
-	private Integer irCurveSceNo;
+	@Enumerated(EnumType.ORDINAL)
+	private EDetSce irCurveSceNo;
 	private String matCd;	
 	
 	private Double liqPrem;

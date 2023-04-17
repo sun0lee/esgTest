@@ -11,6 +11,7 @@ import com.gof.entity.IrSprdLp;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.entity.IrSprdLpUsr;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.util.HibernateUtil;
 
@@ -18,7 +19,7 @@ public class IrSprdDao extends DaoUtil {
 	
 	private static Session session = HibernateUtil.getSessionFactory().openSession();
 	
-	public static List<IrSprdLpBiz> getIrSprdLpBizList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrSprdLpBiz> getIrSprdLpBizList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce){
 		
 		String query = "select a from IrSprdLpBiz a           "
 					 + " where 1=1                            "
@@ -33,12 +34,12 @@ public class IrSprdDao extends DaoUtil {
 			      	  .setParameter("bssd", bssd)
 			      	  .setParameter("applBizDv", applBizDv)
 			      	  .setParameter("irCurveNm", irCurveNm)			      	  
-			      	  .setParameter("irCurveSceNo", irCurveSceNo)
+			      	  .setParameter("irCurveSceNo", irCurveSce)
 					  .getResultList();
 	}	
 	
 	
-	public static List<IrSprdLp> getIrSprdLpList(String bssd, String dcntApplModelCd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo) {
+	public static List<IrSprdLp> getIrSprdLpList(String bssd, String dcntApplModelCd, EApplBizDv applBizDv, String irCurveNm, EDetSce EDetSce) {
 		
 		String query = " select a from IrSprdLp a                  "
 				 	 + "  where 1=1                                " 
@@ -55,12 +56,12 @@ public class IrSprdDao extends DaoUtil {
 				      .setParameter("dcntApplModelCd", dcntApplModelCd)
 			      	  .setParameter("applBizDv", applBizDv)
 			      	  .setParameter("irCurveNm", irCurveNm)			      	  
-			      	  .setParameter("irCurveSceNo", irCurveSceNo)				      
+			      	  .setParameter("irCurveSceNo", EDetSce)				      
 				      .getResultList();
 	}		
 	
 	
-	public static List<IrSprdLpUsr> getIrSprdLpUsrList(String bssd, EApplBizDv applBizDv, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrSprdLpUsr> getIrSprdLpUsrList(String bssd, EApplBizDv applBizDv, String irCurveNm, EDetSce irCurveSce){
 		
 		String query = "select a from IrSprdLpUsr a                        "
 					 + " where 1=1                                         "
@@ -75,12 +76,12 @@ public class IrSprdDao extends DaoUtil {
 			      	  .setParameter("bssd", bssd)
 			      	  .setParameter("applBizDv", applBizDv)
 			      	  .setParameter("irCurveNm", irCurveNm)			      	  
-			      	  .setParameter("irCurveSceNo", irCurveSceNo)
+			      	  .setParameter("irCurveSceNo", irCurveSce)
 					  .getResultList();
 	}
 	
 
-	public static List<IrSprdAfnsBiz> getIrSprdAfnsBizList(String bssd, EIrModel irModelNm, String irCurveNm, Integer irCurveSceNo){
+	public static List<IrSprdAfnsBiz> getIrSprdAfnsBizList(String bssd, EIrModel irModelNm, String irCurveNm, EDetSce irCurveSce){
 		
 		String query = "select a from IrSprdAfnsBiz a         "
 					 + " where 1=1                            "
@@ -95,7 +96,7 @@ public class IrSprdDao extends DaoUtil {
 			      	  .setParameter("bssd", bssd)
 			      	  .setParameter("irModelNm", irModelNm)
 			      	  .setParameter("irCurveNm", irCurveNm)			      	  
-			      	  .setParameter("irCurveSceNo", irCurveSceNo)
+			      	  .setParameter("irCurveSceNo", irCurveSce)
 					  .getResultList();
 	}	
 	

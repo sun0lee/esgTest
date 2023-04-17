@@ -17,6 +17,7 @@ import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsBiz;
 import com.gof.entity.IrSprdLpBiz;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.util.StringUtil;
@@ -29,11 +30,11 @@ public class Esg260_IrDcntRateBu extends Process {
 	public static final Esg260_IrDcntRateBu INSTANCE = new Esg260_IrDcntRateBu();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<IrCurve, Map<Integer, IrParamSw>> map) {	
+	public static List<IrDcntRateBu> setIrDcntRateBu(String bssd, EIrModel irModelNm, EApplBizDv applBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>> map) {	
 		
 		List<IrDcntRateBu> rst = new ArrayList<IrDcntRateBu>();
 		
-		for(Entry<IrCurve, Map<Integer, IrParamSw>> curveSwMap : map.entrySet()) {		
+		for(Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : map.entrySet()) {		
 			IrCurve irCurve = curveSwMap.getKey();
 			String irCurveNm = irCurve.getIrCurveNm();
 			
@@ -48,18 +49,18 @@ public class Esg260_IrDcntRateBu extends Process {
 				continue;
 			}
 
-			for(Map.Entry<Integer, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
-				Integer irCurveSceNo = swSce.getKey();
+			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+				EDetSce irCurveSce = swSce.getKey();
 				IrParamSw irParamSw = swSce.getValue();
 
 				// (biz, irCurveNm) 만기별 유동성프리미엄 
-				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, irCurveNm, irCurveSceNo).stream()
+				Map<String, Double> irSprdLpMap = IrSprdDao.getIrSprdLpBizList(bssd, applBizDv, irCurveNm, irCurveSce).stream()
 						                                   .collect(Collectors.toMap(IrSprdLpBiz::getMatCd, IrSprdLpBiz::getLiqPrem));
 
 //				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelId, irCurveNm, irCurveSceNo).stream()
 //															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 				// (biz, irCurveNm) 만기별 충격스프레드 
-				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, irCurveNm, StringUtil.objectToPrimitive(irParamSw.getShkSprdSceNo(), 1)).stream()
+				Map<String, Double> irSprdShkMap = IrSprdDao.getIrSprdAfnsBizList(bssd, irModelNm, irCurveNm, irParamSw.getShkSprdSceNo()).stream()
 															.collect(Collectors.toMap(IrSprdAfnsBiz::getMatCd, IrSprdAfnsBiz::getShkSprdCont));				
 				
 				//TODO: shallow copy vs deep copy
@@ -87,25 +88,16 @@ public class Esg260_IrDcntRateBu extends Process {
 						IrDcntRateBu dcntRateBu = new IrDcntRateBu();						
 						//TODO:
 						int kicsAddSprdContSceNo = 12;
-//						if(bssd.equals("202012")) kicsAddSprdContSceNo =  6;
-//						if(bssd.equals("202112")) kicsAddSprdContSceNo = 12;						
 						
-//						double addSprd2 = addSprd;                                                                              //Parallel Shift Rate of KICS 6.0 Sensitivity Scenario is Discrete(Below is Continuous) 
-//						double addSprd2 = (applBizDv.equals("KICS") && irCurveSceNo <= kicsAddSprdContSceNo) ? 0.0 : addSprd;						
-//						double baseSpot = intMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) + pvtMult * pvtRate) + addSprd2 + pvtRate * 0;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
-//						double baseSpotCont = irDiscToCont(baseSpot);
-						
-//						double baseSpot = pvtMult * (StringUtil.objectToPrimitive(spot.getSpotRate()) - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
 						double baseSpot = pvtMult * (spot.getSpotRate() - pvtRate) +  pvtRate + addSprd  ;  //pvtRate doesn't have an effect on parallel shift(only addSprd)						
-//						double baseSpotCont = baseSpot;					
 						double baseSpotCont = irDiscToCont(baseSpot);
 //						if(irParamSw.getApplBizDv().equals("SAAS")) {
 //							log.info("{}, {}, {}, {}, {}, {}, {}, {}", llp, spot.getMatCd(), spot.getSpotRate(), addSprd2, intMult, baseSpot, baseSpotCont, irSprdLpMap.getOrDefault(spot.getMatCd(), 0.0));
 //						}		
 						
-//						double shkCont      = irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0);
-//						double shkCont      = applBizDv.equals("KICS") ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) : 0.0;  //Parallel Shift is Discrete Rate (Below is Continuous)
-						double shkCont      = (applBizDv.equals(EApplBizDv.KICS) && irCurveSceNo <= kicsAddSprdContSceNo) ? irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) + addSprd : irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0);
+						double shkCont      = (applBizDv.equals(EApplBizDv.KICS) && irCurveSce.getSceNo() <= kicsAddSprdContSceNo) ? 
+											    irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0) + addSprd 
+											  : irSprdShkMap.getOrDefault(spot.getMatCd(), 0.0);
 						double lpDisc       = irSprdLpMap.getOrDefault(spot.getMatCd(), 0.0);
 						
 						double spotCont     = baseSpotCont + shkCont;
@@ -117,7 +109,7 @@ public class Esg260_IrDcntRateBu extends Process {
 						dcntRateBu.setApplBizDv(applBizDv);
 						dcntRateBu.setIrCurveNm(irCurveNm);
 						dcntRateBu.setIrCurve(irCurve); 
-						dcntRateBu.setIrCurveSceNo(irCurveSceNo);
+						dcntRateBu.setIrCurveSceNo(irCurveSce);
 						dcntRateBu.setMatCd(spot.getMatCd());						
 						dcntRateBu.setSpotRateDisc(spotDisc);
 						dcntRateBu.setSpotRateCont(spotCont);
