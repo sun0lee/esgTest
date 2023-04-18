@@ -18,13 +18,17 @@ public class EnumTest {
 //	     .filter(s->s.isBizDv == true) // 바깥에서는 모름 왜냐 private로 정의했기 때문.
 //	     .forEach(System.out::println);
 		
-//		for(EApplBizDv aa : EApplBizDv.values()) {
+		
+		
+//		for(EIrModel aa : EIrModel.values()) {
 //
 //			 log.info("aaa : {},{},{}"
 //					 , aa.name()
-//					 , aa.isBizDv()
+//					 , aa.value(EIrModel.HW1F_NSP)
 //					 , aa.ordinal());
 //		}
+		
+		
 		
 //		for(EApplBizDv aa : EApplBizDv.getUseBizList()) {
 //
@@ -35,19 +39,23 @@ public class EnumTest {
 //		}
 //		log.info("aaa : {}" , EApplBizDv.getApplBizDetDv(EApplBizDv.KICS, "A"));
 		
+		
+		
 //		EnumSet<EApplBizDv> bizDvs = EnumSet.of(EApplBizDv.KICS);
 //		log.info("aa : {}", bizDvs.size());
 		
 //		log.info("aaa : {}" , EDetSceNo.getValue());
 		
-		for(EDetSce aa : EDetSce.values()) {
-
-			 log.info("aaa : {},{},{},{}"
-					 , aa.name()
-					 , aa.getSceNo()
-//					 , aa.getBaseScenNo()
-					 , aa.ordinal());
-		}
+		
+		
+//		for(EDetSce aa : EDetSce.values()) {
+//
+//			 log.info("aaa : {},{},{},{}"
+//					 , aa.name()
+//					 , aa.getSceNo()
+////					 , aa.getBaseScenNo()
+//					 , aa.ordinal());
+//		}
 		
 		
 	}

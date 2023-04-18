@@ -25,6 +25,7 @@ import com.gof.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Deprecated
 public class Esg260_IrDcntRateBu extends Process {	
 	
 	public static final Esg260_IrDcntRateBu INSTANCE = new Esg260_IrDcntRateBu();

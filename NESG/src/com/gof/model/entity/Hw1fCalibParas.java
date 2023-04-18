@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwCalc;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EParamTypCd;
 
 import lombok.EqualsAndHashCode;
@@ -39,15 +40,15 @@ public class Hw1fCalibParas implements Serializable {
 	
 	private Double cost;
 	
-	public List<IrParamHwCalc> convertNonSplit(String irModelId, String irCurveId) {
+	public List<IrParamHwCalc> convertNonSplit(EIrModel irModelNm, String irCurveNm) {
 		
 		List<IrParamHwCalc> rstList = new ArrayList<IrParamHwCalc>();
 		
 		IrParamHwCalc alphaRst = new IrParamHwCalc();
 		if(matCd.equals("M0240")) {
 			alphaRst.setBaseYymm(this.baseDate.substring(0,6));
-			alphaRst.setIrModelId(irModelId);
-			alphaRst.setIrCurveId(irCurveId);
+			alphaRst.setIrModelNm(irModelNm);
+			alphaRst.setIrCurveNm(irCurveNm);
 			alphaRst.setMatCd(this.matCd);
 //			alphaRst.setParamTypCd("ALPHA");			
 			alphaRst.setParamTypCd(EParamTypCd.ALPHA);			
@@ -58,8 +59,8 @@ public class Hw1fCalibParas implements Serializable {
 		IrParamHwCalc sigmaRst = new IrParamHwCalc();
 		if(!matCd.equals("M0240")) {
 			sigmaRst.setBaseYymm(baseDate.substring(0,6));
-			sigmaRst.setIrModelId(irModelId);
-			sigmaRst.setIrCurveId(irCurveId);
+			sigmaRst.setIrModelNm(irModelNm);
+			sigmaRst.setIrCurveNm(irCurveNm);
 			sigmaRst.setMatCd(this.matCd);
 //			sigmaRst.setParamTypCd("SIGMA");
 			sigmaRst.setParamTypCd(EParamTypCd.SIGMA);
@@ -70,8 +71,8 @@ public class Hw1fCalibParas implements Serializable {
 		IrParamHwCalc costRst = new IrParamHwCalc();
 		if(matCd.equals("M0240")) {
 			costRst.setBaseYymm(baseDate.substring(0,6));
-			costRst.setIrModelId(irModelId);
-			costRst.setIrCurveId(irCurveId);
+			costRst.setIrModelNm(irModelNm);
+			costRst.setIrCurveNm(irCurveNm);
 			costRst.setMatCd(this.matCd);
 //			costRst.setParamTypCd("COST");
 			costRst.setParamTypCd(EParamTypCd.COST);
@@ -82,15 +83,15 @@ public class Hw1fCalibParas implements Serializable {
 	}
 	
 	
-	public List<IrParamHwCalc> convertSplit(String irModelId, String irCurveId) {
+	public List<IrParamHwCalc> convertSplit(EIrModel irModelNm, String irCurveNm) {
 		
 		List<IrParamHwCalc> rstList = new ArrayList<IrParamHwCalc>();
 		
 		IrParamHwCalc alphaRst = new IrParamHwCalc();
 		if(matCd.equals("M0120") || matCd.equals("M0240")) {
 			alphaRst.setBaseYymm(this.baseDate.substring(0,6));
-			alphaRst.setIrModelId(irModelId);
-			alphaRst.setIrCurveId(irCurveId);
+			alphaRst.setIrModelNm(irModelNm);
+			alphaRst.setIrCurveNm(irCurveNm);
 			alphaRst.setMatCd(this.matCd);
 //			alphaRst.setParamTypCd("ALPHA");			
 			alphaRst.setParamTypCd(EParamTypCd.ALPHA);			
@@ -101,8 +102,8 @@ public class Hw1fCalibParas implements Serializable {
 		IrParamHwCalc sigmaRst = new IrParamHwCalc();
 		if(!matCd.equals("M0240")) {
 			sigmaRst.setBaseYymm(baseDate.substring(0,6));
-			sigmaRst.setIrModelId(irModelId);
-			sigmaRst.setIrCurveId(irCurveId);
+			sigmaRst.setIrModelNm(irModelNm);
+			sigmaRst.setIrCurveNm(irCurveNm);
 			sigmaRst.setMatCd(this.matCd);
 //			sigmaRst.setParamTypCd("SIGMA");
 			sigmaRst.setParamTypCd(EParamTypCd.SIGMA);
@@ -113,8 +114,8 @@ public class Hw1fCalibParas implements Serializable {
 		IrParamHwCalc costRst = new IrParamHwCalc();
 		if(matCd.equals("M0240")) {
 			costRst.setBaseYymm(baseDate.substring(0,6));
-			costRst.setIrModelId(irModelId);
-			costRst.setIrCurveId(irCurveId);
+			costRst.setIrModelNm(irModelNm);
+			costRst.setIrCurveNm(irCurveNm);
 			costRst.setMatCd(this.matCd);
 //			costRst.setParamTypCd("COST");
 			costRst.setParamTypCd(EParamTypCd.COST);
