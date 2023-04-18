@@ -295,7 +295,7 @@ public class Main {
 		
 		jobList.clear();
 //		jobList.add("110");
-//		jobList.add("120");
+		jobList.add("120");
 //		jobList.add("130");		
 //		jobList.add("150");
 //		
@@ -304,9 +304,16 @@ public class Main {
 //		jobList.add("230");
 //		jobList.add("240");
 //		jobList.add("250");
-		jobList.add("260");
-		jobList.add("270");
-		jobList.add("280");
+//		jobList.add("260");
+//		jobList.add("270");
+//		jobList.add("280");
+		jobList.add("310");
+//		jobList.add("320");
+//		jobList.add("330");
+//		jobList.add("340");
+//		jobList.add("350");
+//		jobList.add("360");
+//		jobList.add("370");
 	}		
 	
 	//TODO: Start from E_IR_PARAM_SW_USR
@@ -676,7 +683,7 @@ public class Main {
 		                     			 .setParameter("param3", irCurveNm)
 		                     			 .executeUpdate();
 					
-					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum1);
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum1);
 					
 					int delNum2 = session.createQuery("delete IrSprdAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
 					                     .setParameter("param1", bssd) 
@@ -684,7 +691,7 @@ public class Main {
 										 .setParameter("param3", irCurveNm)
 										 .executeUpdate();					
 
-					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
 					
 					List<IrCurveSpotWeek> weekHisList    = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, false);
 					List<IrCurveSpotWeek> weekHisBizList = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, true);
@@ -868,20 +875,9 @@ public class Main {
 				EIrModel irModelNm = EIrModel.AFNS;
 
 				for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
-					// TODO : 260  
 					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  biz, bizIrParamSw.get(biz));				
 					bizDcntRateBu.stream().forEach(s -> session.save(s));
 				}
-//					List<IrDcntRateBu> bizDcntRateBu = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm,  EApplBizDv.KICS, bizIrParamSw.get(EApplBizDv.KICS));				
-//					bizDcntRateBu.stream().forEach(s -> session.save(s));
-//					List<IrDcntRateBu> bizDcntRateBu1 = Esg261_IrDcntRateBu_Ytm.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IFRS, bizIrParamSw.get(EApplBizDv.IFRS));				
-//					bizDcntRateBu1.stream().forEach(s -> session.save(s));
-//					List<IrDcntRateBu> bizDcntRateBu4 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IFRS, bizIrParamSw.get(EApplBizDv.IFRS));				
-//					bizDcntRateBu4.stream().forEach(s -> session.save(s));
-//					List<IrDcntRateBu> bizDcntRateBu2 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.SAAS, bizIrParamSw.get(EApplBizDv.SAAS));				
-//					bizDcntRateBu2.stream().forEach(s -> session.save(s));
-//					List<IrDcntRateBu> bizDcntRateBu3 = Esg260_IrDcntRateBu.setIrDcntRateBu(bssd, irModelNm, EApplBizDv.IBIZ, bizIrParamSw.get(EApplBizDv.IBIZ));				
-//					bizDcntRateBu3.stream().forEach(s -> session.save(s));
 				
 				session.flush();
 				session.clear();
@@ -962,9 +958,9 @@ public class Main {
 			CoJobInfo jobLog = startJogLog(EJob.ESG310);
 			
 //			String irModelNm    = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();			
-			EIrModel irModelNm   = EIrModel.HW1F ;		
-			String irModelNmNsp = irModelNm + "_NSP";
-			String irModelNmSp  = irModelNm + "_SP";
+			EIrModel irModelNm    = EIrModel.HW1F ;		
+			EIrModel irModelNmNsp = EIrModel.valueOf( irModelNm + "_NSP");
+			EIrModel irModelNmSp  = EIrModel.valueOf( irModelNm + "_SP");
 			
 			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
 			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
@@ -1001,7 +997,7 @@ public class Main {
 		                     			 .setParameter("param3", irCurveNm)
 		                     			 .executeUpdate();
 					
-					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamHwCalc.class.getSimpleName()), jobLog.getJobId(), irModelNmNsp, irCurveNm, delNum1);
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamHwCalc.class.getSimpleName()), jobLog.getJobId(), irModelNmNsp, irCurveNm, delNum1);
 
 					
 					int delNum2 = session.createQuery("delete IrParamHwCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
@@ -1010,7 +1006,7 @@ public class Main {
 			                			 .setParameter("param3", irCurveNm)
 			                			 .executeUpdate();		
 					
-					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamHwCalc.class.getSimpleName()), jobLog.getJobId(), irModelNmSp , irCurveNm, delNum2);					
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamHwCalc.class.getSimpleName()), jobLog.getJobId(), irModelNmSp , irCurveNm, delNum2);					
 
 					
 					int delNum3 = session.createQuery("delete IrValidParamHw a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
@@ -1039,14 +1035,15 @@ public class Main {
 
 //					Integer freq = StringUtil.objectToPrimitive(irCurveSwMap.get(irCurveNm).getFreq(), 2);				
 					Integer freq = commIrParamSw.get(irCurveNm).getFreq();				
-					double errTol = StringUtil.objectToPrimitive(modelMstMap.get(irCurveNm).getItrTol(), 1E-8);
+					double errTol = modelMstMap.get(irCurveNm).getItrTol();
 					log.info("freq: {}, errTol: {}", freq, errTol);
 					
 					double[] hwInitParam  = new double[] {hw1fInitAlpha, hw1fInitAlpha, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma};
 //					double[] hwInitParam  = new double[] {0.03, 0.06, 0.007, 0.006, 0.005, 0.004, 0.005, 0.006};
 					
 					Map<String, List<?>> irParamHw1fNonSplitMap = new TreeMap<String, List<?>>();
-					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, irCurveNm, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+//					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, irCurveNm, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
 //					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, irCrv.getKey(), spotList, swpnVolList, hwInitParamNsp, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
 				
 					for(Map.Entry<String, List<?>> rslt : irParamHw1fNonSplitMap.entrySet()) {												
@@ -1057,7 +1054,8 @@ public class Main {
 					}					
 					
 					Map<String, List<?>> irParamHw1fSplitMap = new TreeMap<String, List<?>>();
-					irParamHw1fSplitMap = Esg310_ParamHw1f.createParamHw1fSplitMap(bssd, irModelNmSp, irCurveNm, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceSplit, hwSigmaPiece);
+//					irParamHw1fSplitMap = Esg310_ParamHw1f.createParamHw1fSplitMap(bssd, irModelNmSp, irCurveNm, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceSplit, hwSigmaPiece);
+					irParamHw1fSplitMap = Esg310_ParamHw1f.createParamHw1fSplitMap(bssd, irModelNmSp, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceSplit, hwSigmaPiece);
 				
 					for(Map.Entry<String, List<?>> rslt : irParamHw1fSplitMap.entrySet()) {
 						rslt.getValue().forEach(s -> session.save(s));
@@ -1084,7 +1082,7 @@ public class Main {
 			
 //			String irModelNm    = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();
 			EIrModel irModelNm   = EIrModel.HW1F ;
-			String irModelNmNsp = irModelNm + "_NSP";
+			EIrModel irModelNmNsp = EIrModel.valueOf(irModelNm + "_NSP");
 			
 			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
 //			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getirCurveNm, Function.identity()));
@@ -1126,7 +1124,7 @@ public class Main {
 		                     			.setParameter("param4", jobLog.getJobId())
 		                     			.executeUpdate();
 					
-					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamHwCalc.class.getSimpleName()), jobLog.getJobId(), irModelNmNsp, irCurveNm, delNum);
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamHwCalc.class.getSimpleName()), jobLog.getJobId(), irModelNmNsp, irCurveNm, delNum);
 
 					List<IRateInput> spotList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);
 					
@@ -1165,7 +1163,18 @@ public class Main {
 						
 						double[] hwInitParamSigma  = new double[] {hw1fInitAlpha, hw1fInitAlpha, validSigma, validSigma, validSigma, validSigma, validSigma, validSigma};
 						
-						List<IrParamHwCalc> hwParamCalcValid = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(bssd, irModelNmNsp + "_INIT_" + String.valueOf(validSigma), irCurveNm, spotList, swpnVolList, hwInitParamSigma, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+						List<IrParamHwCalc> hwParamCalcValid = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
+								  bssd
+								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(validSigma))
+								, irCurveNm
+								, spotList
+								, swpnVolList
+								, hwInitParamSigma
+								, freq
+								, errTol
+								, hwAlphaPieceNonSplit
+								, hwSigmaPiece
+								);
 						hwParamCalcValid.forEach(s -> session.save(s));
 					}
 					
@@ -1176,25 +1185,69 @@ public class Main {
 					List<IRateInput> spotListUp = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList, 0.0001);
 					
 //					spotListUp.stream().forEach(s -> s.setSpotRate(s.getSpotRate() + 0.0001));
-					List<IrParamHwCalc> hwParamCalcSpotUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(bssd, irModelNmNsp + "_SPOT_UP", irCurveNm, spotListUp, swpnVolList, hwInitParamMkt, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+					List<IrParamHwCalc> hwParamCalcSpotUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
+							  bssd
+							, EIrModel.valueOf( irModelNmNsp + "_SPOT_UP") 
+							, irCurveNm
+							, spotListUp
+							, swpnVolList
+							, hwInitParamMkt
+							, freq
+							, errTol
+							, hwAlphaPieceNonSplit
+							, hwSigmaPiece)
+							;
 					hwParamCalcSpotUp.forEach(s -> session.save(s));
 										
 					
 					List<IRateInput> spotListDn = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList, -0.0001);					
 //					spotListDn.stream().forEach(s -> s.setSpotRate(s.getSpotRate() - 0.0001));
-					List<IrParamHwCalc> hwParamCalcSpotDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(bssd, irModelNmNsp + "_SPOT_DN", irCurveNm, spotListDn, swpnVolList, hwInitParamMkt, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+					List<IrParamHwCalc> hwParamCalcSpotDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
+							  bssd
+							, EIrModel.valueOf( irModelNmNsp + "_SPOT_DN")
+							, irCurveNm
+							, spotListDn
+							, swpnVolList
+							, hwInitParamMkt
+							, freq
+							, errTol
+							, hwAlphaPieceNonSplit
+							, hwSigmaPiece
+							);
 					hwParamCalcSpotDn.forEach(s -> session.save(s));
 					
 					
 					List<IrVolSwpn> swpnVolListUp = IrVolSwpnDao.getSwpnVol(bssd, irCurveNm);
 					swpnVolListUp.stream().forEach(s -> s.setVol(s.getVol() + 0.0001));
-					List<IrParamHwCalc> hwParamCalcSwpnUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(bssd, irModelNmNsp + "_SWPN_UP", irCurveNm, spotList, swpnVolListUp, hwInitParamMkt, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+					List<IrParamHwCalc> hwParamCalcSwpnUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
+							  bssd
+							, EIrModel.valueOf( irModelNmNsp + "_SWPN_UP")
+							, irCurveNm
+							, spotList
+							, swpnVolListUp
+							, hwInitParamMkt
+							, freq
+							, errTol
+							, hwAlphaPieceNonSplit
+							, hwSigmaPiece
+							);
 					hwParamCalcSwpnUp.forEach(s -> session.save(s));
 					
 					
 					List<IrVolSwpn> swpnVolListDn = IrVolSwpnDao.getSwpnVol(bssd, irCurveNm);
 					swpnVolListDn.stream().forEach(s -> s.setVol(s.getVol() - 0.0001));
-					List<IrParamHwCalc> hwParamCalcSwpnDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(bssd, irModelNmNsp + "_SWPN_DN", irCurveNm, spotList, swpnVolListDn, hwInitParamMkt, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+					List<IrParamHwCalc> hwParamCalcSwpnDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
+							  bssd
+							, EIrModel.valueOf( irModelNmNsp + "_SWPN_DN")
+							, irCurveNm
+							, spotList
+							, swpnVolListDn
+							, hwInitParamMkt
+							, freq
+							, errTol
+							, hwAlphaPieceNonSplit
+							, hwSigmaPiece
+							);
 					hwParamCalcSwpnDn.forEach(s -> session.save(s));
 					
 				}
@@ -1215,7 +1268,8 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG330);
 			
-			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();
+//			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();
+			EIrModel irModelNm = EIrModel.valueOf( argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase());
 			
 			try {
 				for (IrCurve irCurve :irCurveList) {
@@ -1281,10 +1335,10 @@ public class Main {
 //			totalSwMap.put(EApplBizDv.SAAS,  saasSwMap);
 
 //			String query = " delete " + schema + ".E_IR_DCNT_SCE_STO_BIZ partition (PT_E" + bssd + ") " 
-//						 + "  where BASE_YYMM=:param1 and IR_MODEL_ID=:param2 ";
+//						 + "  where BASE_YYMM=:param1 and IR_MODEL_NM=:param2 ";
 //
 //			String query2 = " delete " + schema + ".E_IR_PARAM_HW_RND partition (PT_E" + bssd + ") " 
-//					  + "  where BASE_YYMM=:param1 and IR_MODEL_ID=:param2 ";
+//					  + "  where BASE_YYMM=:param1 and IR_MODEL_NM=:param2 ";
 //
 //			int delNum = session.createNativeQuery(query)
 //								.setParameter("param1", bssd) 
@@ -1312,7 +1366,7 @@ public class Main {
 									 .setParameter("param3", jobLog.getJobId())
 									 .executeUpdate();				
 
-				log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrValidSceSto.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum3);
+				log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrValidSceSto.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum3);
 				
 
 				for(Map.Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
@@ -1485,7 +1539,7 @@ public class Main {
 									.setParameter("param2", irModelNm)
 									.executeUpdate();				
 
-				log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrValidRnd.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);				
+				log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrValidRnd.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);				
 				
 				for(Map.Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
 					
@@ -1551,7 +1605,7 @@ public class Main {
 									.setParameter("param3", jobLog.getJobId())
 									.executeUpdate();				
 
-				log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrValidSceSto.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
+				log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrValidSceSto.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
 				
 				for(Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
 					
@@ -1636,7 +1690,7 @@ public class Main {
         			            .setParameter("param2", "%"+irModelNm+"%")        			             
         			            .executeUpdate();
 
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
+			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
 			
 			try {				
 				for(Map.Entry<EIrModel, Map<String, IrParamModel>> modelMap : modelMstMap.entrySet()) {
@@ -1692,7 +1746,7 @@ public class Main {
         			            .setParameter("param2", "%"+irModelNm+"%")        			             
         			            .executeUpdate();
 
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelBiz.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
+			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelBiz.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
 			
 			try {				
 				for(Entry<EIrModel, Map<String, IrParamModel>> modelMap : modelMstMap.entrySet()) {
@@ -1735,21 +1789,21 @@ public class Main {
         			             .setParameter("param2", "%"+irModelNm+"%")
         			             .executeUpdate();
 
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrDcntSceStoGnr.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum1);			
+			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrDcntSceStoGnr.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum1);			
 			
 			int delNum2 = session.createQuery("delete IrParamModelRnd a where baseYymm=:param1 and a.irModelNm like :param2")						
 								 .setParameter("param1", bssd) 
 								 .setParameter("param2", "%"+irModelNm+"%")
 								 .executeUpdate();
 			
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelRnd.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum2);
+			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelRnd.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum2);
 			
 			int delNum3 = session.createQuery("delete IrQvalSce a where baseYymm=:param1 and a.irModelNm like :param2")
 					 .setParameter("param1", bssd) 
 					 .setParameter("param2", "%"+irModelNm+"%")					 
 					 .executeUpdate();				
 
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_ID: {}, COUNT: {}]", Process.toPhysicalName(IrQvalSce.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum3);
+			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrQvalSce.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum3);
 			
 			
 			try {				

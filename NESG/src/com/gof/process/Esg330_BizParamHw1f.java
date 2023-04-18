@@ -10,6 +10,7 @@ import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwUsr;
 import com.gof.entity.IrParamHwCalc;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.enums.EParamTypCd;
 
@@ -21,37 +22,37 @@ public class Esg330_BizParamHw1f extends Process {
 	public static final Esg330_BizParamHw1f INSTANCE = new Esg330_BizParamHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	public static List<IrParamHwBiz> createBizHw1fParam(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {
+	public static List<IrParamHwBiz> createBizHw1fParam(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {
 		
 		List<IrParamHwBiz>  paramHwBiz  = new ArrayList<IrParamHwBiz>();
-		List<IrParamHwUsr>  paramHwUsr  = IrParamHwDao.getIrParamHwUsrList(bssd, applBizDv, irModelId, irCurveId);		
-		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd, irCurveId);   //just counting in E_IR_PARAM_HW_CALC
+		List<IrParamHwUsr>  paramHwUsr  = IrParamHwDao.getIrParamHwUsrList(bssd, applBizDv,irModelNm.name(), irCurveNm);		
+		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd, irCurveNm);   //just counting in E_IR_PARAM_HW_CALC
 		
 		if(!paramHwUsr.isEmpty()) {			
 			paramHwBiz = paramHwUsr.stream().map(s -> s.convert()).collect(Collectors.toList());
 			log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), paramHwBiz.size(), toPhysicalName(IrParamHwUsr.class.getSimpleName()), toPhysicalName(IrParamHwBiz.class.getSimpleName()));			
 		}
 		else if(applBizDv.equals(EApplBizDv.KICS) && !paramHwCalc.isEmpty()) {			
-			paramHwBiz = calcBizHw1fParam(bssd, applBizDv, irModelId, irCurveId, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd);			
+			paramHwBiz = calcBizHw1fParam(bssd, applBizDv, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd);			
 			log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), paramHwBiz.size(), toPhysicalName(IrParamHwCalc.class.getSimpleName()), toPhysicalName(IrParamHwBiz.class.getSimpleName()));
 		}
 		else {
 			if(!paramHwCalc.isEmpty()) {				
-				paramHwBiz = calcBizHw1fParam(bssd, applBizDv, irModelId, irCurveId, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd);				
+				paramHwBiz = calcBizHw1fParam(bssd, applBizDv, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd);				
 				log.info("{}({}) creates {} results from [{}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), paramHwBiz.size(), toPhysicalName(IrParamHwCalc.class.getSimpleName()), toPhysicalName(IrParamHwBiz.class.getSimpleName()));				
 			}
 			else {
-				log.warn("{}({}) No Model Parameter from Hull-White 1 Factor Model in [Model:{}, ID:{}]", jobId, EJob.valueOf(jobId).getJobName(), irModelId, irCurveId);
+				log.warn("{}({}) No Model Parameter from Hull-White 1 Factor Model in [Model:{}, ID:{}]", jobId, EJob.valueOf(jobId).getJobName(), irModelNm, irCurveNm);
 			}
 		}		
 		return paramHwBiz;
 	}
 	
 	
-	private static List<IrParamHwBiz> calcBizHw1fParam(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {		
+	private static List<IrParamHwBiz> calcBizHw1fParam(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {		
 		
 		List<IrParamHwBiz>  paramHwBiz  = new ArrayList<IrParamHwBiz>();
-		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd, irModelId + "_NSP", irCurveId);
+		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd, irModelNm + "_NSP", irCurveNm);
 
 		for(IrParamHwCalc calc : paramHwCalc) {
 //			if(calc.getParamTypCd().equals("COST")) continue;
@@ -60,34 +61,34 @@ public class Esg330_BizParamHw1f extends Process {
 			IrParamHwBiz biz = new IrParamHwBiz();			
 			biz.setBaseYymm(bssd);
 			biz.setApplBizDv(applBizDv);
-			biz.setIrModelId(irModelId);
-			biz.setIrCurveId(irCurveId);
+			biz.setIrModelNm(irModelNm);
+			biz.setIrCurveNm(irCurveNm);
 			biz.setMatCd(calc.getMatCd());
 			biz.setParamTypCd(calc.getParamTypCd());			
 			biz.setParamVal(calc.getParamVal());
-			biz.setLastModifiedBy(jobId);
-			biz.setLastUpdateDate(LocalDateTime.now());
+			biz.setModifiedBy(jobId);
+			biz.setUpdateDate(LocalDateTime.now());
 			
 			paramHwBiz.add(biz);
 		}		
 						
-		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, EParamTypCd.ALPHA, hwAlphaAvgNum, hwAlphaAvgMatCd));
-		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelId, irCurveId, EParamTypCd.SIGMA, hwSigmaAvgNum, hwSigmaAvgMatCd));		
+		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelNm, irCurveNm, EParamTypCd.ALPHA, hwAlphaAvgNum, hwAlphaAvgMatCd));
+		paramHwBiz.addAll(createBizAppliedParameterOuter(bssd, applBizDv, irModelNm, irCurveNm, EParamTypCd.SIGMA, hwSigmaAvgNum, hwSigmaAvgMatCd));		
 		
-		if(applBizDv.equals(EApplBizDv.KICS)) paramHwBiz.stream().forEach(s -> log.info("PARAM BIZ from CALC: [{}, {}, {}, {}], {}", s.getIrModelId(), s.getApplBizDv(), s.getParamTypCd(), s.getMatCd(), s.getParamVal()));
+		if(applBizDv.equals(EApplBizDv.KICS)) paramHwBiz.stream().forEach(s -> log.info("PARAM BIZ from CALC: [{}, {}, {}, {}], {}", s.getIrModelNm(), s.getApplBizDv(), s.getParamTypCd(), s.getMatCd(), s.getParamVal()));
 
 		return paramHwBiz;
 	}
 	
 	
-	private static List<IrParamHwBiz> createBizAppliedParameterOuter(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId, EParamTypCd paramTypCd, int monthNum, String matCd) {
+	private static List<IrParamHwBiz> createBizAppliedParameterOuter(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, EParamTypCd paramTypCd, int monthNum, String matCd) {
 		
 		List<IrParamHwCalc> paramCalcHisList = new ArrayList<IrParamHwCalc>();
 		if(paramTypCd==EParamTypCd.ALPHA) {
-			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, irModelId + "_SP", irCurveId, paramTypCd, monthNum, matCd);
+			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, irModelNm + "_SP", irCurveNm, paramTypCd, monthNum, matCd);
 		}
 		else {
-			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, irModelId + "_NSP", irCurveId, paramTypCd, monthNum, matCd);
+			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, irModelNm + "_NSP", irCurveNm, paramTypCd, monthNum, matCd);
 		}		 
 		
 		List<IrParamHwBiz> paramHwBiz = new ArrayList<IrParamHwBiz>();
@@ -95,13 +96,13 @@ public class Esg330_BizParamHw1f extends Process {
 		
 		biz.setBaseYymm(bssd);
 		biz.setApplBizDv(applBizDv);
-		biz.setIrModelId(irModelId);
-		biz.setIrCurveId(irCurveId);
+		biz.setIrModelNm(irModelNm);
+		biz.setIrCurveNm(irCurveNm);
 		biz.setParamTypCd(paramTypCd);
 		biz.setMatCd("M1200");
 		biz.setParamVal(paramCalcHisList.stream().collect(Collectors.averagingDouble(s -> s.getParamVal())));
-		biz.setLastModifiedBy(jobId);
-		biz.setLastUpdateDate(LocalDateTime.now());
+		biz.setModifiedBy(jobId);
+		biz.setUpdateDate(LocalDateTime.now());
 		paramHwBiz.add(biz);
 		
 		return paramHwBiz;
