@@ -83,13 +83,12 @@ public class IrCurveSpotDao extends DaoUtil {
 		return curveRst;
 	}	
 	
-	// 23.04.07 add 
-	public static List<IRateInput> getIrCurveSpot(String bssd, String irCurveNm, List<String> tenorList, Double adjSpred) {
+	//23.04.20
+	public static List<IrCurveSpot> getIrCurveSpot2(String bssd, String irCurveNm, List<String> tenorList) {
 		
 		session.clear();
 		
-		String query = "select new com.gof.entity.IRateInput a.baseDate, a.irCurveNm, a.irCurveSid, a.matCd , a.spotRate + :adjSpread as spotRate  " // 이게 될까? 
-				+ "from IrCurveSpot a    "
+		String query = "select a from IrCurveSpot a    "
 				+ " where 1=1                     "
 				+ "   and a.irCurveNm =:irCurveNm "
 				+ "   and a.baseDate  = :bssd	   "
@@ -97,11 +96,10 @@ public class IrCurveSpotDao extends DaoUtil {
 				+ " order by a.matCd              "
 				;
 		
-		List<IRateInput> curveRst = session.createQuery(query, IRateInput.class)
+		List<IrCurveSpot> curveRst = session.createQuery(query, IrCurveSpot.class)
 				.setParameter("irCurveNm", irCurveNm)
 				.setParameter("bssd", getMaxBaseDate(bssd, irCurveNm))
 				.setParameterList("matCdList", tenorList)
-				.setParameter("adjSpread", adjSpred)
 				.getResultList()
 				;
 		return curveRst;

@@ -307,8 +307,8 @@ public class Main {
 //		jobList.add("260");
 //		jobList.add("270");
 //		jobList.add("280");
-		jobList.add("310");
-//		jobList.add("320");
+//		jobList.add("310");
+		jobList.add("320");
 //		jobList.add("330");
 //		jobList.add("340");
 //		jobList.add("350");
@@ -1090,13 +1090,11 @@ public class Main {
 			log.info("IrParamModel: {}", modelMstMap.toString());
 			
 			try {
-//				for(Map.Entry<String, IrCurve> irCrv : irCurveMap.entrySet()) {
-//				for (String irCurveNm : irCurveMap.keySet()) {
 				for (IrCurve irCurve :irCurveList) {
 			    	
 				    String irCurveNm = irCurve.getIrCurveNm() ;
 				    IrParamSw irparamSw = commIrParamSw.get(irCurveNm) ;
-				    Integer llp  = Math.min(irparamSw.getLlp(), 20) ;
+//				    Integer llp  = Math.min(irparamSw.getLlp(), 20) ;
 				    
 					if(!commIrParamSw.containsKey(irCurveNm)) {
 						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);					
@@ -1109,17 +1107,18 @@ public class Main {
 					}					
 										
 //					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getLlp());
-					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, llp);
+					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
 					
-					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, llp, tenorList);					
+					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);					
 					if(tenorList.isEmpty()) {
 						log.warn("No Spot Rate Data [ID: {}] for [{}]", irCurveNm, bssd);
 						continue;
 					}
 					
-					int delNum = session.createQuery("delete IrParamHwCalc a where baseYymm=:param1 and a.irModelNm like :param2 and a.irCurveNm =:param3 and a.lastModifiedBy=:param4")
+//					int delNum = session.createQuery("delete IrParamHwCalc a where baseYymm=:param1 and a.irModelNm = :param2 and a.irCurveNm =:param3 and a.modifiedBy=:param4")
+					int delNum = session.createQuery("delete IrParamHwCalc a where baseYymm=:param1 and a.irCurveNm =:param3 and a.modifiedBy=:param4")
 								 		.setParameter("param1", bssd) 
-		                     			.setParameter("param2", "%"+irModelNmNsp+"%")
+//		                     			.setParameter("param2", irModelNmNsp)
 		                     			.setParameter("param3", irCurveNm)
 		                     			.setParameter("param4", jobLog.getJobId())
 		                     			.executeUpdate();
@@ -1165,8 +1164,9 @@ public class Main {
 						
 						List<IrParamHwCalc> hwParamCalcValid = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 								  bssd
-								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(validSigma))
-								, irCurveNm
+//								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(validSigma))
+								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(i))
+//								, irCurveNm
 								, spotList
 								, swpnVolList
 								, hwInitParamSigma
@@ -1182,13 +1182,15 @@ public class Main {
 					//TODO: Market Data(Spot and Swaption Vol Stability Test for [Spot +1bp, Spot -1bp, Swaption Vol +1bp, Swaption Vol -1bp]
 					double[] hwInitParamMkt = new double[] {hw1fInitAlpha, hw1fInitAlpha, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma};				
 					
-					List<IRateInput> spotListUp = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList, 0.0001);
+					//IrCurveSpot으로 가져와서 rate조정(setter) 후에 IRateInput로 형변환함 IRateInput는 getter밖에 없어서 값을 조정하지 못함ㅠ 
+					List<IrCurveSpot> tmpUp = IrCurveSpotDao.getIrCurveSpot2(bssd, irCurveNm, tenorList);
+					tmpUp.stream().forEach(s -> s.setSpotRate(s.getSpotRate() + 0.0001));
+					List<IRateInput> spotListUp = tmpUp.stream().map(x -> (IRateInput)x).collect(Collectors.toList());
 					
-//					spotListUp.stream().forEach(s -> s.setSpotRate(s.getSpotRate() + 0.0001));
 					List<IrParamHwCalc> hwParamCalcSpotUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SPOT_UP") 
-							, irCurveNm
+//							, irCurveNm
 							, spotListUp
 							, swpnVolList
 							, hwInitParamMkt
@@ -1200,12 +1202,15 @@ public class Main {
 					hwParamCalcSpotUp.forEach(s -> session.save(s));
 										
 					
-					List<IRateInput> spotListDn = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList, -0.0001);					
-//					spotListDn.stream().forEach(s -> s.setSpotRate(s.getSpotRate() - 0.0001));
+					//IrCurveSpot으로 가져와서 rate조정(setter) 후에 IRateInput로 형변환함 IRateInput는 getter밖에 없어서 값을 조정하지 못함ㅠ 
+					List<IrCurveSpot> tmpDn = IrCurveSpotDao.getIrCurveSpot2(bssd, irCurveNm, tenorList);					
+					tmpDn.stream().forEach(s -> s.setSpotRate(s.getSpotRate() - 0.0001));
+					List<IRateInput> spotListDn = tmpDn.stream().map(x -> (IRateInput)x).collect(Collectors.toList());
+					
 					List<IrParamHwCalc> hwParamCalcSpotDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SPOT_DN")
-							, irCurveNm
+//							, irCurveNm
 							, spotListDn
 							, swpnVolList
 							, hwInitParamMkt
@@ -1222,7 +1227,7 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSwpnUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SWPN_UP")
-							, irCurveNm
+//							, irCurveNm
 							, spotList
 							, swpnVolListUp
 							, hwInitParamMkt
@@ -1239,7 +1244,7 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSwpnDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SWPN_DN")
-							, irCurveNm
+//							, irCurveNm
 							, spotList
 							, swpnVolListDn
 							, hwInitParamMkt
