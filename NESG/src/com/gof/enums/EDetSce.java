@@ -10,7 +10,11 @@ public enum EDetSce {
 	,SCE03 (3)
 	,SCE04 (4)
 	,SCE05 (5)
-	,SCE06 (6);
+	,SCE06 (6)
+	,SCE07 (7)
+	,SCE08 (8)
+	,SCE09 (9)
+	,SCE10 (10);
 	
 	private final Integer sceNo ;
 	

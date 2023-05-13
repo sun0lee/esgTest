@@ -354,7 +354,9 @@ public class Hw1fCalibrationKics extends IrModel {
 //		log.info("tenor:{}, iRate:{}", this.tenor, this.iRateBase);
 	}
 	
-//	1st Step 1-1: Preparation of Swap Cashflow from Smith-Wilson Result from baseCurve
+/**	
+ * 1st Step 1-1: Preparation of Swap Cashflow from Smith-Wilson Result from baseCurve 
+ * */
 	private void applySmithWilsonInterpoloation(int prjInterval, double lastLiquidPoint) {
 		
 		Map<Double, Double> ts = new TreeMap<Double, Double>();
@@ -372,7 +374,9 @@ public class Hw1fCalibrationKics extends IrModel {
 //        				   .forEach(s->log.info("{}, {}, {} , {}, {}, {}, {}", s.getBaseDate(), s.getResultType(), s.getMatCd(), s.getSpotDisc(), s.getSpotCont(), s.getFwdDisc(), s.getDcntFactor(), s.getMatTerm()));
 	}	
 
-//	1st Step 1-2: Calculate Exercise Rate of Swaption and PV of Swap Cashflow
+/**	
+ * 1st Step 1-2: Calculate Exercise Rate of Swaption and PV of Swap Cashflow
+ * */
 	private void calSwpnSwapRate() {
 		
 		this.swapRate      = new double[this.swpnMat.length][this.swapTenor.length];
@@ -396,7 +400,7 @@ public class Hw1fCalibrationKics extends IrModel {
 //		log.info("{}, {}", this.swapDfSum);
 	}
 	
-//	1st Step 1-3: Calculate At The Money Price of of Swaption	 
+/**	1st Step 1-3: Calculate At The Money Price of of Swaption */
 	private void calSwpnPriceAtm() {
 		
 		this.swpnPriceAtm = new double[this.swpnMat.length][this.swapTenor.length];
@@ -419,7 +423,8 @@ public class Hw1fCalibrationKics extends IrModel {
 //		log.info("{}, {}", this.notional, this.swpnVolMkt);
 	}
 	
-//	TODO: 2nd Step of Main Process: Find Optimal HW Calibration Parameters
+//	TODO: 
+	/** 2nd Step of Main Process: Find Optimal HW Calibration Parameters */
 	protected void optParasHw() {
 		optParasHw(new int[] {0, 1, 2, 3, 4, 5}, new int[] {0, 1, 2, 3, 4, 5});
 	}	
