@@ -7,8 +7,8 @@
 		<RollingFile name="RollingFile">             
             <!-- <FileName>/SW/qcm_esg/log/gesg_logger.log</FileName> -->
             <!-- <FilePattern>D:/gesg_logger.%d{yyyy-MM-dd-HH-mm}</FilePattern>  -->
-            <FileName>D:/Log/gesg_logger.log</FileName>
-            <FilePattern>D:/Log/gesg_logger.%d{yyyy-MM-dd}</FilePattern>
+            <FileName>Log/gesg_logger.log</FileName>
+            <FilePattern>Log/gesg_logger.%d{yyyy-MM-dd}</FilePattern>
 			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>            
 			<Policies>
                 <TimeBasedTriggeringPolicy interval = "1" modulate = "true"/>
