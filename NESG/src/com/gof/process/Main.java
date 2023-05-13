@@ -295,12 +295,12 @@ public class Main {
 		
 		jobList.clear();
 //		jobList.add("110");
-		jobList.add("120");
+//		jobList.add("120");
 //		jobList.add("130");		
 //		jobList.add("150");
 //		
 //		jobList.add("210");
-//		jobList.add("220");
+		jobList.add("220");
 //		jobList.add("230");
 //		jobList.add("240");
 //		jobList.add("250");
@@ -308,7 +308,7 @@ public class Main {
 //		jobList.add("270");
 //		jobList.add("280");
 //		jobList.add("310");
-		jobList.add("320");
+//		jobList.add("320");
 //		jobList.add("330");
 //		jobList.add("340");
 //		jobList.add("350");
@@ -704,6 +704,7 @@ public class Main {
 					}					
 
 					List<IRateInput> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
+//					log.info("{}", curveHisList);
 					
 					//Any curveBaseList result in same parameters and spreads.
 					List<IRateInput> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
