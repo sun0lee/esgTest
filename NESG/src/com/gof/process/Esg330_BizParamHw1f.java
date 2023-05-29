@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import com.gof.dao.IrParamHwDao;
 import com.gof.entity.IrParamHwBiz;
-import com.gof.entity.IrParamHwUsr;
 import com.gof.entity.IrParamHwCalc;
+import com.gof.entity.IrParamHwUsr;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
@@ -52,7 +52,7 @@ public class Esg330_BizParamHw1f extends Process {
 	private static List<IrParamHwBiz> calcBizHw1fParam(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, int hwAlphaAvgNum, String hwAlphaAvgMatCd, int hwSigmaAvgNum, String hwSigmaAvgMatCd) {		
 		
 		List<IrParamHwBiz>  paramHwBiz  = new ArrayList<IrParamHwBiz>();
-		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd, irModelNm + "_NSP", irCurveNm);
+		List<IrParamHwCalc> paramHwCalc = IrParamHwDao.getIrParamHwCalcList(bssd,  EIrModel.valueOf(irModelNm + "_NSP"), irCurveNm);
 
 		for(IrParamHwCalc calc : paramHwCalc) {
 //			if(calc.getParamTypCd().equals("COST")) continue;
@@ -85,14 +85,16 @@ public class Esg330_BizParamHw1f extends Process {
 		
 		List<IrParamHwCalc> paramCalcHisList = new ArrayList<IrParamHwCalc>();
 		if(paramTypCd==EParamTypCd.ALPHA) {
-			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, irModelNm + "_SP", irCurveNm, paramTypCd, monthNum, matCd);
+			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, EIrModel.valueOf( irModelNm + "_SP"), irCurveNm, paramTypCd, monthNum, matCd);
+			paramCalcHisList.forEach(s ->log.info("aaa : {}, {}", s.getBaseYymm(), s.getParamVal()));
 		}
 		else {
-			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, irModelNm + "_NSP", irCurveNm, paramTypCd, monthNum, matCd);
+			paramCalcHisList = IrParamHwDao.getIrParamHwCalcHisList(bssd, EIrModel.valueOf(irModelNm + "_NSP"), irCurveNm, paramTypCd, monthNum, matCd);
 		}		 
 		
 		List<IrParamHwBiz> paramHwBiz = new ArrayList<IrParamHwBiz>();
 		IrParamHwBiz biz = new IrParamHwBiz();
+		
 		
 		biz.setBaseYymm(bssd);
 		biz.setApplBizDv(applBizDv);
@@ -105,6 +107,7 @@ public class Esg330_BizParamHw1f extends Process {
 		biz.setUpdateDate(LocalDateTime.now());
 		paramHwBiz.add(biz);
 		
+		log.info("{}({}) ", biz.getParamTypCd(), biz.getParamVal() );
 		return paramHwBiz;
 	}
 	

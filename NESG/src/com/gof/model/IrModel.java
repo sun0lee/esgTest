@@ -426,13 +426,13 @@ public abstract class IrModel implements Constant {
 		
 //		Complex_F64    prod   = eigval[0].times(eigval[1].times(eigval[2]));		
 //		log.info("{}, {}", prod, mat.determinant());
-//		log.info("{}, {}, {}, {}", eigval[0], eigval[1], eigval[2]);
-//		log.info("{}, {}, {}, {}", eigvec[0], eigvec[1], eigvec[2]);
+		log.info("eigval : {}, {}, {}, {}", eigval[0], eigval[1], eigval[2]);
+		log.info("eigvec : {}, {}, {}, {}", eigvec[0], eigvec[1], eigvec[2]);
 		
 		SimpleMatrix mat_temp1 = mat.minus(SimpleMatrix.identity(dim).scale(eigval[1].getReal()));		
 		SimpleMatrix mat_temp2 = mat.minus(SimpleMatrix.identity(dim).scale(eigval[2].getReal()));
 		
-//		log.info("{}, {}", mat_temp1, mat_temp2);
+		log.info("{}, {}", mat_temp1, mat_temp2);
 		
 //		 (2,1), (2,2),  |  (1,1), (1,2),  |  (1,1), (1,2)
 //		 (3,1), (3,2),  |  (3,1), (3,2),  |  (2,1), (2,2)		

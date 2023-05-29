@@ -31,21 +31,21 @@ public class IrParamHwDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrParamHwUsr> getIrParamHwUsrList(String bssd, EApplBizDv applBizDv, String irModelId, String irCurveId) {
+	public static List<IrParamHwUsr> getIrParamHwUsrList(String bssd, EApplBizDv applBizDv, String irModelNm, String irCurveNm) {
 		
 		String query = " select a from IrParamHwUsr a    "
 				 	 + "  where 1=1                      " 
 				 	 + "    and a.baseYymm  = :bssd      "
-				 	 + "    and a.applBizDv = :applBizDv "
-				 	 + "    and a.irModelId = :irModelId "
-				 	 + "    and a.irCurveId = :irCurveId "				 	 
+//				 	 + "    and a.applBizDv = :applBizDv "
+//				 	 + "    and a.irModelNm = :irModelNm "
+//				 	 + "    and a.irCurveNm = :irCurveNm "				 	 
 				 	 ;		
 		
 		return session.createQuery(query, IrParamHwUsr.class)
 				      .setParameter("bssd", bssd)
-				      .setParameter("applBizDv", applBizDv)
-				      .setParameter("irModelId", irModelId)
-				      .setParameter("irCurveId", irCurveId)
+//				      .setParameter("applBizDv", applBizDv)
+//				      .setParameter("irModelNm", irModelNm)
+//				      .setParameter("irCurveNm", irCurveNm)
 				      .getResultList();
 	}		
 	
@@ -69,49 +69,49 @@ public class IrParamHwDao extends DaoUtil {
 	
 	
 	//both HW1F_NSP and HW1F_SP(just Counting in JOB: Esg330)
-	public static List<IrParamHwCalc> getIrParamHwCalcList(String bssd, String irCurveId) {
+	public static List<IrParamHwCalc> getIrParamHwCalcList(String bssd, String irCurveNm) {
 		
 		String query = " select a from IrParamHwCalc a      "
 				 	 + "  where 1=1                         " 
 				 	 + "    and a.baseYymm  = :bssd         "
-				 	 + "    and a.irCurveId = :irCurveId    "				 	 
+				 	 + "    and a.irCurveNm = :irCurveNm    "				 	 
 				 	 ;		
 		
 		return session.createQuery(query, IrParamHwCalc.class)
 				      .setParameter("bssd", bssd)			
-				      .setParameter("irCurveId", irCurveId)
+				      .setParameter("irCurveNm", irCurveNm)
 				      .getResultList();
 	}
 	
 	
-	public static List<IrParamHwCalc> getIrParamHwCalcList(String bssd, String irModelId, String irCurveId) {
+	public static List<IrParamHwCalc> getIrParamHwCalcList(String bssd, EIrModel irModelNm, String irCurveNm) {
 		
 		String query = " select a from IrParamHwCalc a      "
 				 	 + "  where 1=1                         " 
 				 	 + "    and a.baseYymm  = :bssd         "
-				 	 + "    and a.irModelId  = :irModelId   "
+				 	 + "    and a.irModelNm  = :irModelNm   "
 //				 	 + "    and a.irModelId like :irModelId "
-				 	 + "    and a.irCurveId = :irCurveId    "				 	 
+				 	 + "    and a.irCurveNm = :irCurveNm    "				 	 
 				 	 ;		
 		
 		return session.createQuery(query, IrParamHwCalc.class)
 				      .setParameter("bssd", bssd)			
-				      .setParameter("irModelId", irModelId)
+				      .setParameter("irModelNm", irModelNm)
 //				      .setParameter("irModelId", "%"+irModelId+"%")
-				      .setParameter("irCurveId", irCurveId)
+				      .setParameter("irCurveNm", irCurveNm)
 				      .getResultList();
 	}
 	
 	
-	public static List<IrParamHwCalc> getIrParamHwCalcHisList(String bssd, String irModelId, String irCurveId, EParamTypCd paramTypCd, int monthNum, String matCd) {
+	public static List<IrParamHwCalc> getIrParamHwCalcHisList(String bssd, EIrModel irModelNm, String irCurveNm, EParamTypCd paramTypCd, int monthNum, String matCd) {
 		
 		String query = "select a from IrParamHwCalc a      "
 					 + " where 1=1                         "
 					 + "   and a.baseYymm   > :stDate      "
 					 + "   and a.baseYymm  <= :endDate     "
-					 + "   and a.irModelId  = :irModelId   "
+					 + "   and a.irModelNm  = :irModelNm   "
 //					 + "   and a.irModelId like :irModelId "
-					 + "   and a.irCurveId  = :irCurveId   "
+					 + "   and a.irCurveNm  = :irCurveNm   "
 					 + "   and a.paramTypCd = :paramTypCd  "					 
 					 + "   and a.matCd      = :matCd       " 
 					 ;
@@ -119,9 +119,9 @@ public class IrParamHwDao extends DaoUtil {
 		return session.createQuery(query, IrParamHwCalc.class)
 					  .setParameter("stDate", FinUtils.addMonth(bssd, monthNum))
 					  .setParameter("endDate", bssd)
-					  .setParameter("irModelId", irModelId)
+					  .setParameter("irModelNm", irModelNm)
 //					  .setParameter("irModelId", "%"+irModelId+"%")
-					  .setParameter("irCurveId", irCurveId)
+					  .setParameter("irCurveNm", irCurveNm)
 					  .setParameter("paramTypCd", paramTypCd)
 					  .setParameter("matCd", matCd)
 					  .getResultList();
