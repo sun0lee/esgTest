@@ -475,12 +475,14 @@ public class AFNelsonSiegel extends IrModel {
 //			log.info("{}, {}, {}, {}, {}", this.iRateDateHis[i], this.iRateHis[i][0], this.iRateHis[i][1], this.iRateHis[i][2],this.iRateHis[i][3]);
 			for(int j=0; j<this.iRateHis[i].length; j++) {		
 				this.iRateHis[i][j] = (this.cmpdType == CMPD_MTD_DISC) ? irDiscToCont(toRealScale*this.iRateHis[i][j]) : toRealScale*this.iRateHis[i][j];				
+//				this.iRateHis[i][j] = (this.cmpdType == CMPD_MTD_DISC) ?  toRealScale*this.iRateHis[i][j] : toRealScale*this.iRateHis[i][j];				
 			}
 //			log.info("{}, {}, {}, {}, {}", this.iRateDateHis[i], this.iRateHis[i][0], this.iRateHis[i][1], this.iRateHis[i][2],this.iRateHis[i][3]);
 		}	
 		
 		for(int j=0; j<this.iRateBase.length; j++) {
 			this.iRateBase[j] = (this.cmpdType == CMPD_MTD_DISC) ? irDiscToCont(toRealScale*this.iRateBase[j]) : toRealScale*this.iRateBase[j];
+//			this.iRateBase[j] = (this.cmpdType == CMPD_MTD_DISC) ? toRealScale*this.iRateBase[j] : toRealScale*this.iRateBase[j];
 //			log.info("{}, {}", this.iRateBase[j]);
 		}
 		
@@ -503,7 +505,8 @@ public class AFNelsonSiegel extends IrModel {
 		this.lambda = optimizer.optimize(new MaxEval(10000)
 				                       , new UnivariateObjectiveFunction(fp)
 				                       , GoalType.MINIMIZE
-				                       , new SearchInterval(this.minLambda, this.maxLambda)).getPoint();		
+				                       , new SearchInterval(this.minLambda, this.maxLambda)).getPoint();	
+		log.info("find initialLamda:{},residual Sum Of Squares : {}", this.lambda, residualSumOfSquares(this.lambda));
 	}
 	
 	
@@ -523,10 +526,11 @@ public class AFNelsonSiegel extends IrModel {
 			coeffLt[i] = rslt[0];
 			coeffSt[i] = rslt[1];
 			coeffCt[i] = rslt[2];
-			residue[i] = reg.calculateResidualSumOfSquares();			
+			residue[i] = reg.calculateResidualSumOfSquares()*10000;			
 			
 			residualSum += residue[i];
 		}
+//		log.info("residualSum, lambda :{}, {}", residualSum, lambda);
 		return residualSum;		
 	}	
 	
@@ -552,7 +556,7 @@ public class AFNelsonSiegel extends IrModel {
 		this.kappaS = -Math.log(linRegS.getSlope()) / this.dt;
 		this.kappaC = -Math.log(linRegC.getSlope()) / this.dt;
 		
-//		log.info("{}, {}, {}, {}, {}, {}", this.thetaL, this.thetaS, this.thetaC, this.kappaL, this.kappaS, this.kappaC);
+		log.info("findInitailThetaKappa :{}, {}, {}, {}, {}, {}", this.thetaL, this.thetaS, this.thetaC, this.kappaL, this.kappaS, this.kappaC);
 	}		
 	
 
@@ -573,6 +577,8 @@ public class AFNelsonSiegel extends IrModel {
 		double[] fpUpper = new double[paras.length];
 		double[] fpScale = new double[paras.length];
 		
+		
+		// 모수 추정 구간 정의 
 		for(int i=0; i<paras.length; i++) {
 			if(i == 0) {  //lambda
 				fpLower[i] = this.minLambda;
@@ -792,6 +798,7 @@ public class AFNelsonSiegel extends IrModel {
 		SimpleMatrix N          = new SimpleMatrix(toDiagMatrix(factorLLP.extractMatrix(0, tenorLLP.length, 0, 1).elementSum()
 				                                              , factorLLP.extractMatrix(0, tenorLLP.length, 1, 2).elementSum()
 				                                              , factorLLP.extractMatrix(0, tenorLLP.length, 2, 3).elementSum())).mult(M);
+//		2023.05.29 수정
 		SimpleMatrix NTN        = N.transpose().mult(N);   //for IAIS(International Association of Insurance Supervisors) 2017 Field Testing Tech. doc(page 201 of 326)
 //		SimpleMatrix NTN	    = N.mult(N.transpose());   //for KIDI Article(2018-2) (page 28)
 		
@@ -910,7 +917,7 @@ public class AFNelsonSiegel extends IrModel {
 		
 		for(int i=0; i<fLoad.length; i++) {
 			for(int j=0; j<2; j++) fLoad[i][j] = fLoadFull[i][j+1];
-//			log.info("{}, {}, {}, {}, {}", lambda, tau[i], fLoad[i][0], fLoad[i][1]);
+			log.info("{}, {}, {}, {}, {}", lambda, tau[i], fLoad[i][0], fLoad[i][1]);
 		}			
 		return fLoad;
 	}

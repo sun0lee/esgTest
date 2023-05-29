@@ -169,6 +169,9 @@ public class Main {
 //		job420();		// Job 420: Biz Applied CIR Forcasting Model Parameter
 //		job430();		// Job 430: Stochastic Scenario of CIR Forcasting Model
 		
+
+		
+		job710(); 
 // ****************************************************************** RC Job                              ********************************
 
 		job810();		// Job 810: Set Transition Matrix
@@ -300,7 +303,7 @@ public class Main {
 //		jobList.add("150");
 //		
 //		jobList.add("210");
-		jobList.add("220");
+//		jobList.add("220");
 //		jobList.add("230");
 //		jobList.add("240");
 //		jobList.add("250");
@@ -314,6 +317,7 @@ public class Main {
 //		jobList.add("350");
 //		jobList.add("360");
 //		jobList.add("370");
+		jobList.add("710");
 	}		
 	
 	//TODO: Start from E_IR_PARAM_SW_USR
@@ -1867,6 +1871,121 @@ public class Main {
 				log.error("ERROR: {}", e);
 				completeJob("ERROR", jobLog);
 			}
+			session.saveOrUpdate(jobLog);
+			session.getTransaction().commit();
+		}
+	}	
+	
+	
+
+	private static void job710() {
+		if(jobList.contains("710")) {
+			session.beginTransaction();
+			CoJobInfo jobLog = startJogLog(EJob.ESG710);			
+
+			EIrModel irModelNm     = EIrModel.AFNS;						
+			int    weekDay         = Integer.valueOf((String) argInDBMap.getOrDefault("AFNS_WEEK_DAY"        , "5")); //금욜 
+			
+			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(irModelNm);
+			Map<String, IrParamModel> irModelMstMap = modelMstList.stream()
+													.collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
+			
+			log.info("IrParamModel: {}", irModelMstMap.toString());			
+			
+			try {
+				for (IrCurve irCurve :irCurveList) {
+				    	
+					    String        irCurveNm  = irCurve.getIrCurveNm() ;
+					    IrParamSw     irparamSw  = commIrParamSw.get(irCurveNm) ;
+					    IrParamModel  irModelMst = irModelMstMap.get(irCurveNm) ;
+					
+					    
+					if(!commIrParamSw.containsKey(irCurveNm)) {
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);
+						continue;
+					}					
+					
+					if(!irModelMstMap.containsKey(irCurveNm)) {
+						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+						continue;
+					}
+					
+					log.info("AFNS Shock Spread (Cont) for [{}({}, {})]", irCurveNm, irCurve.getIrCurveNm(), irCurve.getCurCd());
+					
+					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
+
+					// 엑셀과 모수 추정에 사용하는 테너만 남기기
+					tenorList.remove("M0003");tenorList.remove("M0006");tenorList.remove("M0009");tenorList.remove("M0018");tenorList.remove("M0030");tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
+					log.info("{}", tenorList);
+					//TODO:
+//					tenorList.remove("M0180");
+					
+					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
+					if(tenorList.isEmpty()) {
+						log.warn("No Spot Rate Data [ID: {}] for [{}]", irCurveNm, bssd);
+						continue;
+					}
+
+					int delNum1 = session.createQuery("delete IrParamAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
+		                     			 .setParameter("param1", bssd) 
+		                     			 .setParameter("param2", irModelNm)
+		                     			 .setParameter("param3", irCurveNm)
+		                     			 .executeUpdate();
+					
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum1);
+					
+					int delNum2 = session.createQuery("delete IrSprdAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
+					                     .setParameter("param1", bssd) 
+								  		 .setParameter("param2", irModelNm)
+										 .setParameter("param3", irCurveNm)
+										 .executeUpdate();					
+
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
+					
+					List<IrCurveSpotWeek> weekHisList    = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, false);
+					List<IrCurveSpotWeek> weekHisBizList = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, true);
+					log.info("weekHisList: [{}], [TOTAL: {}, BIZDAY: {}], [from {} to {}, weekDay:{}]", irCurveNm, weekHisList.size(), weekHisBizList.size(), iRateHisStBaseDate.substring(0,6), bssd, weekDay);			
+
+					//for ensuring enough input size
+					if(weekHisList.size() < 1000) {
+						log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] for [{}]", irCurveNm, weekHisList.size(), bssd);
+						continue;
+					}					
+
+					List<IRateInput> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
+//					log.info("{}", curveHisList);
+					
+					//Any curveBaseList result in same parameters and spreads.
+					List<IRateInput> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
+					
+					if(curveBaseList.size()==0) {
+						log.warn("No IR Curve Data [IR_CURVE_NM: {}] for [{}]", irCurveNm, bssd);
+						continue;
+					}					
+					
+					
+					Map<String, List<?>> irShockSenario = new TreeMap<String, List<?>>();
+					irShockSenario = Esg220_ShkSprdAfns.createAfnsShockScenario(FinUtils.toEndOfMonth(bssd)
+																			  , curveHisList
+																			  , curveBaseList
+																			  , irModelMst  // add 
+																			  , irparamSw   // add 
+																			  , argInDBMap  // add 
+																			  );	
+											
+					for(Map.Entry<String, List<?>> rslt : irShockSenario.entrySet()) {						
+						rslt.getValue().forEach(s -> session.save(s));
+
+						session.flush();
+						session.clear();
+					}					
+				}
+				completeJob("SUCCESS", jobLog);
+				
+			} catch (Exception e) {
+				log.error("ERROR: {}", e);
+				completeJob("ERROR", jobLog);
+			}			
 			session.saveOrUpdate(jobLog);
 			session.getTransaction().commit();
 		}
