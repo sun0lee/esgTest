@@ -16,7 +16,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EIrModel;
+import com.gof.enums.EHwParamTypCd;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -42,7 +43,9 @@ public class IrParamAfnsBiz extends BaseEntity implements Serializable {
 	private long id;
 
 	private String baseYymm; 
-	private String irModelNm;
+//	private String irModelNm;
+	@Enumerated(EnumType.STRING)
+	private EIrModel irModelNm;
 	private String irCurveNm;
 //	@Enumerated(EnumType.STRING)
 //	private EParamTypCd paramTypCd;

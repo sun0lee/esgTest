@@ -23,7 +23,7 @@ import org.hibernate.annotations.ParamDef;
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EIrModel;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EHwParamTypCd;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -59,7 +59,7 @@ public class IrParamHwCalc extends BaseEntity implements Serializable {
 	private String irCurveNm;
 	private String matCd;	
 	@Enumerated (EnumType.STRING)
-	private EParamTypCd paramTypCd;
+	private EHwParamTypCd paramTypCd;
 	
 	private Double paramVal;	
 //	private String lastModifiedBy;

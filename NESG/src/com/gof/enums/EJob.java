@@ -35,8 +35,11 @@ public enum EJob {
 	, ESG420 ("Biz Applied CIR Forcasting Model Parameter")
 	, ESG430 ("Stochastic Scenario of CIR Forcasting Model")	
 
+	//add
+	, ESG710 ("finding AFNS initial parameters")
+	, ESG720 ("optimization AFNS parameters")
+	, ESG730 ("generate AFNS Shock Spread")
 	
-	, ESG710 ("AFNS Shock Spread")
 	, ESG810 ("Set Transition Matrix")
 	, ESG820 ("Corporate PD from Transition Matrix")
 	;
