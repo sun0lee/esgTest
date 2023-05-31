@@ -6,7 +6,7 @@ import java.util.EnumSet;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EHwParamTypCd;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j

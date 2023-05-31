@@ -23,7 +23,7 @@ import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 
 import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrParamModelCalc;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EHwParamTypCd;
 import com.gof.util.DateUtil;
 
 import lombok.Builder;
@@ -82,22 +82,22 @@ public class CIRCalibrationForcast extends IrModel {
 		this.mleOptimize(new double[] {this.initAlpha, this.initTheta, this.initSigma});
 		
 		IrParamModelCalc rZero = new IrParamModelCalc();
-		rZero.setParamTypCd(EParamTypCd.R_ZERO);
+		rZero.setParamTypCd(EHwParamTypCd.R_ZERO);
 		rZero.setParamVal(this.rZero);
 		rst.add(rZero);
 		
 		IrParamModelCalc alpha = new IrParamModelCalc();
-		alpha.setParamTypCd(EParamTypCd.ALPHA);
+		alpha.setParamTypCd(EHwParamTypCd.ALPHA);
 		alpha.setParamVal(this.alpha);
 		rst.add(alpha);
 
 		IrParamModelCalc theta = new IrParamModelCalc();
-		theta.setParamTypCd(EParamTypCd.THETA);
+		theta.setParamTypCd(EHwParamTypCd.THETA);
 		theta.setParamVal(this.theta);
 		rst.add(theta);
 
 		IrParamModelCalc sigma = new IrParamModelCalc();
-		sigma.setParamTypCd(EParamTypCd.SIGMA);
+		sigma.setParamTypCd(EHwParamTypCd.SIGMA);
 		sigma.setParamVal(this.sigma);
 		rst.add(sigma);
 		

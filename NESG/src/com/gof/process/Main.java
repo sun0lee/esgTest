@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import com.gof.dao.IrCurveSpotDao;
 import com.gof.dao.IrCurveSpotWeekDao;
 import com.gof.dao.IrCurveYtmDao;
 import com.gof.dao.IrDcntRateDao;
+import com.gof.dao.IrParamAfnsDao;
 import com.gof.dao.IrParamModelDao;
 import com.gof.dao.IrParamSwDao;
 import com.gof.dao.IrVolSwpnDao;
@@ -44,6 +46,7 @@ import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrDcntSceStoBiz;
 import com.gof.entity.IrDcntSceStoGnr;
 import com.gof.entity.IrParamAfnsCalc;
+import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwCalc;
 import com.gof.entity.StdAsstIrSceSto;
@@ -172,6 +175,8 @@ public class Main {
 
 		
 		job710(); 
+		job720();
+		job730(); 
 // ****************************************************************** RC Job                              ********************************
 
 		job810();		// Job 810: Set Transition Matrix
@@ -317,7 +322,11 @@ public class Main {
 //		jobList.add("350");
 //		jobList.add("360");
 //		jobList.add("370");
-		jobList.add("710");
+//		jobList.add("710");
+//		jobList.add("720");
+		jobList.add("730");
+		
+		
 	}		
 	
 	//TODO: Start from E_IR_PARAM_SW_USR
@@ -1926,21 +1935,15 @@ public class Main {
 						continue;
 					}
 
-					int delNum1 = session.createQuery("delete IrParamAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
+					int delNum1 = session.createQuery("delete IrParamAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3 and modifiedBy =:param4")
 		                     			 .setParameter("param1", bssd) 
 		                     			 .setParameter("param2", irModelNm)
 		                     			 .setParameter("param3", irCurveNm)
+		                     			 .setParameter("param4", "ESG710")
 		                     			 .executeUpdate();
 					
 					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum1);
 					
-					int delNum2 = session.createQuery("delete IrSprdAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
-					                     .setParameter("param1", bssd) 
-								  		 .setParameter("param2", irModelNm)
-										 .setParameter("param3", irCurveNm)
-										 .executeUpdate();					
-
-					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
 					
 					List<IrCurveSpotWeek> weekHisList    = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, false);
 					List<IrCurveSpotWeek> weekHisBizList = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, true);
@@ -1964,13 +1967,231 @@ public class Main {
 					}					
 					
 					
-					Map<String, List<?>> irShockSenario = new TreeMap<String, List<?>>();
-					irShockSenario = Esg220_ShkSprdAfns.createAfnsShockScenario(FinUtils.toEndOfMonth(bssd)
+					Map<String, List<?>> resultMap = new TreeMap<String, List<?>>();
+					resultMap = Esg710_SetAfnsInitParam.setAfnsInitParam(FinUtils.toEndOfMonth(bssd)
 																			  , curveHisList
 																			  , curveBaseList
 																			  , irModelMst  // add 
 																			  , irparamSw   // add 
 																			  , argInDBMap  // add 
+																			  );	
+											
+					for(Map.Entry<String, List<?>> rslt : resultMap.entrySet()) {						
+						rslt.getValue().forEach(s -> session.save(s));
+
+						session.flush();
+						session.clear();
+					}		
+				}
+				completeJob("SUCCESS", jobLog);
+				
+			} catch (Exception e) {
+				log.error("ERROR: {}", e);
+				completeJob("ERROR", jobLog);
+			}			
+			session.saveOrUpdate(jobLog);
+			session.getTransaction().commit();
+		}
+	}	
+	
+	private static void job720() {
+		if(jobList.contains("720")) {
+			session.beginTransaction();
+			CoJobInfo jobLog = startJogLog(EJob.ESG720);			
+
+			EIrModel irModelNm     = EIrModel.AFNS;						
+			int    weekDay         = Integer.valueOf((String) argInDBMap.getOrDefault("AFNS_WEEK_DAY"        , "5")); //금욜 
+			
+			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(irModelNm);
+			Map<String, IrParamModel> irModelMstMap = modelMstList.stream()
+													.collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
+			
+			log.info("IrParamModel: {}", irModelMstMap.toString());			
+			
+			try {
+				for (IrCurve irCurve :irCurveList) {
+				    	
+					    String        irCurveNm  = irCurve.getIrCurveNm() ;
+					    IrParamSw     irparamSw  = commIrParamSw.get(irCurveNm) ;
+					    IrParamModel  irModelMst = irModelMstMap.get(irCurveNm) ;
+					
+					    
+					if(!commIrParamSw.containsKey(irCurveNm)) {
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);
+						continue;
+					}					
+					
+					if(!irModelMstMap.containsKey(irCurveNm)) {
+						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+						continue;
+					}
+					
+					log.info("AFNS Shock Spread (Cont) for [{}({}, {})]", irCurveNm, irCurve.getIrCurveNm(), irCurve.getCurCd());
+					
+					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
+
+					// 엑셀과 모수 추정에 사용하는 테너만 남기기
+					tenorList.remove("M0003");tenorList.remove("M0006");tenorList.remove("M0009");tenorList.remove("M0018");tenorList.remove("M0030");tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
+					log.info("{}", tenorList);
+					//TODO:
+//					tenorList.remove("M0180");
+					
+					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
+					if(tenorList.isEmpty()) {
+						log.warn("No Spot Rate Data [ID: {}] for [{}]", irCurveNm, bssd);
+						continue;
+					}
+
+					int delNum1 = session.createQuery("delete IrParamAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3 and modifiedBy =:param4")
+		                     			 .setParameter("param1", bssd) 
+		                     			 .setParameter("param2", irModelNm)
+		                     			 .setParameter("param3", irCurveNm)
+		                     			 .setParameter("param4", "ESG720")
+		                     			 .executeUpdate();
+					
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum1);
+										
+					List<IrCurveSpotWeek> weekHisList    = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, false);
+					List<IrCurveSpotWeek> weekHisBizList = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, true);
+					log.info("weekHisList: [{}], [TOTAL: {}, BIZDAY: {}], [from {} to {}, weekDay:{}]", irCurveNm, weekHisList.size(), weekHisBizList.size(), iRateHisStBaseDate.substring(0,6), bssd, weekDay);			
+
+					//for ensuring enough input size
+					if(weekHisList.size() < 1000) {
+						log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] for [{}]", irCurveNm, weekHisList.size(), bssd);
+						continue;
+					}					
+
+					List<IRateInput> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
+//					log.info("{}", curveHisList);
+					
+					//Any curveBaseList result in same parameters and spreads.
+					List<IRateInput> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
+					
+					if(curveBaseList.size()==0) {
+						log.warn("No IR Curve Data [IR_CURVE_NM: {}] for [{}]", irCurveNm, bssd);
+						continue;
+					}					
+					
+
+					// enum에 정의된 순서로 정렬해서 받음 =>  모수는 enum에 정의한 순서대로 다른 의미를 갖는 값이기 때문에 순서가 중요함.  
+					List<IrParamAfnsCalc> initParam = IrParamAfnsDao.getIrParamAfnsCalcInitList(bssd, EIrModel.AFNS, irCurveNm).stream()
+						                                            .sorted(Comparator.comparingInt(p -> p.getParamTypCd().ordinal()))
+						                                            .collect(Collectors.toList());
+					
+					Map<String, List<?>> resultMap = new TreeMap<String, List<?>>();
+					resultMap = Esg720_optAfnsParam.optimizationParas(FinUtils.toEndOfMonth(bssd)
+																			  , curveHisList
+																			  , curveBaseList
+																			  , irModelMst  // add 
+																			  , irparamSw   // add 
+																			  , argInDBMap  // add 
+																			  , initParam // add
+																			  );	
+											
+					for(Map.Entry<String, List<?>> rslt : resultMap.entrySet()) {						
+						rslt.getValue().forEach(s -> session.save(s));
+
+						session.flush();
+						session.clear();
+					}					
+				}
+				completeJob("SUCCESS", jobLog);
+				
+			} catch (Exception e) {
+				log.error("ERROR: {}", e);
+				completeJob("ERROR", jobLog);
+			}			
+			session.saveOrUpdate(jobLog);
+			session.getTransaction().commit();
+		}
+	}	
+	
+
+	private static void job730() {
+		if(jobList.contains("730")) {
+			session.beginTransaction();
+			CoJobInfo jobLog = startJogLog(EJob.ESG730);			
+
+			EIrModel irModelNm     = EIrModel.AFNS;						
+			int    weekDay         = Integer.valueOf((String) argInDBMap.getOrDefault("AFNS_WEEK_DAY"        , "5")); //금욜 
+			
+			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(irModelNm);
+			Map<String, IrParamModel> irModelMstMap = modelMstList.stream()
+													.collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
+			
+			log.info("IrParamModel: {}", irModelMstMap.toString());			
+			
+			try {
+				for (IrCurve irCurve :irCurveList) {
+				    	
+					    String        irCurveNm  = irCurve.getIrCurveNm() ;
+					    IrParamSw     irparamSw  = commIrParamSw.get(irCurveNm) ;
+					    IrParamModel  irModelMst = irModelMstMap.get(irCurveNm) ;
+					
+					    
+					if(!commIrParamSw.containsKey(irCurveNm)) {
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);
+						continue;
+					}					
+					
+					if(!irModelMstMap.containsKey(irCurveNm)) {
+						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+						continue;
+					}
+					
+					log.info("AFNS Shock Spread (Cont) for [{}({}, {})]", irCurveNm, irCurve.getIrCurveNm(), irCurve.getCurCd());
+					
+					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
+
+					// 엑셀과 모수 추정에 사용하는 테너만 남기기
+					tenorList.remove("M0003");tenorList.remove("M0006");tenorList.remove("M0009");tenorList.remove("M0018");tenorList.remove("M0030");tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
+					log.info("{}", tenorList);
+
+					
+					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
+					if(tenorList.isEmpty()) {
+						log.warn("No Spot Rate Data [ID: {}] for [{}]", irCurveNm, bssd);
+						continue;
+					}
+
+					
+					int delNum2 = session.createQuery("delete IrSprdAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
+					                     .setParameter("param1", bssd) 
+								  		 .setParameter("param2", irModelNm)
+										 .setParameter("param3", irCurveNm)
+										 .executeUpdate();					
+
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
+					
+					List<IrCurveSpotWeek> weekHisList    = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, false);
+					List<IrCurveSpotWeek> weekHisBizList = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, true);
+					
+					log.info("weekHisList: [{}], [TOTAL: {}, BIZDAY: {}], [from {} to {}, weekDay:{}]", irCurveNm, weekHisList.size(), weekHisBizList.size(), iRateHisStBaseDate.substring(0,6), bssd, weekDay);			
+
+
+					List<IRateInput> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
+//					log.info("{}", curveHisList);
+					
+					//Any curveBaseList result in same parameters and spreads.
+					List<IRateInput> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
+					
+					if(curveBaseList.size()==0) {
+						log.warn("No IR Curve Data [IR_CURVE_NM: {}] for [{}]", irCurveNm, bssd);
+						continue;
+					}					
+					
+					List<IrParamAfnsCalc> optParam = IrParamAfnsDao.getIrParamAfnsCalcList(bssd, EIrModel.AFNS, irCurveNm).stream()
+                            .sorted(Comparator.comparingInt(p -> p.getParamTypCd().ordinal()))
+                            .collect(Collectors.toList());
+					
+					Map<String, List<?>> irShockSenario = new TreeMap<String, List<?>>();
+					irShockSenario = Esg730_ShkSprdAfns.createAfnsShockScenario(FinUtils.toEndOfMonth(bssd)
+																			  , curveHisList
+																			  , curveBaseList
+																			  , irModelMst 
+																			  , irparamSw   
+																			  , argInDBMap 
+																			  , optParam // add 
 																			  );	
 											
 					for(Map.Entry<String, List<?>> rslt : irShockSenario.entrySet()) {						
@@ -1990,7 +2211,6 @@ public class Main {
 			session.getTransaction().commit();
 		}
 	}	
-	
 	
 	private static void job810() {
 		if(jobList.contains("810")) {

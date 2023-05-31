@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EIrModel;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EHwParamTypCd;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
@@ -47,7 +47,7 @@ public class IrParamModelUsr extends BaseEntity  implements Serializable, Entity
 	private EIrModel irModelNm;
 	private String irCurveNm;
 	@Enumerated(EnumType.STRING)
-	private EParamTypCd paramTypCd;	
+	private EHwParamTypCd paramTypCd;	
 	
 	private Double paramVal;	
 //	private String lastModifiedBy;

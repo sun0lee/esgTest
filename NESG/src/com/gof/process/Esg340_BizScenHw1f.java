@@ -25,7 +25,7 @@ import com.gof.enums.EApplBizDv;
 import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EHwParamTypCd;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.Hw1fSimulationKics;
 import com.gof.model.entity.Hw1fCalibParas;
@@ -83,10 +83,10 @@ public class Esg340_BizScenHw1f extends Process {
 					continue;
 				}
 				
-				int[] alphaPiece = paramHw.stream().filter(s->s.getParamTypCd()==EParamTypCd.ALPHA && s.getMatCd().equals("M0240"))
+				int[] alphaPiece = paramHw.stream().filter(s->s.getParamTypCd()==EHwParamTypCd.ALPHA && s.getMatCd().equals("M0240"))
 										  	       .mapToInt(s-> Integer.valueOf(s.getMatCd().split("M")[1])/12).toArray();				
 				
-				int[] sigmaPiece = paramHw.stream().filter(s->s.getParamTypCd()==EParamTypCd.SIGMA && !s.getMatCd().equals("M1200") && !s.getMatCd().equals("M0240"))
+				int[] sigmaPiece = paramHw.stream().filter(s->s.getParamTypCd()==EHwParamTypCd.SIGMA && !s.getMatCd().equals("M1200") && !s.getMatCd().equals("M0240"))
 												   .mapToInt(s-> Integer.valueOf(s.getMatCd().split("M")[1])/12).toArray();	
 				log.info("{}, {}", alphaPiece, sigmaPiece);				
 

@@ -18,7 +18,8 @@ import javax.persistence.Table;
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EIrModel;
 import com.gof.enums.ENamingConvention;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EAfnsParamTypCd;
+import com.gof.enums.EHwParamTypCd;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,9 +48,9 @@ public class IrParamAfnsCalc extends BaseEntity  implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private EIrModel irModelNm;
 	private String irCurveNm;
-//	@Enumerated(EnumType.STRING)
-//	private EParamTypCd paramTypCd;
-	private String paramTypCd;
+	@Enumerated(EnumType.STRING)
+	private EAfnsParamTypCd paramTypCd;
+//	private String paramTypCd;
 	
 	private Double paramVal;	
 //	private String modifiedBy;

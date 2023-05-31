@@ -27,6 +27,9 @@ import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.dense.row.factory.DecompositionFactory_DDRM;
+import org.ejml.interfaces.decomposition.CholeskyDecomposition_F64;
 import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
 
@@ -37,9 +40,10 @@ import com.gof.entity.IrParamAfnsCalc;
 import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrSprdAfnsCalc;
+import com.gof.enums.EAfnsParamTypCd;
 import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
-import com.gof.enums.EParamTypCd;
+import com.gof.enums.EHwParamTypCd;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 
@@ -95,52 +99,7 @@ public class AFNelsonSiegel extends IrModel {
 	protected double        epsilon;
 	
 	protected List<IrDcntSceDetBiz> rsltList = new ArrayList<IrDcntSceDetBiz>();
-	
 		
-//	public AFNelsonSiegel(LocalDate baseDate, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, double dt, double initSigma) {				
-//		this(baseDate, EIrModel.AFNS, null, iRateHisList, iRateBaseList, false       , CMPD_MTD_DISC, dt, initSigma, DCB_MON_DIF, 0.045, 0.045, 60  , 0.0032  , 1.0/12, 0.05, 2.0, 3, 140    , 1e-10, 100, 0.995, 0.001);		
-//	}	
-	
-//	public AFNelsonSiegel(LocalDate baseDate, EIrModel mode, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, 
-//			              double ltfrL, double ltfrA, int ltfrT, double liqPrem, int prjYear) {		
-//		this(baseDate, mode  , null, iRateHisList, iRateBaseList, isRealNumber, cmpdType     , dt, initSigma, DCB_MON_DIF, ltfrL, ltfrA, ltfrT, liqPrem, 1.0/12, 0.05, 2.0, 3, prjYear, 1e-10, 100, 0.995, 0.001);		
-//	}
-	
-//	public AFNelsonSiegel(LocalDate baseDate, EIrModel mode, List<IrParamAfnsBiz> inputParas, List<IRateInput> iRateBaseList, boolean isRealNumber, char cmpdType, double dt, double initSigma, int dayCountBasis,
-//						  double ltfrL, double ltfrA, int ltfrT, double liqPrem, double term, double minLambda, double maxLambda, int nf, int prjYear, double accuracy, int itrMax, double confInterval, double epsilon) {		
-//
-//		this.baseDate      = baseDate;
-//		this.mode          = mode;
-////		setTermStructureBase(iRateBaseList);		
-//		setTermStructure(iRateBaseList);		
-//		setAfnsParamList(inputParas);		
-//		//TODO: iRateBaseList 가 null임을 고려해야함. dummy관점에서라도 irateBaseList는 null을 안넣는게 좋을듯
-//		this.irCurveNm     = iRateBaseList.get(0).getIrCurveNm();
-//		this.isRealNumber  = isRealNumber;
-//		this.cmpdType      = cmpdType;		
-//		this.dt            = dt;	
-//		this.initSigma     = initSigma;
-//		this.dayCountBasis = dayCountBasis;
-//		this.ltfrL         = ltfrL;
-//		this.ltfrA         = ltfrA;
-//		this.ltfrT         = ltfrT;
-//		this.liqPrem       = liqPrem;
-//		this.term          = term;
-//		this.minLambda     = minLambda;
-//		this.maxLambda     = maxLambda;
-//		this.nf            = nf;
-//		this.prjYear       = prjYear;
-//		this.accuracy      = accuracy;
-//		this.itrMax        = itrMax;
-//		this.confInterval  = confInterval;
-//		this.epsilon       = epsilon;
-//		
-//		for(int j=0; j<this.iRateBase.length; j++) {
-//			this.iRateBase[j] = (this.cmpdType == CMPD_MTD_DISC) ? irDiscToCont((this.isRealNumber ? 1 : 0.01) * this.iRateBase[j]) : (this.isRealNumber ? 1 : 0.01) * this.iRateBase[j];
-//		}
-//	}
-	
-	
 	public AFNelsonSiegel( String bssd
 					 	 , List<IRateInput> iRateHisList
 					 	 , List<IRateInput> iRateBaseList
@@ -266,95 +225,51 @@ public class AFNelsonSiegel extends IrModel {
 //		}	
 //	}		
 
-	
-//	public void setAfnsParamList(List<IrParamAfnsBiz> inputParas) {
-//		
-//		this.optParasFlag = true;		
-//		this.optParas = new double[14];
-//		this.optLSC   = new double[3];
-//		
-//		if(inputParas == null) {
-//			this.optParas[0]  = 0.4397764671040283;
-//			this.optParas[1]  = 0.03238093323059146;
-//			this.optParas[2]  = -0.01816932435509963;
-//			this.optParas[3]  = -0.0012340100084967927;
-//			this.optParas[4]  =  0.07011881997655274;
-//			this.optParas[5]  =  0.31428423540308786;
-//			this.optParas[6]  =  0.41032947646397744;
-//			this.optParas[7]  =  0.004594675150093352;
-//			this.optParas[8]  = -0.004372406977548432;
-//			this.optParas[9]  =  0.0027771993513785245;
-//			this.optParas[10] =  6.773607124233114E-4;
-//			this.optParas[11] = -5.426876995115856E-4;
-//			this.optParas[12] =  0.00976325443053842;
-//			this.optParas[13] =  0.38292135421347995;
-//			
-//			this.optLSC[0]    =  0.01935128249313093;
-//			this.optLSC[1]    = -0.00667992698106652;
-//			this.optLSC[2]    = -0.004801227043622508;
-//		}
-//		else {		
-////			Map<EParamTypCd, Double> paramMap = new HashMap<EParamTypCd, Double>();		
-//			Map<String, Double> paramMap = new HashMap<String, Double>();		
-//			paramMap = inputParas.stream().collect(Collectors.toMap(IrParamAfnsBiz::getParamTypCd, IrParamAfnsBiz::getParamVal));
-//			
-//			// TODO : ENUMSET 반복자로 정의할수 있을듯 
-//			this.optParas[0]  = paramMap.getOrDefault("LAMBDA"  ,  1e-1);
-//			this.optParas[1]  = paramMap.getOrDefault("THETA_1" ,  1e-2);
-//			this.optParas[2]  = paramMap.getOrDefault("THETA_2" , -1e-3);
-//			this.optParas[3]  = paramMap.getOrDefault("THETA_3" , -1e-3);
-//			this.optParas[4]  = paramMap.getOrDefault("KAPPA_1" ,  1e-1);
-//			this.optParas[5]  = paramMap.getOrDefault("KAPPA_2" ,  1e-1);
-//			this.optParas[6]  = paramMap.getOrDefault("KAPPA_3" ,  1e-1);
-//			this.optParas[7]  = paramMap.getOrDefault("SIGMA_11",  1e-2);
-//			this.optParas[8]  = paramMap.getOrDefault("SIGMA_21",  0e-2);
-//			this.optParas[9]  = paramMap.getOrDefault("SIGMA_22",  1e-2);
-//			this.optParas[10] = paramMap.getOrDefault("SIGMA_31",  0e-2);
-//			this.optParas[11] = paramMap.getOrDefault("SIGMA_32", -1e-2);
-//			this.optParas[12] = paramMap.getOrDefault("SIGMA_33",  1e-2);
-//			this.optParas[13] = paramMap.getOrDefault("EPSILON" ,  1e-1);
-//			
-//			this.optLSC[0]    = paramMap.getOrDefault("L0"      ,  1e-2);
-//			this.optLSC[1]    = paramMap.getOrDefault("S0"      , -1e-3);
-//			this.optLSC[2]    = paramMap.getOrDefault("C0"      , -1e-3);
-//			
-////			this.optParas[0]  = paramMap.getOrDefault(EParamTypCd.LAMBDA  ,  1e-1);
-////			this.optParas[1]  = paramMap.getOrDefault(EParamTypCd.THETA_1 ,  1e-2);
-////			this.optParas[2]  = paramMap.getOrDefault(EParamTypCd.THETA_2 , -1e-3);
-////			this.optParas[3]  = paramMap.getOrDefault(EParamTypCd.THETA_3 , -1e-3);
-////			this.optParas[4]  = paramMap.getOrDefault(EParamTypCd.KAPPA_1 ,  1e-1);
-////			this.optParas[5]  = paramMap.getOrDefault(EParamTypCd.KAPPA_2 ,  1e-1);
-////			this.optParas[6]  = paramMap.getOrDefault(EParamTypCd.KAPPA_3 ,  1e-1);
-////			this.optParas[7]  = paramMap.getOrDefault(EParamTypCd.SIGMA_11,  1e-2);
-////			this.optParas[8]  = paramMap.getOrDefault(EParamTypCd.SIGMA_21,  0e-2);
-////			this.optParas[9]  = paramMap.getOrDefault(EParamTypCd.SIGMA_22,  1e-2);
-////			this.optParas[10] = paramMap.getOrDefault(EParamTypCd.SIGMA_31,  0e-2);
-////			this.optParas[11] = paramMap.getOrDefault(EParamTypCd.SIGMA_32, -1e-2);
-////			this.optParas[12] = paramMap.getOrDefault(EParamTypCd.SIGMA_33,  1e-2);
-////			this.optParas[13] = paramMap.getOrDefault(EParamTypCd.EPSILON ,  1e-1);
-////			
-////			this.optLSC[0]    = paramMap.getOrDefault(EParamTypCd.L0      ,  1e-2);
-////			this.optLSC[1]    = paramMap.getOrDefault(EParamTypCd.S0      , -1e-3);
-////			this.optLSC[2]    = paramMap.getOrDefault(EParamTypCd.C0      , -1e-3);
-//		}			
-//
-////		log.info("optParas:{}", this.optParas);
-////		log.info("optLSC:{}", this.optLSC);		
-//	}
+	// 230530 add initParam setting : IrParamAfnsCalc에 찍어둠 
+	public List<IrParamAfnsCalc> setAfnsInitParamList() {
+
+		List<IrParamAfnsCalc> paramList = new ArrayList<IrParamAfnsCalc>();
+		
+//		String[] paraNames = new String[] {"INIT_LAMBDA"  , "INIT_THETA_1" , "INIT_THETA_2" , "INIT_THETA_3" , "INIT_KAPPA_1" , "INIT_KAPPA_2" , "INIT_KAPPA_3" , 
+//				                           "INIT_SIGMA_11", "INIT_SIGMA_21", "INIT_SIGMA_22", "INIT_SIGMA_31", "INIT_SIGMA_32", "INIT_SIGMA_33", "INIT_EPSILON" };		
+		
+		// enum으로 정의한 초기모수 목록 가져오기 
+		List<EAfnsParamTypCd> initParamNames = EAfnsParamTypCd.getInitAfnsParams();
+
+		
+		if(this.initParas != null) {			
+			
+			for(int i=0; i<this.initParas.length; i++) {
+				
+				IrParamAfnsCalc param = new IrParamAfnsCalc();
+				param.setBaseYymm(dateToString(this.baseDate).substring(0,6));
+				param.setIrModelNm(this.mode);
+				param.setIrCurveNm(this.irCurveNm);				
+				param.setParamTypCd(initParamNames.get(i));
+				param.setParamVal(initParas[i]);
+				param.setModifiedBy("INIT_" + this.getClass().getSimpleName());
+				param.setUpdateDate(LocalDateTime.now());				
+				paramList.add(param);
+			}
+
+		}
+		return paramList;
+	}
 	
 	
 	public List<IrParamAfnsCalc> getAfnsParamList() {
 
 		List<IrParamAfnsCalc> paramList = new ArrayList<IrParamAfnsCalc>();
 		
-		// TODO : Enum 에서 조건별로 구분하기 
-		String[] optParaNames = new String[] {"LAMBDA"  , "THETA_1" , "THETA_2" , "THETA_3" , "KAPPA_1" , "KAPPA_2" , "KAPPA_3" , 
-				                              "SIGMA_11", "SIGMA_21", "SIGMA_22", "SIGMA_31", "SIGMA_32", "SIGMA_33", "EPSILON" };		
+//		String[] optParaNames = new String[] {"LAMBDA"  , "THETA_1" , "THETA_2" , "THETA_3" , "KAPPA_1" , "KAPPA_2" , "KAPPA_3" , 
+//				                              "SIGMA_11", "SIGMA_21", "SIGMA_22", "SIGMA_31", "SIGMA_32", "SIGMA_33", "EPSILON" };		
 		
-//		List<EParamTypCd> optParaNames = EParamTypCd.getParamList(EIrModel.AFNS, "optParas");
+		List<EAfnsParamTypCd> optParaNames = EAfnsParamTypCd.getOptAfnsParams("paras");
+		
 			
-        // TODO : enum
-		String[] optLSCNames  = new String[] {"L0", "S0", "C0"};        
+//		String[] optLSCNames  = new String[] {"L0", "S0", "C0"};
+		
+		List<EAfnsParamTypCd> optLSCNames = EAfnsParamTypCd.getOptAfnsParams("LSC");
 				
 		if(this.optParas != null && this.optLSC != null) {			
 			
@@ -364,7 +279,7 @@ public class AFNelsonSiegel extends IrModel {
 				param.setBaseYymm(dateToString(this.baseDate).substring(0,6));
 				param.setIrModelNm(this.mode);
 				param.setIrCurveNm(this.irCurveNm);				
-				param.setParamTypCd(optParaNames[i]);
+				param.setParamTypCd(optParaNames.get(i));
 				param.setParamVal(optParas[i]);
 				param.setModifiedBy("GESG_" + this.getClass().getSimpleName());
 				param.setUpdateDate(LocalDateTime.now());				
@@ -377,7 +292,7 @@ public class AFNelsonSiegel extends IrModel {
 				param.setBaseYymm(dateToString(this.baseDate).substring(0,6));
 				param.setIrModelNm(this.mode);
 				param.setIrCurveNm(this.irCurveNm);				
-				param.setParamTypCd(optLSCNames[i]);
+				param.setParamTypCd(optLSCNames.get(i));
 				param.setParamVal(optLSC[i]);
 				param.setModifiedBy("GESG_" + this.getClass().getSimpleName());
 				param.setUpdateDate(LocalDateTime.now());				
@@ -415,7 +330,72 @@ public class AFNelsonSiegel extends IrModel {
 		return shockList;
 	}
 	
+// 작업 분리 23.05.30 
+	
+	// 1. Initializing AFNS Parameter
+	public void getinitialAfnsParas() {
+		if(!this.optParasFlag) {
 
+			initializeAfnsParas();
+		}
+	}
+	
+	// 2. afns 모수 최적화 
+	public void optimizationParas(List<IrParamAfnsCalc> initParam) {
+		if(!this.optParasFlag) {
+
+			this.initParas = new double[initParam.size()];
+			
+			// initParam을 inputParas double[]에 순서대로 담기
+	        for (int i = 0; i < initParam.size(); i++) {
+	            IrParamAfnsCalc param = initParam.get(i);
+	            double paramVal = param.getParamVal();
+
+	            this.initParas[i] = paramVal; 
+	        }
+	        
+			// Determine this.initParas 사용자 입력값을 받을지 산출된 초기모수를 사용할지 
+			if(this.inputParas != null) this.initParas = this.inputParas;   
+
+				
+			// To set this.optParas, this.optLSC
+			kalmanFiltering();
+		}
+	}
+	
+	// 3. afns 충격시나리오 생성 
+	public void genAfnsShock(List<IrParamAfnsCalc> inOptParam, List<IrParamAfnsCalc> inOptLsc) {
+		
+		// 최적화된 모수 읽어온 값 담기 
+		this.optParas = new double[inOptParam.size()];
+		
+		// inOptParam을 optParas double[]에 순서대로 담기
+        for (int i = 0; i < inOptParam.size(); i++) {
+            IrParamAfnsCalc param = inOptParam.get(i);
+            double paramVal = param.getParamVal();
+
+            this.optParas[i] = paramVal; 
+        }
+        
+        
+        // L,S,C 담기 
+		this.optLSC = new double[inOptLsc.size()];
+		
+		// inOptLsc을 optLSC double[]에 순서대로 담기
+        for (int i = 0; i < inOptLsc.size(); i++) {
+            IrParamAfnsCalc param = inOptLsc.get(i);
+            double paramVal = param.getParamVal();
+
+            this.optLSC[i] = paramVal; 
+        }
+		
+        
+		// To set this.IntShock
+		afnsShockGenerating();	
+	}
+	
+	
+	
 	public List<IrDcntSceDetBiz> getAfnsResultList() {
 
 		if(!this.optParasFlag) {
@@ -475,14 +455,12 @@ public class AFNelsonSiegel extends IrModel {
 //			log.info("{}, {}, {}, {}, {}", this.iRateDateHis[i], this.iRateHis[i][0], this.iRateHis[i][1], this.iRateHis[i][2],this.iRateHis[i][3]);
 			for(int j=0; j<this.iRateHis[i].length; j++) {		
 				this.iRateHis[i][j] = (this.cmpdType == CMPD_MTD_DISC) ? irDiscToCont(toRealScale*this.iRateHis[i][j]) : toRealScale*this.iRateHis[i][j];				
-//				this.iRateHis[i][j] = (this.cmpdType == CMPD_MTD_DISC) ?  toRealScale*this.iRateHis[i][j] : toRealScale*this.iRateHis[i][j];				
 			}
 //			log.info("{}, {}, {}, {}, {}", this.iRateDateHis[i], this.iRateHis[i][0], this.iRateHis[i][1], this.iRateHis[i][2],this.iRateHis[i][3]);
 		}	
 		
 		for(int j=0; j<this.iRateBase.length; j++) {
 			this.iRateBase[j] = (this.cmpdType == CMPD_MTD_DISC) ? irDiscToCont(toRealScale*this.iRateBase[j]) : toRealScale*this.iRateBase[j];
-//			this.iRateBase[j] = (this.cmpdType == CMPD_MTD_DISC) ? toRealScale*this.iRateBase[j] : toRealScale*this.iRateBase[j];
 //			log.info("{}, {}", this.iRateBase[j]);
 		}
 		
@@ -771,36 +749,39 @@ public class AFNelsonSiegel extends IrModel {
 		
 		// Declare M, N and Calculate NTN | eKappa ~ Kappa^-1 x (I-exp(-Kappa)) x Sigma  |  N ~ W.mat x M  |  NTN ~ t(N) x N
 		SimpleMatrix eKappa     = new SimpleMatrix(toDiagMatrix(Math.exp(-Kappa.get(0,0)), Math.exp(-Kappa.get(1,1)), Math.exp(-Kappa.get(2,2))));
-		SimpleMatrix IminusK    = new SimpleMatrix(toIdentityMatrix(this.nf)).minus(eKappa);
-		SimpleMatrix M          = Kappa.invert().mult(IminusK).mult(Sigma);		
+		
+//		2023.05.30 주석처리 : for 엑셀과 로직 맞추기 변동성 행렬 산출 시 주 요인만을 고려 (level, slope)
+//		SimpleMatrix IminusK    = new SimpleMatrix(toIdentityMatrix(this.nf)).minus(eKappa);
+//		SimpleMatrix M          = Kappa.invert().mult(IminusK).mult(Sigma);		
 		
         ////////////////////////////////////////////////////////////////////////////////	
+//		2023.05.30 수정 : for 엑셀과 로직 맞추기 변동성 행렬 산출 시 모든 요인을 고려(level, slope, curvature)
 		
-//		double[][] mTemp = new double[this.nf][this.nf];		
-//		for(int i=0; i<mTemp.length; i++) {
-//			for(int j=0; j<mTemp[i].length; j++) {
-//				mTemp[i][j]     = (1.0 - eKappa.get(i,i) * eKappa.get(j,j)) / (Kappa.get(i,i) + Kappa.get(j,j));								
-//			}
-//		}	
-//		SimpleMatrix M1         = Sigma.mult(Sigma.transpose()).elementMult(new SimpleMatrix(mTemp));
-//		
-//		CholeskyDecomposition_F64<DMatrixRMaj> chol = DecompositionFactory_DDRM.chol(true);
-//		
-//		if(!chol.decompose(M1.getDDRM())) {
-//			log.error("Cholesky Decomposition is failed in AFNS Process!");
-//			System.exit(0);
-//		}		
-//		SimpleMatrix M          = new SimpleMatrix(chol.getT(M1.getDDRM()));  //for IAIS Modified after 2017		
-////		for(int i=0; i<M.numRows(); i++) log.info("M matrix: {}, {}, {}", M.get(i,0),  M.get(i,1),  M.get(i,2));		
+		double[][] mTemp = new double[this.nf][this.nf];		
+		for(int i=0; i<mTemp.length; i++) {
+			for(int j=0; j<mTemp[i].length; j++) {
+				mTemp[i][j]     = (1.0 - eKappa.get(i,i) * eKappa.get(j,j)) / (Kappa.get(i,i) + Kappa.get(j,j));								
+			}
+		}	
+		SimpleMatrix M1         = Sigma.mult(Sigma.transpose()).elementMult(new SimpleMatrix(mTemp));
+		
+		CholeskyDecomposition_F64<DMatrixRMaj> chol = DecompositionFactory_DDRM.chol(true);
+		
+		if(!chol.decompose(M1.getDDRM())) {
+			log.error("Cholesky Decomposition is failed in AFNS Process!");
+			System.exit(0);
+		}		
+		SimpleMatrix M          = new SimpleMatrix(chol.getT(M1.getDDRM()));  //for IAIS Modified after 2017		
+		for(int i=0; i<M.numRows(); i++) log.info("M matrix: {}, {}, {}", M.get(i,0),  M.get(i,1),  M.get(i,2));		
 
         ////////////////////////////////////////////////////////////////////////////////		
 
 		SimpleMatrix N          = new SimpleMatrix(toDiagMatrix(factorLLP.extractMatrix(0, tenorLLP.length, 0, 1).elementSum()
 				                                              , factorLLP.extractMatrix(0, tenorLLP.length, 1, 2).elementSum()
 				                                              , factorLLP.extractMatrix(0, tenorLLP.length, 2, 3).elementSum())).mult(M);
-//		2023.05.29 수정
-		SimpleMatrix NTN        = N.transpose().mult(N);   //for IAIS(International Association of Insurance Supervisors) 2017 Field Testing Tech. doc(page 201 of 326)
-//		SimpleMatrix NTN	    = N.mult(N.transpose());   //for KIDI Article(2018-2) (page 28)
+//		2023.05.29 수정  : for 엑셀과 로직 맞추기 
+//		SimpleMatrix NTN        = N.transpose().mult(N);   //for IAIS(International Association of Insurance Supervisors) 2017 Field Testing Tech. doc(page 201 of 326)
+		SimpleMatrix NTN	    = N.mult(N.transpose());   //for KIDI Article(2018-2) (page 28)
 		
 		// Eigen Decomposition & get rotation angle
 		Map<Integer, List<Double>> eigVec =  eigenValueUserDefined(NTN, 3);		
