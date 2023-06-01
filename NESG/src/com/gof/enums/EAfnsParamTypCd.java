@@ -94,7 +94,7 @@ public enum EAfnsParamTypCd {
 	}
 	
 	// 초기모수 추출 
-	public static List<EAfnsParamTypCd> getInitAfnsParams() {
+	public static List<EAfnsParamTypCd> getInitParamNames() {
 	    List<EAfnsParamTypCd> initParams = new ArrayList<>();
 	    for (EAfnsParamTypCd param : EAfnsParamTypCd.values()) {
 	        if (param.name().startsWith("INIT_")) {
@@ -105,7 +105,7 @@ public enum EAfnsParamTypCd {
 	}
 	
 	// 최적모수 추출 -> init 이 아닌 파라메타 목록 paramDv 에 따라 paras / LSC 를 구분해서 받기 
-	public static List<EAfnsParamTypCd> getOptAfnsParams(String paramDv) {
+	public static List<EAfnsParamTypCd> getOptParamNames(String paramDv) {
 	    List<EAfnsParamTypCd> optParams = new ArrayList<>();
 	    for (EAfnsParamTypCd param : EAfnsParamTypCd.values()) {
 	        if (!param.name().startsWith("INIT_") && param.paramDv.equals(paramDv)) {

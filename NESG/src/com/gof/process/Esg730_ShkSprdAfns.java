@@ -31,10 +31,9 @@ public class Esg730_ShkSprdAfns extends Process {
 	 * @See getAfnsResultList
 	 * */
 	public static Map<String, List<?>> createAfnsShockScenario(String bssd
-														 	 , List<IRateInput> curveHisList
-														 	 , List<IRateInput> curveBaseList
-														 	 , IrParamModel irModelMst
-														 	 , IrParamSw    irParamSw  
+														 	 , double[]          inTenor
+														 	 , IrParamModel     irModelMst
+														 	 , IrParamSw        irParamSw  
 														 	 , Map<String, String>  argInDBMap 
 														 	 , List<IrParamAfnsCalc> optInput  // add 
 														 	 )	
@@ -48,7 +47,7 @@ public class Esg730_ShkSprdAfns extends Process {
 		List<IrParamAfnsCalc> inOptLsc  = optInput.stream().filter(param -> param.getParamTypCd().getParamDv().equals("LSC"))
                 .collect(Collectors.toList());
 		
-		AFNelsonSiegel afns = new AFNelsonSiegel(bssd, curveHisList, curveBaseList, irModelMst, irParamSw, argInDBMap) ;
+		AFNelsonSiegel afns = new AFNelsonSiegel(bssd ,inTenor, irModelMst, irParamSw, argInDBMap) ;
 		
 		afns.genAfnsShock(inOptParam , inOptLsc);
 		irShock.       addAll(afns.getAfnsShockList());
@@ -56,6 +55,7 @@ public class Esg730_ShkSprdAfns extends Process {
 		// fk 값 추가 
 		irShock.     stream().forEach(s -> s.setIrParamModel(irModelMst));
 		irShock.     stream().forEach(s -> s.setIrCurve(irModelMst.getIrCurve()));
+		irShock.     stream().forEach(s -> s.setIrCurveNm(irModelMst.getIrCurveNm())); // 금리 정보가 비어있으면 irCurveNm이 null임 
 		irShock.     stream().forEach(s -> s.setModifiedBy(jobId));
 
 		resultMap.put("SHOCK",  irShock);

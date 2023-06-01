@@ -315,10 +315,10 @@ public class AFNelsonSiegelHetero extends IrModel {
 //											  "EPSILON1", "EPSILON2", "EPSILON3" , "EPSILON4" , "EPSILON5" , "EPSILON6" , "EPSILON7" ,
 //											  "EPSILON8", "EPSILON9", "EPSILON10", "EPSILON11", "EPSILON12", "EPSILON13", "EPSILON14" };
 		
-		List<EAfnsParamTypCd> optParaNames = EAfnsParamTypCd.getOptAfnsParams("optParas");
+		List<EAfnsParamTypCd> optParaNames = EAfnsParamTypCd.getOptParamNames("optParas");
 
 //		String[] optLSCNames  = new String[] {"L0", "S0", "C0"};
-		List<EAfnsParamTypCd> optLSCNames = EAfnsParamTypCd.getOptAfnsParams("LSC");
+		List<EAfnsParamTypCd> optLSCNames = EAfnsParamTypCd.getOptParamNames("LSC");
 				
 		if(this.optParas != null && this.optLSC != null) {			
 

@@ -99,10 +99,21 @@ public class AFNelsonSiegel extends IrModel {
 	protected double        epsilon;
 	
 	protected List<IrDcntSceDetBiz> rsltList = new ArrayList<IrDcntSceDetBiz>();
-		
+	
+	// 금리정보를 받아오는 경우.
+	public AFNelsonSiegel(String bssd, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, IrParamModel irModelMst, IrParamSw irParamSw, Map<String, String> argInDBMap) {
+		this( bssd, iRateHisList, iRateBaseList, null , irModelMst,  irParamSw, argInDBMap);
+	}
+	// 금리 정보가 비어있는 경우. 사용할 테너정보를 받아야 함. 
+	public AFNelsonSiegel(String bssd, double[] inTenor , IrParamModel irModelMst, IrParamSw irParamSw, Map<String, String> argInDBMap) {
+		this( bssd, null, null , inTenor, irModelMst,  irParamSw, argInDBMap);
+	}
+
+	
 	public AFNelsonSiegel( String bssd
-					 	 , List<IRateInput> iRateHisList
-					 	 , List<IRateInput> iRateBaseList
+					 	 , List<IRateInput> iRateHisList  // 금리내역 
+					 	 , List<IRateInput> iRateBaseList // 기준일자 금리정보 
+					 	 , double[]     inTenor           // 금리내역이 없을때 기본적으로 정의할 테너 (개별job에서 정의)  
 					 	 , IrParamModel irModelMst 
 					 	 , IrParamSw    irParamSw  
 					 	 , Map<String, String>  argInDBMap ) 
@@ -122,8 +133,10 @@ public class AFNelsonSiegel extends IrModel {
 		
 		this.baseDate      =  IrModel.stringToDate(bssd);		
 		this.mode          =  irModelMst.getIrModelNm() ;
-		this.inputParas    =  null;		
-		this.setTermStructureHis(iRateHisList, iRateBaseList);
+		this.inputParas    =  null;
+		
+//		this.setTermStructureHis(iRateHisList, iRateBaseList);
+		
 		this.isRealNumber  = true;
 		this.cmpdType      = 'D';		
 		this.dt            = 1.0 /52.0 ;	//weekly only
@@ -142,7 +155,16 @@ public class AFNelsonSiegel extends IrModel {
 		this.itrMax        = kalmanItrMax;
 		this.confInterval  = confInterval;
 		this.epsilon       = epsilonInit;
-		this.setIrmodelAttributes();
+		
+		if(iRateHisList != null && iRateBaseList != null) {	
+		// 금리정보가 있으면 금리 세팅 ,tenor도 여기에서 설정함.  
+			this.setTermStructureHis(iRateHisList, iRateBaseList);
+			this.setIrmodelAttributes();
+		} else 
+		{ // 금리정보가 null 일 때 input 값으로 tenor 설정.
+			this.tenor = inTenor;
+		};
+
 }
 
 	//TODO:
@@ -234,7 +256,8 @@ public class AFNelsonSiegel extends IrModel {
 //				                           "INIT_SIGMA_11", "INIT_SIGMA_21", "INIT_SIGMA_22", "INIT_SIGMA_31", "INIT_SIGMA_32", "INIT_SIGMA_33", "INIT_EPSILON" };		
 		
 		// enum으로 정의한 초기모수 목록 가져오기 
-		List<EAfnsParamTypCd> initParamNames = EAfnsParamTypCd.getInitAfnsParams();
+		List<EAfnsParamTypCd> initParamNames = EAfnsParamTypCd.getInitParamNames();
+//		System.out.println(initParamNames);
 
 		
 		if(this.initParas != null) {			
@@ -264,12 +287,12 @@ public class AFNelsonSiegel extends IrModel {
 //		String[] optParaNames = new String[] {"LAMBDA"  , "THETA_1" , "THETA_2" , "THETA_3" , "KAPPA_1" , "KAPPA_2" , "KAPPA_3" , 
 //				                              "SIGMA_11", "SIGMA_21", "SIGMA_22", "SIGMA_31", "SIGMA_32", "SIGMA_33", "EPSILON" };		
 		
-		List<EAfnsParamTypCd> optParaNames = EAfnsParamTypCd.getOptAfnsParams("paras");
+		List<EAfnsParamTypCd> optParaNames = EAfnsParamTypCd.getOptParamNames("paras");
 		
 			
 //		String[] optLSCNames  = new String[] {"L0", "S0", "C0"};
 		
-		List<EAfnsParamTypCd> optLSCNames = EAfnsParamTypCd.getOptAfnsParams("LSC");
+		List<EAfnsParamTypCd> optLSCNames = EAfnsParamTypCd.getOptParamNames("LSC");
 				
 		if(this.optParas != null && this.optLSC != null) {			
 			
@@ -281,7 +304,7 @@ public class AFNelsonSiegel extends IrModel {
 				param.setIrCurveNm(this.irCurveNm);				
 				param.setParamTypCd(optParaNames.get(i));
 				param.setParamVal(optParas[i]);
-				param.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//				param.setModifiedBy("GESG_" + this.getClass().getSimpleName());
 				param.setUpdateDate(LocalDateTime.now());				
 				paramList.add(param);
 			}
@@ -294,7 +317,7 @@ public class AFNelsonSiegel extends IrModel {
 				param.setIrCurveNm(this.irCurveNm);				
 				param.setParamTypCd(optLSCNames.get(i));
 				param.setParamVal(optLSC[i]);
-				param.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+//				param.setModifiedBy("GESG_" + this.getClass().getSimpleName());
 				param.setUpdateDate(LocalDateTime.now());				
 				paramList.add(param);				
 			}
@@ -898,7 +921,7 @@ public class AFNelsonSiegel extends IrModel {
 		
 		for(int i=0; i<fLoad.length; i++) {
 			for(int j=0; j<2; j++) fLoad[i][j] = fLoadFull[i][j+1];
-			log.info("{}, {}, {}, {}, {}", lambda, tau[i], fLoad[i][0], fLoad[i][1]);
+//			log.info("{}, {}, {}, {}, {}", lambda, tau[i], fLoad[i][0], fLoad[i][1]);
 		}			
 		return fLoad;
 	}

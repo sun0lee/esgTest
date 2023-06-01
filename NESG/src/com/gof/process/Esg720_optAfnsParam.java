@@ -25,16 +25,16 @@ public class Esg720_optAfnsParam extends Process {
 	public static final Esg720_optAfnsParam INSTANCE = new Esg720_optAfnsParam();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);	
 	
-	/** <p> AFNS 모수 최적화 by Kalman filter </br> 
+	/** <p> AFNS 모수 최적화 (kalmanFiltering) </br> 
 	 * @param 
 	 * @See getAfnsResultList
 	 * */
 	public static Map<String, List<?>> optimizationParas(String bssd
 														 	 , List<IRateInput> curveHisList
 														 	 , List<IRateInput> curveBaseList
-														 	 , IrParamModel irModelMst // add
-														 	 , IrParamSw    irParamSw  // add
-														 	 , Map<String, String>  argInDBMap // add 
+														 	 , IrParamModel irModelMst 
+														 	 , IrParamSw    irParamSw  
+														 	 , Map<String, String>  argInDBMap  
 														 	 , List<IrParamAfnsCalc> initParam // add input 
 														 	 )	
 	{		

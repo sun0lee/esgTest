@@ -77,6 +77,7 @@ import com.gof.entity.RcCorpPd;
 import com.gof.entity.RcCorpPdBiz;
 import com.gof.entity.RcCorpTm;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EBaseTenor;
 import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
@@ -322,8 +323,8 @@ public class Main {
 //		jobList.add("350");
 //		jobList.add("360");
 //		jobList.add("370");
-//		jobList.add("710");
-//		jobList.add("720");
+		jobList.add("710");
+		jobList.add("720");
 		jobList.add("730");
 		
 		
@@ -678,11 +679,10 @@ public class Main {
 					log.info("AFNS Shock Spread (Cont) for [{}({}, {})]", irCurveNm, irCurve.getIrCurveNm(), irCurve.getCurCd());
 					
 					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
+					
+					// 엑셀과 모수 추정에 사용하는 테너만 남기기
+					tenorList.remove("M0003");tenorList.remove("M0006");tenorList.remove("M0009");tenorList.remove("M0018");tenorList.remove("M0030");tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
 
-//					tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
-//					log.info("{}", tenorList);
-					//TODO:
-//					tenorList.remove("M0180");
 					
 					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
 					if(tenorList.isEmpty()) {
@@ -1925,9 +1925,6 @@ public class Main {
 
 					// 엑셀과 모수 추정에 사용하는 테너만 남기기
 					tenorList.remove("M0003");tenorList.remove("M0006");tenorList.remove("M0009");tenorList.remove("M0018");tenorList.remove("M0030");tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
-					log.info("{}", tenorList);
-					//TODO:
-//					tenorList.remove("M0180");
 					
 					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
 					if(tenorList.isEmpty()) {
@@ -1935,11 +1932,12 @@ public class Main {
 						continue;
 					}
 
-					int delNum1 = session.createQuery("delete IrParamAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3 and modifiedBy =:param4")
+					// 이전에 산출한 초기모수 삭제 
+					int delNum1 = session.createQuery("delete IrParamAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3 ") // and modifiedBy =:param4")
 		                     			 .setParameter("param1", bssd) 
 		                     			 .setParameter("param2", irModelNm)
 		                     			 .setParameter("param3", irCurveNm)
-		                     			 .setParameter("param4", "ESG710")
+//		                     			 .setParameter("param4", "ESG710")
 		                     			 .executeUpdate();
 					
 					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum1);
@@ -2032,15 +2030,17 @@ public class Main {
 
 					// 엑셀과 모수 추정에 사용하는 테너만 남기기
 					tenorList.remove("M0003");tenorList.remove("M0006");tenorList.remove("M0009");tenorList.remove("M0018");tenorList.remove("M0030");tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
-					log.info("{}", tenorList);
-					//TODO:
-//					tenorList.remove("M0180");
 					
 					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
 					if(tenorList.isEmpty()) {
 						log.warn("No Spot Rate Data [ID: {}] for [{}]", irCurveNm, bssd);
 						continue;
+
 					}
+//					 double[] genTenor = EBaseTenor.getTenorArray(tenorList) ;
+					// 기본적으로 인풋에 사용되는 금리 정보를 바탕으로 그에 대응되는 테너를 사용하지만, 금리 모델에서 생성하고자 하는 경우 테너가 추가될수도, 제거될 수 있는 것임. 
+					// 필요한 경우에 목적에 맞는 tenor 를 irModel에 전해주기 
+
 
 					int delNum1 = session.createQuery("delete IrParamAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3 and modifiedBy =:param4")
 		                     			 .setParameter("param1", bssd) 
@@ -2052,17 +2052,8 @@ public class Main {
 					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum1);
 										
 					List<IrCurveSpotWeek> weekHisList    = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, false);
-					List<IrCurveSpotWeek> weekHisBizList = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, true);
-					log.info("weekHisList: [{}], [TOTAL: {}, BIZDAY: {}], [from {} to {}, weekDay:{}]", irCurveNm, weekHisList.size(), weekHisBizList.size(), iRateHisStBaseDate.substring(0,6), bssd, weekDay);			
-
-					//for ensuring enough input size
-					if(weekHisList.size() < 1000) {
-						log.warn("Weekly SpotRate Data is not Enough [ID: {}, SIZE: {}] for [{}]", irCurveNm, weekHisList.size(), bssd);
-						continue;
-					}					
 
 					List<IRateInput> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
-//					log.info("{}", curveHisList);
 					
 					//Any curveBaseList result in same parameters and spreads.
 					List<IRateInput> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
@@ -2072,7 +2063,6 @@ public class Main {
 						continue;
 					}					
 					
-
 					// enum에 정의된 순서로 정렬해서 받음 =>  모수는 enum에 정의한 순서대로 다른 의미를 갖는 값이기 때문에 순서가 중요함.  
 					List<IrParamAfnsCalc> initParam = IrParamAfnsDao.getIrParamAfnsCalcInitList(bssd, EIrModel.AFNS, irCurveNm).stream()
 						                                            .sorted(Comparator.comparingInt(p -> p.getParamTypCd().ordinal()))
@@ -2082,9 +2072,9 @@ public class Main {
 					resultMap = Esg720_optAfnsParam.optimizationParas(FinUtils.toEndOfMonth(bssd)
 																			  , curveHisList
 																			  , curveBaseList
-																			  , irModelMst  // add 
-																			  , irparamSw   // add 
-																			  , argInDBMap  // add 
+																			  , irModelMst  
+																			  , irparamSw   
+																			  , argInDBMap 
 																			  , initParam // add
 																			  );	
 											
@@ -2112,8 +2102,7 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG730);			
 
-			EIrModel irModelNm     = EIrModel.AFNS;						
-			int    weekDay         = Integer.valueOf((String) argInDBMap.getOrDefault("AFNS_WEEK_DAY"        , "5")); //금욜 
+			EIrModel irModelNm     = EIrModel.AFNS;					
 			
 			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(irModelNm);
 			Map<String, IrParamModel> irModelMstMap = modelMstList.stream()
@@ -2140,19 +2129,18 @@ public class Main {
 					}
 					
 					log.info("AFNS Shock Spread (Cont) for [{}({}, {})]", irCurveNm, irCurve.getIrCurveNm(), irCurve.getCurCd());
-					
+
+					// 시나리오를 생성할 기본 테너 
 					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
 
-					// 엑셀과 모수 추정에 사용하는 테너만 남기기
-					tenorList.remove("M0003");tenorList.remove("M0006");tenorList.remove("M0009");tenorList.remove("M0018");tenorList.remove("M0030");tenorList.remove("M0048"); tenorList.remove("M0084"); tenorList.remove("M0180");  //FOR CHECK w/ FSS
-					log.info("{}", tenorList);
-
-					
 					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
 					if(tenorList.isEmpty()) {
 						log.warn("No Spot Rate Data [ID: {}] for [{}]", irCurveNm, bssd);
 						continue;
 					}
+					 double[] genTenor = EBaseTenor.getTenorArray(tenorList) ;
+					// 기본적으로 인풋에 사용되는 금리 정보를 바탕으로 그에 대응되는 테너를 사용하지만, 금리 모델에서 생성하고자 하는 경우 테너가 추가될수도, 제거될 수 있는 것임. 
+					// 필요한 경우에 목적에 맞는 tenor 를 irModel에 전해주기 
 
 					
 					int delNum2 = session.createQuery("delete IrSprdAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3")
@@ -2163,22 +2151,6 @@ public class Main {
 
 					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
 					
-					List<IrCurveSpotWeek> weekHisList    = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, false);
-					List<IrCurveSpotWeek> weekHisBizList = IrCurveSpotWeekDao.getIrCurveSpotWeekHis(bssd, iRateHisStBaseDate, irCurve, tenorList, weekDay, true);
-					
-					log.info("weekHisList: [{}], [TOTAL: {}, BIZDAY: {}], [from {} to {}, weekDay:{}]", irCurveNm, weekHisList.size(), weekHisBizList.size(), iRateHisStBaseDate.substring(0,6), bssd, weekDay);			
-
-
-					List<IRateInput> curveHisList = weekHisList.stream().map(s->s.convertToHis()).collect(toList());
-//					log.info("{}", curveHisList);
-					
-					//Any curveBaseList result in same parameters and spreads.
-					List<IRateInput> curveBaseList = IrCurveSpotDao.getIrCurveSpot(bssd, irCurveNm, tenorList);					
-					
-					if(curveBaseList.size()==0) {
-						log.warn("No IR Curve Data [IR_CURVE_NM: {}] for [{}]", irCurveNm, bssd);
-						continue;
-					}					
 					
 					List<IrParamAfnsCalc> optParam = IrParamAfnsDao.getIrParamAfnsCalcList(bssd, EIrModel.AFNS, irCurveNm).stream()
                             .sorted(Comparator.comparingInt(p -> p.getParamTypCd().ordinal()))
@@ -2186,8 +2158,7 @@ public class Main {
 					
 					Map<String, List<?>> irShockSenario = new TreeMap<String, List<?>>();
 					irShockSenario = Esg730_ShkSprdAfns.createAfnsShockScenario(FinUtils.toEndOfMonth(bssd)
-																			  , curveHisList
-																			  , curveBaseList
+																			  , genTenor // add
 																			  , irModelMst 
 																			  , irparamSw   
 																			  , argInDBMap 
