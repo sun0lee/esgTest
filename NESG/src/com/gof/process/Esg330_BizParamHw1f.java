@@ -61,6 +61,8 @@ public class Esg330_BizParamHw1f extends Process {
 			IrParamHwBiz biz = new IrParamHwBiz();			
 			biz.setBaseYymm(bssd);
 			biz.setApplBizDv(applBizDv);
+			biz.setIrParamModel(calc.getIrParamModel());
+			biz.setIrCurve(calc.getIrCurve());
 			biz.setIrModelNm(irModelNm);
 			biz.setIrCurveNm(irCurveNm);
 			biz.setMatCd(calc.getMatCd());
@@ -98,6 +100,8 @@ public class Esg330_BizParamHw1f extends Process {
 		
 		biz.setBaseYymm(bssd);
 		biz.setApplBizDv(applBizDv);
+		biz.setIrParamModel(paramCalcHisList.get(0).getIrParamModel());
+		biz.setIrCurve(paramCalcHisList.get(0).getIrCurve());
 		biz.setIrModelNm(irModelNm);
 		biz.setIrCurveNm(irCurveNm);
 		biz.setParamTypCd(paramTypCd);

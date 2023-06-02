@@ -9,13 +9,11 @@ import java.util.TreeMap;
 import com.gof.entity.IrSprdAfnsCalc;
 import com.gof.enums.EJob;
 import com.gof.interfaces.IRateInput;
-import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamAfnsCalc;
 import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrDcntSceDetBiz;
 import com.gof.model.AFNelsonSiegel;
-import com.gof.model.IrModel;
 
 import lombok.extern.slf4j.Slf4j;
 

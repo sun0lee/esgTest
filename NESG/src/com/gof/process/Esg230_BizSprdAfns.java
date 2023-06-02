@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.math3.linear.EigenDecomposition;
 
 import com.gof.dao.IrSprdDao;
 import com.gof.entity.IrSprdAfnsCalc;
@@ -13,7 +12,6 @@ import com.gof.entity.IrSprdAfnsUsr;
 import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
-import com.gof.util.StringUtil;
 import com.gof.entity.IrSprdAfnsBiz;
 
 import lombok.extern.slf4j.Slf4j;

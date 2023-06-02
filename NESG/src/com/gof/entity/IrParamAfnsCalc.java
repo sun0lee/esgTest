@@ -17,9 +17,7 @@ import javax.persistence.Table;
 
 import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EIrModel;
-import com.gof.enums.ENamingConvention;
 import com.gof.enums.EAfnsParamTypCd;
-import com.gof.enums.EHwParamTypCd;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

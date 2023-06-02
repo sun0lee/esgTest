@@ -28,9 +28,7 @@ import org.apache.commons.math3.optim.univariate.SearchInterval;
 import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 
-import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrValidParamHw;
-import com.gof.interfaces.IRateDcnt;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.Hw1fCalibParas;
 import com.gof.model.entity.SmithWilsonRslt;

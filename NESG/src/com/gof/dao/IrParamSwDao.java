@@ -5,11 +5,8 @@ import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 
-import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrParamSwUsr;
-import com.gof.enums.EApplBizDv;
-import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
 
 public class IrParamSwDao extends DaoUtil {

@@ -22,7 +22,6 @@ import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EJob;
 import com.gof.interfaces.IRateInput;
-import com.gof.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
 

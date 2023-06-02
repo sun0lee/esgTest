@@ -24,7 +24,6 @@ import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EIrModel;
 import com.gof.enums.EHwParamTypCd;
-import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -46,8 +45,6 @@ public class IrParamHwCalc extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = -3199922647182076353L;
 
-	private static final String String = null;
-	
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_PARAM_HW_CALC_SEQ_GEN")
 	@Column (name = "SID")
 	@Id

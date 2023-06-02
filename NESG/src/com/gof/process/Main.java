@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.toMap;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,9 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.function.Function;
 //import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -44,19 +41,13 @@ import com.gof.entity.IrDcntRate;
 import com.gof.entity.IrDcntRateBiz;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrDcntSceStoBiz;
-import com.gof.entity.IrDcntSceStoGnr;
 import com.gof.entity.IrParamAfnsCalc;
-import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwCalc;
 import com.gof.entity.StdAsstIrSceSto;
 import com.gof.entity.IrParamModel;
-import com.gof.entity.IrParamModelBiz;
-import com.gof.entity.IrParamModelCalc;
-import com.gof.entity.IrParamModelRnd;
 import com.gof.entity.IrParamSw;
 import com.gof.entity.IrParamSwUsr;
-import com.gof.entity.IrQvalSce;
 import com.gof.entity.IrSprdAfnsBiz;
 import com.gof.entity.IrSprdAfnsCalc;
 import com.gof.entity.IrSprdLp;
@@ -84,11 +75,9 @@ import com.gof.enums.EJob;
 import com.gof.enums.ERunArgument;
 import com.gof.interfaces.IRateInput;
 import com.gof.util.AesCrypto;
-import com.gof.util.DateUtil;
 import com.gof.util.EsgConstant;
 import com.gof.util.FinUtils;
 import com.gof.util.HibernateUtil;
-import com.gof.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -123,8 +112,8 @@ public class Main {
 	private static int[]     hwAlphaPieceNonSplit        = new int[] {20};
 	private static int[]     hwSigmaPiece                = new int[] {1, 2, 3, 5, 7, 10};
 	private static double    significanceLevel           = 0.05;	
-	private static int       cirAvgMonth                 = 36;	
-	private static int       cirPrjYear                  = 30;
+//	private static int       cirAvgMonth                 = 36;	
+//	private static int       cirPrjYear                  = 30;
 	private static String    iRateHisStBaseDate          = "20100101";	
 	
 
@@ -167,13 +156,7 @@ public class Main {
 		job360();       // job 360: Validation for Random number of HW1F Scenario
 		job370();       // job 370: Validation for Market Consistency of HW1F Scenario		
 		
-// ****************************************************************** Biz Scenario of CIR Model           ********************************		
-
-//		job410();		// Job 410: Calibration of CIR Forcasting Model
-//		job420();		// Job 420: Biz Applied CIR Forcasting Model Parameter
-//		job430();		// Job 430: Stochastic Scenario of CIR Forcasting Model
-		
-
+// ******************************************************************AFNS Shock Spread	   ********************************		
 		
 		job710(); 
 		job720();
@@ -293,8 +276,8 @@ public class Main {
 			targetDuration	             = Double.parseDouble(argInDBMap.getOrDefault("BOND_YIELD_TGT_DURATION", "3.0").toString());		
 			significanceLevel            = Double.parseDouble(argInDBMap.getOrDefault("SIGNIFICANCE_LEVEL", "0.05").toString());
 			
-			cirAvgMonth                  = Integer.parseInt(argInDBMap.getOrDefault("CIR_AVG_MONTH", "36").toString());
-			cirPrjYear                   = Integer.parseInt(argInDBMap.getOrDefault("CIR_PROJECTION_YEAR", "30").toString());
+//			cirAvgMonth                  = Integer.parseInt(argInDBMap.getOrDefault("CIR_AVG_MONTH", "36").toString());
+//			cirPrjYear                   = Integer.parseInt(argInDBMap.getOrDefault("CIR_PROJECTION_YEAR", "30").toString());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -319,13 +302,13 @@ public class Main {
 //		jobList.add("310");
 //		jobList.add("320");
 //		jobList.add("330");
-//		jobList.add("340");
+		jobList.add("340");
 //		jobList.add("350");
 //		jobList.add("360");
 //		jobList.add("370");
-		jobList.add("710");
-		jobList.add("720");
-		jobList.add("730");
+//		jobList.add("710");
+//		jobList.add("720");
+//		jobList.add("730");
 		
 		
 	}		
@@ -1688,202 +1671,6 @@ public class Main {
 		}		
 	}
 
-	
-	private static void job410() {
-		if(jobList.contains("410")) {		
-			session.beginTransaction();		
-			CoJobInfo jobLog = startJogLog(EJob.ESG410);
-			
-//			String irModelNm = "CIR";			
-			EIrModel irModelNm   = EIrModel.CIR ;
-
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-//			Map<String, Map<String, IrParamModel>> modelMstMap = modelMst.stream().collect(Collectors.groupingBy(IrParamModel::getirModelNm
-		    Map<EIrModel, Map<String, IrParamModel>> modelMstMap = modelMst.stream().collect(Collectors.groupingBy(IrParamModel::getIrModelNm
-//					                                                                    , TreeMap::new, Collectors.toMap(IrParamModel::getirCurveNm, Function.identity(), (k, v) -> k, TreeMap::new)));			
-          			                                                                    , TreeMap::new, Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity(), (k, v) -> k, TreeMap::new)));			
-			log.info("IrParamModel: {}", modelMstMap.toString());
-			
-			int delNum = session.createQuery("delete IrParamModelCalc a where baseYymm=:param1 and a.irModelNm like :param2")
-			 		    		.setParameter("param1", bssd) 
-        			            .setParameter("param2", "%"+irModelNm+"%")        			             
-        			            .executeUpdate();
-
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
-			
-			try {				
-				for(Map.Entry<EIrModel, Map<String, IrParamModel>> modelMap : modelMstMap.entrySet()) {
-					for(Map.Entry<String, IrParamModel> model : modelMap.getValue().entrySet()) {					
-
-//						String  cirTenor  = String.format("%s%04d", "M", Integer.valueOf(modelMap.getKey().substring(5)) * 12);						
-						String  cirTenor=  modelMap.getKey().equals(EIrModel.CIR_Y5) ?  "M00060" : "M00120" ; //이름에다 만기를 달아둔 이유는 ??
-						Double  dt        = 1.0 / 250;
-						
-						List<IrCurveSpot> spotList = IrCurveYtmDao.getIrCurveYtmHis(bssd, model.getKey(), -cirAvgMonth, cirTenor).stream().map(s -> s.convertSimple()).collect(Collectors.toList());
-//						log.info("{}", spotList);						
-						if(spotList.size()==0) {
-							log.warn("No Historical YTM Data exist for [{}, {}] in [{}]", bssd, model.getKey(), jobLog.getJobId());
-							continue;
-						}			
-						
-						List<IrParamModelCalc> cirParamList = Esg410_ParamCirForecast.createCirParam(bssd, modelMap.getKey(), model.getKey(), dt, spotList, model.getValue().getItrTol());
-						cirParamList.stream().forEach(s -> session.save(s));			
-					}
-				}				
-				
-				session.flush();
-				session.clear();
-				completeJob("SUCCESS", jobLog);
-	
-			} catch (Exception e) {
-				log.error("ERROR: {}", e);
-				completeJob("ERROR", jobLog);
-			}
-			session.saveOrUpdate(jobLog);
-			session.getTransaction().commit();
-		}
-	}	
-	
-	
-	private static void job420() {
-		if(jobList.contains("420")) {
-			session.beginTransaction();
-			CoJobInfo jobLog = startJogLog(EJob.ESG420);
-			
-//			String irModelNm = "CIR";	
-			EIrModel irModelNm   = EIrModel.CIR ;
-
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-//			Map<String, Map<String, IrParamModel>> modelMstMap = modelMst.stream().collect(Collectors.groupingBy(IrParamModel::getirModelNm
-			Map<EIrModel, Map<String, IrParamModel>> modelMstMap = modelMst.stream().collect(Collectors.groupingBy(IrParamModel::getIrModelNm
-//					                                                                    , TreeMap::new, Collectors.toMap(IrParamModel::getirCurveNm, Function.identity(), (k, v) -> k, TreeMap::new)));			
-                                                                             			, TreeMap::new, Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity(), (k, v) -> k, TreeMap::new)));			
-			log.info("IrParamModel: {}", modelMstMap.toString());					
-			
-			int delNum = session.createQuery("delete IrParamModelBiz a where baseYymm=:param1 and a.irModelNm like :param2")
-			 		    		.setParameter("param1", bssd) 
-        			            .setParameter("param2", "%"+irModelNm+"%")        			             
-        			            .executeUpdate();
-
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelBiz.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
-			
-			try {				
-				for(Entry<EIrModel, Map<String, IrParamModel>> modelMap : modelMstMap.entrySet()) {
-					for(Map.Entry<String, IrParamModel> model : modelMap.getValue().entrySet()) {						
-						Esg420_BizParamCirForecast.createBizCirForecastParam(bssd, modelMap.getKey(), model.getKey()).forEach(s -> session.save(s));
-					}
-				}				
-
-				session.flush();
-				session.clear();
-				completeJob("SUCCESS", jobLog);
-				
-			} catch (Exception e) {
-				log.error("ERROR: {}", e);
-				completeJob("ERROR", jobLog);
-			}				
-			session.saveOrUpdate(jobLog);
-			session.getTransaction().commit();
-		}
-	}
-
-	
-	private static void job430() {
-		if(jobList.contains("430")) {		
-			session.beginTransaction();		
-			CoJobInfo jobLog = startJogLog(EJob.ESG430);
-			
-//			String irModelNm = "CIR";	
-			EIrModel irModelNm   = EIrModel.CIR ;
-
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-//			Map<String, Map<String, IrParamModel>> modelMstMap = modelMst.stream().collect(Collectors.groupingBy(IrParamModel::getirModelNm
-//					                                                                    , TreeMap::new, Collectors.toMap(IrParamModel::getirCurveNm, Function.identity(), (k, v) -> k, TreeMap::new)));			
-			Map<EIrModel, Map<String, IrParamModel>> modelMstMap = modelMst.stream().collect(Collectors.groupingBy(IrParamModel::getIrModelNm
-					, TreeMap::new, Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity(), (k, v) -> k, TreeMap::new)));			
-			log.info("IrParamModel: {}", modelMstMap.toString());
-			
-			int delNum1 = session.createQuery("delete IrDcntSceStoGnr a where baseYymm=:param1 and a.irModelNm like :param2")
-			 		 	 		 .setParameter("param1", bssd) 
-        			             .setParameter("param2", "%"+irModelNm+"%")
-        			             .executeUpdate();
-
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrDcntSceStoGnr.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum1);			
-			
-			int delNum2 = session.createQuery("delete IrParamModelRnd a where baseYymm=:param1 and a.irModelNm like :param2")						
-								 .setParameter("param1", bssd) 
-								 .setParameter("param2", "%"+irModelNm+"%")
-								 .executeUpdate();
-			
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrParamModelRnd.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum2);
-			
-			int delNum3 = session.createQuery("delete IrQvalSce a where baseYymm=:param1 and a.irModelNm like :param2")
-					 .setParameter("param1", bssd) 
-					 .setParameter("param2", "%"+irModelNm+"%")					 
-					 .executeUpdate();				
-
-			log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrQvalSce.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum3);
-			
-			
-			try {				
-				for(Entry<EIrModel, Map<String, IrParamModel>> modelMap : modelMstMap.entrySet()) {
-					for(Map.Entry<String, IrParamModel> model : modelMap.getValue().entrySet()) {					
-
-						Double dt = 1.0 / 12;						
-						List<IrParamModelBiz> cirParamList = IrParamModelDao.getParamModelBizList(bssd, modelMap.getKey(), model.getKey());
-						log.info("CIR Param: {}", cirParamList);						
-
-						List<IrDcntSceStoGnr> cirSceList = Esg430_BizScenCirForecast.createScenCir(bssd, modelMap.getKey(), model.getKey(), cirParamList, dt, cirPrjYear, model.getValue().getTotalSceNo(), model.getValue().getRndSeed());				
-						
-						TreeMap<Integer, TreeMap<Integer, Double>> cirSceMap = new TreeMap<Integer, TreeMap<Integer, Double>>();							
-						cirSceMap = cirSceList.stream().collect(Collectors.groupingBy(s -> Integer.valueOf(s.getMatCd().substring(1))
-												               , TreeMap::new, Collectors.toMap(s -> Integer.valueOf(s.getSceNo()), IrDcntSceStoGnr::getFwdRate, (k, v) -> k, TreeMap::new)));
-						
-						Esg430_BizScenCirForecast.createQuantileValue(bssd, EApplBizDv.IBIZ, modelMap.getKey(), model.getKey(), 1, cirSceMap).forEach(s -> session.save(s));
-						
-						int sceCnt = 1;
-						for (IrDcntSceStoGnr sce : cirSceList) {						
-							session.save(sce);
-							if (sceCnt % 50 == 0) {
-								session.flush();
-								session.clear();
-							}
-							if (sceCnt % logSize == 0) {
-								log.info("CIR Interest Rate of [{}] [ID: {}] is processed {}/{} in Job:[{}]", modelMap.getKey(), model.getKey(), sceCnt, cirSceList.size(), jobLog.getJobId());
-							}
-							sceCnt++;
-						}
-						
-						if(cirParamList.size() == 0) continue;						
-						List<IrParamModelRnd> randNumList = Esg430_BizScenCirForecast.createRandCir(bssd, modelMap.getKey(), model.getKey(), cirPrjYear, model.getValue().getTotalSceNo(), model.getValue().getRndSeed());						
-						
-						int rndCnt = 1;
-						for (IrParamModelRnd rnd : randNumList) {
-							session.save(rnd);
-							if (rndCnt % 50 == 0) {
-								session.flush();
-								session.clear();
-							}
-							if (rndCnt % logSize == 0) {
-								log.info("CIR Random Number of [{}] [ID: {}] is processed {}/{} in Job:[{}]", modelMap.getKey(), model.getKey(), rndCnt, randNumList.size(), jobLog.getJobId());
-							}
-							rndCnt++;
-						}
-						
-						session.flush();
-						session.clear();						
-					}
-				}				
-				completeJob("SUCCESS", jobLog);
-	
-			} catch (Exception e) {
-				log.error("ERROR: {}", e);
-				completeJob("ERROR", jobLog);
-			}
-			session.saveOrUpdate(jobLog);
-			session.getTransaction().commit();
-		}
-	}	
 	
 	
 

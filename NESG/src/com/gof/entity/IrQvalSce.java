@@ -11,7 +11,6 @@ import javax.persistence.Table;
 
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EIrModel;
-import com.gof.enums.ENamingConvention;
 import com.gof.interfaces.EntityIdentifier;
 
 import lombok.EqualsAndHashCode;

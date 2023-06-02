@@ -13,7 +13,6 @@ import com.gof.entity.IrSprdLpBiz;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EDetSce;
 import com.gof.enums.EJob;
-import com.gof.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
 

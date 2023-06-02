@@ -35,7 +35,7 @@ public enum EIrModel {
 		this.upperIrModel = null;
 	}
 	
-	// (HW1F_NSP, HW1F_SP) -> HW1F 
+	// model id setting (HW1F_NSP, HW1F_SP) -> HW1F 
 	public EIrModel getIrModel(EIrModel inIrModel) {
 		return upperIrModel ;
 	}

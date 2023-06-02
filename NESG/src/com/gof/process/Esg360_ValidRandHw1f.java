@@ -14,7 +14,6 @@ import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import com.gof.dao.IrDcntRateDao;
 import com.gof.dao.IrParamHwDao;
 import com.gof.entity.IrCurve;
-import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrDcntRateBu;
 import com.gof.entity.IrParamHwBiz;
 import com.gof.entity.IrParamHwRnd;

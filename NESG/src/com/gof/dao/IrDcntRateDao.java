@@ -15,7 +15,6 @@ import com.gof.enums.EDetSce;
 import com.gof.interfaces.IRateInput;
 import com.gof.util.HibernateUtil;
 
-import jmetal.metaheuristics.singleObjective.differentialEvolution.DE;
 
 public class IrDcntRateDao extends DaoUtil {
 	

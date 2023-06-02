@@ -3,7 +3,6 @@ package com.gof.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,7 +34,6 @@ import org.ejml.simple.SimpleMatrix;
 
 //import com.gof.entity.IrCurveSpot;
 import com.gof.entity.IrDcntSceDetBiz;
-import com.gof.entity.IrParamAfnsBiz;
 import com.gof.entity.IrParamAfnsCalc;
 import com.gof.entity.IrParamModel;
 import com.gof.entity.IrParamSw;
@@ -43,7 +41,6 @@ import com.gof.entity.IrSprdAfnsCalc;
 import com.gof.enums.EAfnsParamTypCd;
 import com.gof.enums.EDetSce;
 import com.gof.enums.EIrModel;
-import com.gof.enums.EHwParamTypCd;
 import com.gof.interfaces.IRateInput;
 import com.gof.model.entity.SmithWilsonRslt;
 

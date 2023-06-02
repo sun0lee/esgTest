@@ -18,7 +18,6 @@ import com.gof.model.entity.Hw1fCalibParas;
 import com.gof.model.entity.IrModelBondYield;
 import com.gof.model.entity.IrModelSce;
 import com.gof.model.entity.SmithWilsonRslt;
-import com.gof.entity.IrCurveSpot;
 import com.gof.util.DateUtil;
 
 import lombok.Getter;

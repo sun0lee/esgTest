@@ -10,7 +10,6 @@ import com.gof.entity.IrCurve;
 import com.gof.entity.IrVolSwpn;
 import com.gof.entity.IrVolSwpnUsr;
 import com.gof.enums.EJob;
-import com.gof.util.StringUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
