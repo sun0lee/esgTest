@@ -37,20 +37,20 @@ public class IrModelSce implements Serializable {
 	private String lastModifiedBy;	
 	private LocalDateTime lastUpdateDate;	
 	
-	public IrDcntSceStoBiz convert(EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, String jobId) {
+	public IrDcntSceStoBiz convert(EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, Integer irCurveSceNo, String jobId) {
 		IrDcntSceStoBiz rst = new IrDcntSceStoBiz();
 		
 		rst.setBaseYymm(this.baseDate.substring(0,6));		
 		rst.setApplBizDv(applBizDv);
-		rst.setIrModelId(irModelId);
-		rst.setIrCurveId(irCurveId);
+		rst.setIrModelNm(irModelNm);
+		rst.setIrCurveNm(irCurveNm);
 		rst.setIrCurveSceNo(irCurveSceNo);
 		rst.setSceNo(this.sceNo);
 		rst.setMatCd(this.matCd);		
 		rst.setSpotRate(this.spotRateDisc);
 		rst.setFwdRate(this.fwdRateDisc);	
-		rst.setLastModifiedBy(jobId);
-		rst.setLastUpdateDate(LocalDateTime.now());
+		rst.setModifiedBy(jobId);
+		rst.setUpdateDate(LocalDateTime.now());
 
 		return rst;
 	}

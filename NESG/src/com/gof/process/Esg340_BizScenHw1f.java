@@ -153,12 +153,18 @@ public class Esg340_BizScenHw1f extends Process {
 	}		
 	
 	
-	public static List<IrValidSceSto> createQuantileValue(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap) {		
+	public static List<IrValidSceSto> createQuantileValue(
+			  String bssd
+			, EApplBizDv applBizDv
+			, EIrModel irModelNm
+			, String irCurveNm
+			, Integer irCurveSceNo
+			, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap) {		
 		
 		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();		
 		
 		if(stoSceMap.isEmpty()) {
-			log.warn("Quantile Value: No Stochastic Discount Rate Data of [{}] [BIZ: {}, ID: {}, SCE: {}] for [{}]", irModelId, applBizDv, irCurveId, irCurveSceNo, bssd);
+			log.warn("Quantile Value: No Stochastic Discount Rate Data of [{}] [BIZ: {}, ID: {}, SCE: {}] for [{}]", irModelNm, applBizDv, irCurveNm, irCurveSceNo, bssd);
 			return rst;		
 		}
 
@@ -222,7 +228,7 @@ public class Esg340_BizScenHw1f extends Process {
 
 //		log.info("quantile: {}, {}, {}, {}, {}", p000, p025, p050, p075, p100);
 //		log.info("quantile: {}, {}, {}, {}, {}", v000, v025, v050, v075, v100);
-		log.info("[{}, {}, {}, {}], [QUANTILE SCE_NO: 0%: {}, 25%: {}, 50%: {}, 75%: {}, 100%: {}]", bssd, applBizDv, irCurveId, irCurveSceNo, q000, q025, q050, q075, q100);		
+		log.info("[{}, {}, {}, {}], [QUANTILE SCE_NO: 0%: {}, 25%: {}, 50%: {}, 75%: {}, 100%: {}]", bssd, applBizDv, irCurveNm, irCurveSceNo, q000, q025, q050, q075, q100);		
 		
 
 		for(int i=0; i<stoDcntRate.length; i++) {
@@ -230,8 +236,8 @@ public class Esg340_BizScenHw1f extends Process {
 			IrValidSceSto fwd = new IrValidSceSto();
 			fwd.setBaseYymm(bssd);
 			fwd.setApplBizDv(applBizDv);
-			fwd.setIrModelId(irModelId);
-			fwd.setIrCurveId(irCurveId);
+			fwd.setIrModelNm(irModelNm);
+			fwd.setIrCurveNm(irCurveNm);
 			fwd.setIrCurveSceNo(irCurveSceNo);			
 			fwd.setValidDv("FWD_QUANTILE");
 			
@@ -258,8 +264,8 @@ public class Esg340_BizScenHw1f extends Process {
 //			fwd.setValidVal4(stoPrice[i][q075-1]);
 //			fwd.setValidVal5(stoPrice[i][q100-1]);						
 
-			fwd.setLastModifiedBy(jobId);
-			fwd.setLastUpdateDate(LocalDateTime.now());
+			fwd.setModifiedBy(jobId);
+			fwd.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(fwd);			
 		}
@@ -270,8 +276,10 @@ public class Esg340_BizScenHw1f extends Process {
 			IrValidSceSto fwd = new IrValidSceSto();
 			fwd.setBaseYymm(bssd);
 			fwd.setApplBizDv(applBizDv);
-			fwd.setIrModelId(irModelId);
-			fwd.setIrCurveId(irCurveId);
+			fwd.setIrModelNm(irModelNm);
+			fwd.setIrCurveNm(irCurveNm);
+//			fwd.setIrParamModel(irParamModel); // 객체 가져와야함 
+//			fwd.setIrCurve(irCurve);           // 객체 가져와야함
 			fwd.setIrCurveSceNo(irCurveSceNo);			
 			fwd.setValidDv("FWD_QUANTILE2");
 			
@@ -282,12 +290,12 @@ public class Esg340_BizScenHw1f extends Process {
 			fwd.setValidVal4(new Percentile().evaluate(stoDcntRate[i],  75.0));
 			fwd.setValidVal5(new Percentile().evaluate(stoDcntRate[i], 100.0));			
 
-			fwd.setLastModifiedBy(jobId);
-			fwd.setLastUpdateDate(LocalDateTime.now());
+			fwd.setModifiedBy(jobId);
+			fwd.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(fwd);			
 		}
-		log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.size(), applBizDv, irCurveId, irCurveSceNo, toPhysicalName(IrValidSceSto.class.getSimpleName()));
+		log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.size(), applBizDv, irCurveNm, irCurveSceNo, toPhysicalName(IrValidSceSto.class.getSimpleName()));
 
 		return rst;
 	}

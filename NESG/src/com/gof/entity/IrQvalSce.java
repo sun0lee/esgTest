@@ -1,56 +1,51 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EIrModel;
 import com.gof.interfaces.EntityIdentifier;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name ="E_IR_QVAL_SCE")
+@Table(name ="IR_QVAL_SCE")
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
-public class IrQvalSce implements Serializable, EntityIdentifier {
+@SequenceGenerator (name = "IR_QVAL_SCE_SEQ_GEN",sequenceName = "IR_QVAL_SCE_SEQ",initialValue = 1, allocationSize = 1)
+public class IrQvalSce extends BaseEntity implements Serializable, EntityIdentifier {
 	
 	private static final long serialVersionUID = 1660055914228437117L;
 
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_QVAL_SCE_SEQ_GEN")
+	@Column (name = "SID")
 	@Id
 	private String baseYymm;
-	
-	@Id
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;
-
-    @Id
     @Enumerated(EnumType.STRING)
-	private EIrModel irModelId;	
-	
-	@Id
-	private String irCurveId;
-		
-    @Id
+	private EIrModel irModelNm;	
+	private String irCurveNm;
 	private Integer irCurveSceNo;	
-	
-	@Id
 	private String qvalDv;
-	
-	@Id
 	private Integer qvalSeq;	
 	
 	private Double qval1;
@@ -69,7 +64,14 @@ public class IrQvalSce implements Serializable, EntityIdentifier {
 	private Double qval14;
 	private Double qval15;
 	
-	private String lastModifiedBy;
-	private LocalDateTime lastUpdateDate;
+//	private String lastModifiedBy;
+//	private LocalDateTime lastUpdateDate;
 	
+	@ManyToOne
+	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
+	private IrCurve irCurve ;
+
+	@ManyToOne
+	@JoinColumn(name = "IR_MODEL_SID" , referencedColumnName ="SID")
+	private IrParamModel irParamModel ;
 }

@@ -65,8 +65,8 @@ public class Esg810_SetTransitionMatrix extends Process {
 					tm.setTransProb(round(StringUtil.objectToPrimitive(tmUsr.getTransProb7(), 0.0) * toReal, digit));
 				}
 				
-				tm.setLastModifiedBy(jobId);
-				tm.setLastUpdateDate(LocalDateTime.now());
+				tm.setModifiedBy(jobId);
+				tm.setUpdateDate(LocalDateTime.now());
 									
 				corpTm.add(tm);
 			}				

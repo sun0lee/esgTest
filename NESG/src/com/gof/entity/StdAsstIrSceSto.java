@@ -1,12 +1,16 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.gof.enums.EApplBizDv;
@@ -21,7 +25,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name ="E_STD_ASST_IR_SCE_STO")
+@Table(name ="STD_ASST_IR_SCE_STO")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,32 +33,25 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode
 @ToString
+@SequenceGenerator (name = "STD_ASST_IR_SCE_STO_SEQ_GEN",sequenceName = "STD_ASST_IR_SCE_STO_SEQ",initialValue = 1, allocationSize = 1)
 public class StdAsstIrSceSto implements Serializable, EntityIdentifier {
 	
 	private static final long serialVersionUID = -4432625052946670655L;
 	
-	@Id	
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STD_ASST_IR_SCE_STO_SEQ_GEN")
+	@Column (name = "SID")
+	@Id
 	private String baseYymm;
-    
-	@Id	
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;
-    
-	@Id 
 	private String stdAsstCd;
-	
-	@Id
 	private Integer sceTypCd;
-    
-	@Id	
 	private Integer sceNo;
-    
-	@Id	
 	private String matCd;
 
 	private Double asstYield;	
-	private String lastModifiedBy;
-	private LocalDateTime lastUpdateDate;	
+	private String modifiedBy;
+	private LocalDate updateDate;	
 	
 }
 

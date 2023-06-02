@@ -860,16 +860,18 @@ public class AFNelsonSiegel extends IrModel {
 				IrDcntSceDetBiz ir  = new IrDcntSceDetBiz();
 				
 				ir.setBaseYymm(dateToString(this.baseDate).substring(0,6));
-				ir.setIrModelId(this.mode);
+				ir.setIrModelNm(this.mode);
+				ir.setIrParamModel(null); // todo model 정보 가져오든 밖에서 붙이든 해야함. 
 				ir.setMatCd(rslt.getMatCd());
 //				ir.setSceNo(type + String.valueOf(i+1) + "_" + this.IntShockName[i]);
 //				ir.setIrCurveSceNo(String.valueOf((type.equals("L") ? 0 : 10) + (i+1)));
 				ir.setIrCurveSceNo((type.equals("L") ? 0 : 10) + (i+1));
-				ir.setIrCurveId(this.irCurveNm);
+				ir.setIrCurveNm(this.irCurveNm);
+				ir.setIrCurve(this.irCurve);
 				ir.setSpotRate(rslt.getSpotDisc());
 				ir.setFwdRate(0.0);
-				ir.setLastModifiedBy("GESG_" + this.getClass().getSimpleName());
-				ir.setLastUpdateDate(LocalDateTime.now());				
+				ir.setModifiedBy("GESG_" + this.getClass().getSimpleName());
+				ir.setUpdateDate(LocalDateTime.now());				
 				curveList.add(ir);
 			}						
 //			log.info("scenNo: {}, swAlpha: {}", type + String.valueOf(i+1), sw.getAlphaApplied());

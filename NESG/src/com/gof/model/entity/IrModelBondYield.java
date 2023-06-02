@@ -31,8 +31,8 @@ public class IrModelBondYield implements Serializable {
 	private Double bondYieldCont;	
 	private Double bondYieldDisc;
 	
-	private String lastModifiedBy;	
-	private LocalDateTime lastUpdateDate;
+	private String modifiedBy;	
+	private LocalDateTime updateDate;
 	
 	public StdAsstIrSceSto convert(EApplBizDv applBizDv, String stdAsstCd, Integer sceTypCd, String jobId) {
 		
@@ -45,8 +45,8 @@ public class IrModelBondYield implements Serializable {
 		rst.setSceNo(this.sceNo);
 		rst.setMatCd(this.matCd);		
 		rst.setAsstYield(this.bondYieldDisc);				
-		rst.setLastModifiedBy(jobId);
-		rst.setLastUpdateDate(LocalDateTime.now());
+		rst.setModifiedBy(jobId);
+//		rst.setUpdateDate(LocalDateTime.now());
 
 		return rst;
 	}	

@@ -86,8 +86,8 @@ public class Esg820_RcCorpPd extends Process {
 				pd.setFwdPd((i<fromGrd.length-1) ? fwdPdCur : 1.0);				
 //				if (k<4) log.info("pd: {}, {}, {}, {}, {}, {}", k+1, i, fromGrd[i], cumPdCur, cumPdBef, (i<fromGrd.length-1) ? fwdPdCur : 1.0);				
 				
-				pd.setLastModifiedBy(jobId);
-				pd.setLastUpdateDate(LocalDateTime.now());
+				pd.setModifiedBy(jobId);
+				pd.setUpdateDate(LocalDateTime.now());
 				
 				rst.add(pd);
 			}			
@@ -153,8 +153,8 @@ public class Esg820_RcCorpPd extends Process {
 				pdBiz.setCumPd(Math.max(splineCumPdCur[i], splineCumPdBefTemp[i]));  //for avoiding reversal value of PD in interpolation(B- and CCC after M0300) 
 				pdBiz.setFwdPd(Math.max(splineFwdPdCur[i], 0));
 				
-				pdBiz.setLastModifiedBy(jobId);
-				pdBiz.setLastUpdateDate(LocalDateTime.now());
+				pdBiz.setModifiedBy(jobId);
+				pdBiz.setUpdateDate(LocalDateTime.now());
 				
 				rst.add(pdBiz);
 				splineCumPdBefTemp[i] = Math.max(splineCumPdCur[i], splineCumPdBefTemp[i]);				

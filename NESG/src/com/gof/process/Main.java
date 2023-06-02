@@ -1082,7 +1082,6 @@ public class Main {
 			EIrModel irModelNmNsp = EIrModel.valueOf(irModelNm + "_NSP");
 			
 			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-//			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getirCurveNm, Function.identity()));
 			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
 			log.info("IrParamModel: {}", modelMstMap.toString());
 			
@@ -1162,8 +1161,7 @@ public class Main {
 						List<IrParamHwCalc> hwParamCalcValid = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 								  bssd
 //								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(validSigma))
-								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(i))
-//								, irCurveNm
+								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(i)) //enum에 소수점을 넣을수가 없음 
 								, spotList
 								, swpnVolList
 								, hwInitParamSigma
@@ -1207,7 +1205,6 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSpotDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SPOT_DN")
-//							, irCurveNm
 							, spotListDn
 							, swpnVolList
 							, hwInitParamMkt
@@ -1224,7 +1221,6 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSwpnUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SWPN_UP")
-//							, irCurveNm
 							, spotList
 							, swpnVolListUp
 							, hwInitParamMkt
@@ -1241,7 +1237,6 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSwpnDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SWPN_DN")
-//							, irCurveNm
 							, spotList
 							, swpnVolListDn
 							, hwInitParamMkt
@@ -1297,10 +1292,6 @@ public class Main {
 					
 					for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
 						Esg330_BizParamHw1f.createBizHw1fParam(bssd, biz, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));					
-//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.KICS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));					
-//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.IFRS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
-//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.IBIZ, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
-//						Esg330_BizParamHw1f.createBizHw1fParam(bssd, EApplBizDv.SAAS, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));
 					}
 					session.flush();
 					session.clear();					
@@ -1322,7 +1313,6 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG340);			
 			
-//			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();
 			EIrModel irModelNm   = EIrModel.HW1F ;
 			
 			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
@@ -1331,10 +1321,6 @@ public class Main {
 						
 			Map<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> totalSwMap = new LinkedHashMap<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>>();
 			totalSwMap = bizIrParamSw ;
-//			totalSwMap.put(EApplBizDv.KICS,  kicsSwMap);
-//			totalSwMap.put(EApplBizDv.IFRS,  ifrsSwMap);
-//			totalSwMap.put(EApplBizDv.IBIZ,  ibizSwMap);
-//			totalSwMap.put(EApplBizDv.SAAS,  saasSwMap);
 
 //			String query = " delete " + schema + ".E_IR_DCNT_SCE_STO_BIZ partition (PT_E" + bssd + ") " 
 //						 + "  where BASE_YYMM=:param1 and IR_MODEL_NM=:param2 ";
@@ -1449,16 +1435,11 @@ public class Main {
 			EIrModel irModelNm   = EIrModel.HW1F ;
 			
 			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-//			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getirCurveNm, Function.identity()));
 			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
 			log.info("IrParamModel: {}", modelMstMap.toString());
 			
 			Map<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> totalSwMap = new LinkedHashMap<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>>();
 			totalSwMap = bizIrParamSw ;
-//			totalSwMap.put(EApplBizDv.KICS,  kicsSwMap);
-//			totalSwMap.put(EApplBizDv.IFRS,  ifrsSwMap);
-//			totalSwMap.put(EApplBizDv.IBIZ,  ibizSwMap);
-//			totalSwMap.put(EApplBizDv.SAAS,  saasSwMap);
 
 			try {				
 				int delNum = session.createQuery("delete StdAsstIrSceSto a where a.baseYymm=:param1")						
@@ -1523,7 +1504,6 @@ public class Main {
 			EIrModel irModelNm   = EIrModel.HW1F ;
 			
 			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-//			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getirCurveNm, Function.identity()));
 			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
 			log.info("IrParamModel: {}", modelMstMap.toString());
 			
@@ -1589,7 +1569,6 @@ public class Main {
 //			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();		
 			
 			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-//			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getirCurveNm, Function.identity()));
 			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
 			log.info("IrParamModel: {}", modelMstMap.toString());			
 			

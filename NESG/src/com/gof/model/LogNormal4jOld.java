@@ -90,8 +90,8 @@ public class LogNormal4jOld {
 //						.asstYield(Math.exp(yieldSce / dt)-1 )
 //						.asstYield(Math.exp(yieldSce / dt)-1 )
 						.asstYield( yieldSce / (12.0 * dt) )			//TODO :Check !!!!!
-						.lastModifiedBy("ESG")
-						.lastUpdateDate(LocalDateTime.now())
+						.modifiedBy("ESG")
+//						.updateDate(LocalDateTime.now())
 						.build()
 						);
 			}

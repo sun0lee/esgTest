@@ -1,37 +1,40 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 import com.gof.interfaces.EntityIdentifier;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name ="E_STD_ASST_PRC")
+@Table(name ="STD_ASST_PRC")
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-public class StdAsstPrc implements Serializable, EntityIdentifier { 
+@SequenceGenerator (name = "STD_ASST_PRC_SEQ_GEN",sequenceName = "STD_ASST_PRC_SEQ",initialValue = 1, allocationSize = 1)
+public class StdAsstPrc extends BaseEntity implements Serializable, EntityIdentifier { 
 	
 	private static final long serialVersionUID = 8822660082355727894L;
 	
-	@Id	
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STD_ASST_PRC_SEQ_GEN")
+	@Column (name = "SID")
+	@Id
 	private String baseDate;
-	
-	@Id	
 	private String stdAsstCd;	
 
 	private Double stdAsstPrice;	
-	private String lastModifiedBy;	
-	private LocalDateTime lastUpdateDate;
+//	private String lastModifiedBy;	
+//	private LocalDateTime lastUpdateDate;
 	
 }

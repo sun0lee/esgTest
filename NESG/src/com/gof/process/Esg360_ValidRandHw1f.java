@@ -105,12 +105,12 @@ public class Esg360_ValidRandHw1f extends Process {
 	}		
 	
 	
-	public static List<IrValidRnd> testRandNormality(String bssd, EIrModel irModelId, String irCurveId, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
+	public static List<IrValidRnd> testRandNormality(String bssd, EIrModel irModelNm, String irCurveNm, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
 		
 		List<IrValidRnd> rst = new ArrayList<IrValidRnd>();		
 		
 		if(randNumMap.isEmpty()) {
-			log.warn("No Random Number Data for [{}] Stochastic Simulation [ID: {}] for [{}]", irModelId, irCurveId, bssd);
+			log.warn("No Random Number Data for [{}] Stochastic Simulation [ID: {}] for [{}]", irModelNm, irCurveNm, bssd);
 			return rst;		
 		}		 
 		
@@ -160,8 +160,8 @@ public class Esg360_ValidRandHw1f extends Process {
 			
 			IrValidRnd rnd = new IrValidRnd();
 			rnd.setBaseYymm(bssd);
-			rnd.setIrModelId(irModelId);
-			rnd.setIrCurveId(irCurveId);
+			rnd.setIrModelNm(irModelNm);
+			rnd.setIrCurveNm(irCurveNm);
 			rnd.setValidDv("JB_TEST");
 			
 			rnd.setValidSeq(Integer.valueOf(i+1));
@@ -171,8 +171,8 @@ public class Esg360_ValidRandHw1f extends Process {
 			rnd.setValidVal4(qCheck);			
 			rnd.setValidVal5((jbTest[i] < qCheck) ? 1.0 : 0.0);
 			
-			rnd.setLastModifiedBy(jobId);
-			rnd.setLastUpdateDate(LocalDateTime.now());
+			rnd.setModifiedBy(jobId);
+			rnd.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(rnd);			
 		}
@@ -197,8 +197,10 @@ public class Esg360_ValidRandHw1f extends Process {
 			
 			IrValidRnd rnd = new IrValidRnd();
 			rnd.setBaseYymm(bssd);
-			rnd.setIrModelId(irModelId);
-			rnd.setIrCurveId(irCurveId);
+			rnd.setIrModelNm(irModelNm);
+			rnd.setIrCurveNm(irCurveNm);			
+//			rnd.setIrParamModel(null)  // 객체를 가져와서 찍기 
+//			rnd.setIrCurve(irCurve);   // 객체를 가져와서 찍기 
 			rnd.setValidDv("KS_TEST");
 			
 			rnd.setValidSeq(Integer.valueOf(i+1));
@@ -209,8 +211,8 @@ public class Esg360_ValidRandHw1f extends Process {
 			rnd.setValidVal5((distance[i] < distanceCheck ? 1.0 : 0.0));
 //			rnd.setValidVal5((kspValue[i] > alpha ? 1.0 : 0.0));			
 			
-			rnd.setLastModifiedBy(jobId);
-			rnd.setLastUpdateDate(LocalDateTime.now());
+			rnd.setModifiedBy(jobId);
+			rnd.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(rnd);			
 		}
@@ -219,12 +221,18 @@ public class Esg360_ValidRandHw1f extends Process {
 	}
 	
 	//TODO: Runs Test
-	public static List<IrValidRnd> testRandIndependency(String bssd, EIrModel irModelId, String irCurveId, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
+	public static List<IrValidRnd> testRandIndependency(
+			  String bssd
+			, EIrModel irModelNm
+			, String irCurveNm
+			, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap
+			, Double sigLevel) 
+	{		
 		
 		List<IrValidRnd> rst = new ArrayList<IrValidRnd>();		
 		
 		if(randNumMap.isEmpty()) {
-			log.warn("No Random Number Data for [{}] Stochastic Simulation [ID: {}] for [{}]", irModelId, irCurveId, bssd);
+			log.warn("No Random Number Data for [{}] Stochastic Simulation [ID: {}] for [{}]", irModelNm, irCurveNm, bssd);
 			return rst;		
 		}		 
 		
@@ -257,8 +265,10 @@ public class Esg360_ValidRandHw1f extends Process {
 			
 			IrValidRnd rnd = new IrValidRnd();
 			rnd.setBaseYymm(bssd);
-			rnd.setIrModelId(irModelId);
-			rnd.setIrCurveId(irCurveId);
+			rnd.setIrModelNm(irModelNm);
+			rnd.setIrCurveNm(irCurveNm);
+//			rnd.setIrParamModel(null);  // 객체 가져오기 
+//			rnd.setIrCurve(null);       // 객체 가져오기 
 			rnd.setValidDv("RUNS_TEST");
 			
 			rnd.setValidSeq(Integer.valueOf(j+1));
@@ -271,8 +281,8 @@ public class Esg360_ValidRandHw1f extends Process {
 			rnd.setValidVal5((pValue2 > sigLevel / 2.0) ? 1.0 : 0.0);    //same as below line
 //			rnd.setValidVal5(( (pValue> sigLevel / 2.0) && (pValue < 1.0 - sigLevel / 2.0) ) ? 1.0 : 0.0);			
 
-			rnd.setLastModifiedBy(jobId);
-			rnd.setLastUpdateDate(LocalDateTime.now());
+			rnd.setModifiedBy(jobId);
+			rnd.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(rnd);			
 		}		

@@ -104,17 +104,17 @@ public class Esg370_ValidScenHw1f extends Process {
 	}
 	
 	
-	public static List<IrValidSceSto> testMarketConsistency(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap, TreeMap<Integer, TreeMap<Integer, Double>> stoYldMap, Double sigLevel) {		
+	public static List<IrValidSceSto> testMarketConsistency(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap, TreeMap<Integer, TreeMap<Integer, Double>> stoYldMap, Double sigLevel) {		
 		
 		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();		
 		
 		if(stoSceMap.isEmpty()) {			
-			log.warn("Martingale Test: No Stochastic Discount Rate Data of [{}] [BIZ: {}, ID: {}, SCE_NO: {}] for [{}]", irModelId, applBizDv, irCurveId, irCurveSceNo, bssd);
+			log.warn("Martingale Test: No Stochastic Discount Rate Data of [{}] [BIZ: {}, ID: {}, SCE_NO: {}] for [{}]", irModelNm, applBizDv, irCurveNm, irCurveSceNo, bssd);
 			return rst;		
 		}		
 			
 		if(stoYldMap.isEmpty()) {
-			log.warn("Martingale Test: No Stochastic Bond Yield Data of [{}] [BIZ: {}, ID: {}, SCE_NO: {}] for [{}]", irModelId, applBizDv, irCurveId, irCurveSceNo, bssd);
+			log.warn("Martingale Test: No Stochastic Bond Yield Data of [{}] [BIZ: {}, ID: {}, SCE_NO: {}] for [{}]", irModelNm, applBizDv, irCurveNm, irCurveSceNo, bssd);
 			return rst;		
 		}		
 
@@ -224,8 +224,10 @@ public class Esg370_ValidScenHw1f extends Process {
 			IrValidSceSto dcnt = new IrValidSceSto();
 			dcnt.setBaseYymm(bssd);
 			dcnt.setApplBizDv(applBizDv);
-			dcnt.setIrModelId(irModelId);
-			dcnt.setIrCurveId(irCurveId);
+			dcnt.setIrModelNm(irModelNm);
+			dcnt.setIrCurveNm(irCurveNm);
+//			dcnt.setIrParamModel(null);    // todo
+//			dcnt.setIrCurve(null);         // todo
 			dcnt.setIrCurveSceNo(irCurveSceNo);
 			dcnt.setValidDv("DCNT_TEST");
 			
@@ -236,8 +238,8 @@ public class Esg370_ValidScenHw1f extends Process {
 			dcnt.setValidVal4(stoPriceUpper[i]);
 			dcnt.setValidVal5((i<=0) ? 1.0 : ((detPrice[i] >= stoPriceLower[i] && detPrice[i] <= stoPriceUpper[i]) ? 1.0 : 0.0));
 
-			dcnt.setLastModifiedBy(jobId);
-			dcnt.setLastUpdateDate(LocalDateTime.now());
+			dcnt.setModifiedBy(jobId);
+			dcnt.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(dcnt);			
 		}		
@@ -248,8 +250,10 @@ public class Esg370_ValidScenHw1f extends Process {
 			IrValidSceSto yld = new IrValidSceSto();
 			yld.setBaseYymm(bssd);
 			yld.setApplBizDv(applBizDv);
-			yld.setIrModelId(irModelId);
-			yld.setIrCurveId(irCurveId);
+			yld.setIrModelNm(irModelNm);
+			yld.setIrCurveNm(irCurveNm);
+//			yld.setIrParamModel(null);    // todo
+//			yld.setIrCurve(null);         // todo
 			yld.setIrCurveSceNo(irCurveSceNo);
 			yld.setValidDv("YIELD_TEST");
 			
@@ -260,8 +264,8 @@ public class Esg370_ValidScenHw1f extends Process {
 			yld.setValidVal4(stoYieldDotDcntUpper[i]);
 			yld.setValidVal5((i==0) ? 1.0 : ((detYieldDotDcnt[i] >= stoYieldDotDcntLower[i] && detYieldDotDcnt[i] <= stoYieldDotDcntUpper[i]) ? 1.0 : 0.0));
 
-			yld.setLastModifiedBy(jobId);
-			yld.setLastUpdateDate(LocalDateTime.now());
+			yld.setModifiedBy(jobId);
+			yld.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(yld);			
 		}
@@ -272,8 +276,10 @@ public class Esg370_ValidScenHw1f extends Process {
 			IrValidSceSto fwd = new IrValidSceSto();
 			fwd.setBaseYymm(bssd);
 			fwd.setApplBizDv(applBizDv);
-			fwd.setIrModelId(irModelId);
-			fwd.setIrCurveId(irCurveId);
+			fwd.setIrModelNm(irModelNm);
+			fwd.setIrCurveNm(irCurveNm);
+//			fwd.setIrParamModel(null);    // todo
+//			fwd.setIrCurve(null);         // todo
 			fwd.setIrCurveSceNo(irCurveSceNo);			
 			fwd.setValidDv("FWD_TEST");
 			
@@ -283,8 +289,8 @@ public class Esg370_ValidScenHw1f extends Process {
 			fwd.setValidVal3(detDcntRate[i]-stoFwdByZcbMean[i]);
 			fwd.setValidVal4(stoDcntRateMean[i]);						
 
-			fwd.setLastModifiedBy(jobId);
-			fwd.setLastUpdateDate(LocalDateTime.now());
+			fwd.setModifiedBy(jobId);
+			fwd.setUpdateDate(LocalDateTime.now());
 			
 			rst.add(fwd);			
 		}		

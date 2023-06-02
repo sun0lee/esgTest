@@ -1,18 +1,24 @@
 package com.gof.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.gof.abstracts.BaseEntity;
 import com.gof.enums.EApplBizDv;
+import com.gof.enums.EIrModel;
 import com.gof.interfaces.EntityIdentifier;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,38 +28,36 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-public class IrCurveSceBiz implements Serializable, EntityIdentifier {
+@SequenceGenerator (name = "IR_CURVE_SCE_BIZ_SEQ_GEN",sequenceName = "IR_CURVE_SCE_BIZ_SEQ",initialValue = 1, allocationSize = 1)
+public class IrCurveSceBiz extends BaseEntity implements Serializable, EntityIdentifier {
 
 	private static final long serialVersionUID = 4458482460359847563L;
 
-	@Id	
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_CURVE_SCE_BIZ_SEQ_GEN")
+	@Column (name = "SID")
+	@Id
 	private String baseYymm;
-    
-	@Id	
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;
-
-    @Id 
-    private String irModelId;	
-	
-    @Id 
-    private String irCurveId;	
-    
-    @Id 
+    @Enumerated(EnumType.STRING)
+	private EIrModel irModelNm;
+    private String irCurveNm;	
     private Integer irCurveSceNo;	
-    
-    @Id	
     private Integer sceNo;
-    
-    @Id	
     private String matCd;    
 
 	private Double spotRate;
 	private Double fwdRate;	
-	private String lastModifiedBy;
-	private LocalDateTime lastUpdateDate;
-	
+//	private String lastModifiedBy;
+//	private LocalDateTime lastUpdateDate;
+
+	@ManyToOne
+	@JoinColumn(name = "IR_CURVE_SID" , referencedColumnName ="SID")
+	private IrCurve irCurve ;
+
+	@ManyToOne
+	@JoinColumn(name = "IR_MODEL_SID" , referencedColumnName ="SID")
+	private IrParamModel irParamModel ;
 }
 
 
