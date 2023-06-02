@@ -367,15 +367,10 @@ public class AFNelsonSiegel extends IrModel {
 	public void optimizationParas(List<IrParamAfnsCalc> initParam) {
 		if(!this.optParasFlag) {
 
-			this.initParas = new double[initParam.size()];
-			
-			// initParam을 inputParas double[]에 순서대로 담기
-	        for (int i = 0; i < initParam.size(); i++) {
-	            IrParamAfnsCalc param = initParam.get(i);
-	            double paramVal = param.getParamVal();
-
-	            this.initParas[i] = paramVal; 
-	        }
+			// 초기모수 읽어온 값 담기 
+			this.initParas = initParam.stream()
+				    .mapToDouble(param -> param.getParamVal())
+				    .toArray();
 	        
 			// Determine this.initParas 사용자 입력값을 받을지 산출된 초기모수를 사용할지 
 			if(this.inputParas != null) this.initParas = this.inputParas;   
@@ -389,28 +384,16 @@ public class AFNelsonSiegel extends IrModel {
 	// 3. afns 충격시나리오 생성 
 	public void genAfnsShock(List<IrParamAfnsCalc> inOptParam, List<IrParamAfnsCalc> inOptLsc) {
 		
-		// 최적화된 모수 읽어온 값 담기 
-		this.optParas = new double[inOptParam.size()];
 		
-		// inOptParam을 optParas double[]에 순서대로 담기
-        for (int i = 0; i < inOptParam.size(); i++) {
-            IrParamAfnsCalc param = inOptParam.get(i);
-            double paramVal = param.getParamVal();
-
-            this.optParas[i] = paramVal; 
-        }
-        
+//		// 최적화된 모수 읽어온 값 담기 
+		this.optParas = inOptParam.stream()
+			    .mapToDouble(param -> param.getParamVal())
+			    .toArray();        
         
         // L,S,C 담기 
-		this.optLSC = new double[inOptLsc.size()];
-		
-		// inOptLsc을 optLSC double[]에 순서대로 담기
-        for (int i = 0; i < inOptLsc.size(); i++) {
-            IrParamAfnsCalc param = inOptLsc.get(i);
-            double paramVal = param.getParamVal();
-
-            this.optLSC[i] = paramVal; 
-        }
+        this.optLSC = inOptLsc.stream()
+        	    .mapToDouble(param -> param.getParamVal())
+        	    .toArray();
 		
         
 		// To set this.IntShock
@@ -527,7 +510,7 @@ public class AFNelsonSiegel extends IrModel {
 			coeffLt[i] = rslt[0];
 			coeffSt[i] = rslt[1];
 			coeffCt[i] = rslt[2];
-			residue[i] = reg.calculateResidualSumOfSquares()*10000;			
+			residue[i] = reg.calculateResidualSumOfSquares();			
 			
 			residualSum += residue[i];
 		}
