@@ -31,16 +31,16 @@ public class Esg310_ParamHw1f extends Process {
 	
 	public static Map<String, List<?>> createParamHw1fNonSplitMap(
 			  String bssd
-			, EIrModel irModelNm
-//			, String irCurveNm
+			, EIrModel irModelNm 
+			, IrParamModel modelMst
 			, List<IRateInput> spotList
 			, List<IrVolSwpn> swpnVolList
 			, double[] initParas
 			, Integer freq
-			, double errTol
 			, int[] alphaPiece
 			, int[] sigmaPiece) 
 	{
+		double errTol = modelMst.getItrTol();
 		
 		Map<String, List<?>>  irParamHw1fMap  = new TreeMap<String, List<?>>();
 		List<IrParamHwCalc>   paramCalc       = new ArrayList<IrParamHwCalc>();
@@ -49,27 +49,23 @@ public class Esg310_ParamHw1f extends Process {
 		freq = Math.max(freq, 1);		
 		List<SwpnVolInfo> volInfo  = swpnVolList.stream().map(s-> SwpnVolInfo.convertFrom(s)).collect(toList());		
 		
-// add 23.04.18 		
-		IrParamModel irModel  = IrParamModelDao.getParamModelList(irModelNm.getUpperIrModel()).get(0) ;
-		IrCurve      irCurve  = irModel.getIrCurve();
-		String     irCurveNm = irCurve.getIrCurveNm();
 		
 		Hw1fCalibrationKics calib = new Hw1fCalibrationKics(bssd, spotList, volInfo, alphaPiece, sigmaPiece, initParas, freq, errTol);
 //		Hw1fCalibrationKicsNs calib = new Hw1fCalibrationKicsNs(bssd, spotList, volInfo, alphaPiece, sigmaPiece, initParas, freq, errTol);
-		paramCalc                 = calib.getHw1fCalibrationResultList().stream().map(s -> s.convertNonSplit(irModelNm, irCurveNm))
+		paramCalc                 = calib.getHw1fCalibrationResultList().stream().map(s -> s.convertNonSplit(irModelNm, modelMst.getIrCurveNm()))
 																			     .flatMap(s-> s.stream())
 																			     .collect(toList());
 
-		paramCalc.stream().forEach(s -> s.setIrParamModel(irModel));
-		paramCalc.stream().forEach(s -> s.setIrCurve(irCurve));
+		paramCalc.stream().forEach(s -> s.setIrParamModel(modelMst));
+		paramCalc.stream().forEach(s -> s.setIrCurve(modelMst.getIrCurve()));
 		paramCalc.stream().forEach(s -> s.setModifiedBy(jobId));
 		paramCalc.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));
 		
 		validParam = calib.getValidationResult();
 		validParam.stream().forEach(s -> s.setIrModelNm(irModelNm));
-		validParam.stream().forEach(s -> s.setIrCurveNm(irCurveNm));
-		validParam.stream().forEach(s -> s.setIrParamModel(irModel));
-		validParam.stream().forEach(s -> s.setIrCurve(irCurve));
+		validParam.stream().forEach(s -> s.setIrCurveNm(modelMst.getIrCurveNm()));
+		validParam.stream().forEach(s -> s.setIrParamModel(modelMst));
+		validParam.stream().forEach(s -> s.setIrCurve(modelMst.getIrCurve()));
 		validParam.stream().forEach(s -> s.setModifiedBy(jobId));
 		validParam.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));
 		
@@ -89,16 +85,16 @@ public class Esg310_ParamHw1f extends Process {
 	public static Map<String, List<?>> createParamHw1fSplitMap(
 			  String bssd
 			, EIrModel irModelNm
-//			, String irCurveNm
+			, IrParamModel modelMst
 			, List<IRateInput> spotList
 			, List<IrVolSwpn> swpnVolList
 			, double[] initParas
 			, Integer freq
-			, double errTol
 			, int[] alphaPiece
 			, int[] sigmaPiece) 
 	{
 		
+		double errTol = modelMst.getItrTol();
 		Map<String, List<?>>  irParamHw1fMap  = new TreeMap<String, List<?>>();
 		List<IrParamHwCalc>   paramCalc       = new ArrayList<IrParamHwCalc>();
 //		List<IrValidParamHw>  validParam      = new ArrayList<IrValidParamHw>();		
@@ -106,17 +102,13 @@ public class Esg310_ParamHw1f extends Process {
 		freq = Math.max(freq, 1);		
 		List<SwpnVolInfo> volInfo  = swpnVolList.stream().map(s-> SwpnVolInfo.convertFrom(s)).collect(toList());		
 		
-		IrParamModel irModel  = IrParamModelDao.getParamModelList(irModelNm.getUpperIrModel()).get(0) ;
-		IrCurve      irCurve  = irModel.getIrCurve();
-		String     irCurveNm = irCurve.getIrCurveNm();
-
 		Hw1fCalibrationKics calib = new Hw1fCalibrationKics(bssd, spotList, volInfo, alphaPiece, sigmaPiece, initParas, freq, errTol);
-		paramCalc                 = calib.getHw1fCalibrationResultList().stream().map(s -> s.convertSplit(irModelNm, irCurveNm))
+		paramCalc                 = calib.getHw1fCalibrationResultList().stream().map(s -> s.convertSplit(irModelNm, modelMst.getIrCurveNm()))
 																			     .flatMap(s-> s.stream())
 																			     .collect(toList());
 
-		paramCalc.stream().forEach(s -> s.setIrParamModel(irModel));
-		paramCalc.stream().forEach(s -> s.setIrCurve(irCurve));
+		paramCalc.stream().forEach(s -> s.setIrParamModel(modelMst));
+		paramCalc.stream().forEach(s -> s.setIrCurve(modelMst.getIrCurve()));
 		paramCalc.stream().forEach(s -> s.setModifiedBy(jobId));
 		paramCalc.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));	
 

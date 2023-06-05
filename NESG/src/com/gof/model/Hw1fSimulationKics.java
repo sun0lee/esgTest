@@ -132,7 +132,6 @@ public class Hw1fSimulationKics extends IrModel {
 	
 	
 	public Hw1fSimulationKics(String bssd
-//							, List<IrCurveSpot> iRateBaseList
 							, List<IRateInput> iRateBaseList
 							, List<Hw1fCalibParas> hwParasList
 							, int[] alphaPiece
@@ -694,7 +693,7 @@ public class Hw1fSimulationKics extends IrModel {
 			default: mersenneTwisterAdj(this.seedNum);
 					 break;
 		}		
-//		log.info("{}, {}, {}, {}, {}, {}", this.randNum[0][0], this.randNum[0][this.scenNum-1], this.randNum[1][0], this.randNum[this.prjMonth-1][0], this.randNum[this.prjMonth-1][this.scenNum-1]);
+		log.info("{}, {}, {}, {}, {}, {}", this.randNum[0][0], this.randNum[0][this.scenNum-1], this.randNum[1][0], this.randNum[this.prjMonth-1][0], this.randNum[this.prjMonth-1][this.scenNum-1]);
 	}	
 
 	

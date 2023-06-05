@@ -36,6 +36,8 @@ public class IrCurveSceBiz extends BaseEntity implements Serializable, EntityIde
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_CURVE_SCE_BIZ_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseYymm;
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;

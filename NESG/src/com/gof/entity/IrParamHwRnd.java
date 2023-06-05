@@ -38,6 +38,8 @@ public class IrParamHwRnd extends BaseEntity implements Serializable, EntityIden
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_PARAM_HW_RND_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseYymm;
 	@Enumerated(EnumType.STRING)
 	private EIrModel irModelNm;

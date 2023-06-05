@@ -24,6 +24,8 @@ import org.apache.commons.math3.optim.univariate.BrentOptimizer;
 import org.apache.commons.math3.optim.univariate.SearchInterval;
 import org.apache.commons.math3.optim.univariate.UnivariateObjectiveFunction;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
+import org.apache.commons.math3.random.GaussianRandomGenerator;
+import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.ejml.data.DMatrixRMaj;
@@ -95,6 +97,12 @@ public class AFNelsonSiegel extends IrModel {
 	protected double        kappaC;	
 	protected double        epsilon;
 	
+	// 23.06.05 add for 내부모형 stoScen 
+	protected int           scenNum = 1000 ;
+	protected int           randomGenType = 1;
+	protected int           seedNum = 470 ;
+	protected double[][]    randNum; // [this.scenNum]
+	
 	protected List<IrDcntSceDetBiz> rsltList = new ArrayList<IrDcntSceDetBiz>();
 	
 	// 금리정보를 받아오는 경우.
@@ -106,8 +114,18 @@ public class AFNelsonSiegel extends IrModel {
 	public AFNelsonSiegel(String bssd ,double[] inTenor , IrParamModel irModelMst, EIrModel irModelNm , IrParamSw irParamSw, Map<String, String> argInDBMap) {
 		this( bssd, null, null , inTenor, irModelMst, irModelNm,  irParamSw, argInDBMap);
 	}
-
 	
+	public AFNelsonSiegel(String bssd ,double[] inTenor , IrParamModel irModelMst, EIrModel irModelNm , IrParamSw irParamSw, Map<String, String> argInDBMap
+			          , int randomGenType, int seedNum) {
+		this( bssd, null, null , inTenor, irModelMst, irModelNm,  irParamSw, argInDBMap);
+		
+		// 23.06.05 add for 내부모형 stoScen
+		this.randomGenType = randomGenType;
+		this.seedNum = seedNum;
+		this.randomNumberGaussian(); // 난수 생성 
+	}
+
+	// 초기화 
 	public AFNelsonSiegel( String bssd
 					 	 , List<IRateInput> iRateHisList  // 금리내역 
 					 	 , List<IRateInput> iRateBaseList // 기준일자 금리정보 
@@ -115,7 +133,8 @@ public class AFNelsonSiegel extends IrModel {
 					 	 , IrParamModel irModelMst 
 					 	 , EIrModel     irModelNm   // AFNS vs. AFNS_STO
 					 	 , IrParamSw    irParamSw  
-					 	 , Map<String, String>  argInDBMap ) 
+					 	 , Map<String, String>  argInDBMap
+					 	 ) 
 	
 {		
 		// 모형에서 계산에 필요한 초기인수는 필요한 곳에서 풀어헤치기 
@@ -869,7 +888,6 @@ public class AFNelsonSiegel extends IrModel {
 		
 	////// mu = (I -e-Kt) (θ - X0)
 		SimpleMatrix Mu          = IminusK.mult(Theta.minus(X0));
-		
         ////////////////////////////////////////////////////////////////////////////////	
 //		2023.05.30 수정 : for 엑셀과 로직 맞추기 변동성 행렬 산출 시 모든 요인을 고려(level, slope, curvature)
 		
@@ -896,9 +914,17 @@ public class AFNelsonSiegel extends IrModel {
 	////// H ; CoefInt
 		SimpleMatrix CoefInt    = new SimpleMatrix(factorLoad(Lambda, this.tenor, true));
 
-		SimpleMatrix BaseShock  = CoefInt.mult(new SimpleMatrix(vecToMat(new double[] {0.0, 0.0, 0.0})));
+		
+		
+	// 1000개 시나리오 스프레드 생성
+		
+		SimpleMatrix rand  = new SimpleMatrix(this.randNum).transpose() ;
+		// todo : 여기부터 이어서~~~
+//		SimpleMatrix stoShock = rand.mult(M.transpose());
 			
+
 		// 여기에 충격 스프레드 결과 담기 
+		SimpleMatrix BaseShock  = CoefInt.mult(new SimpleMatrix(vecToMat(new double[] {0.0, 0.0, 0.0})));
 		this.IntShock           = new SimpleMatrix(BaseShock);
 		
 	}
@@ -1061,5 +1087,137 @@ public class AFNelsonSiegel extends IrModel {
 		double lamTau = lambda *  tenor;
 		return Lt * 1.0 + St * ((1 - Math.exp(-lamTau)) / lamTau) + Ct * ((1 - Math.exp(-lamTau)) / lamTau - Math.exp(-lamTau)) + epsilon;
 	}
+	
+	
+// X ~ Z(0,1) 표준 정규분포를 따르는 난수를 반환
+	private void randomNumberGaussian() {
+		
+		int len = 3 ; // ;this.optLSC.length ;
+		switch(this.randomGenType) {
+			
+			case 1:  mersenneTwisterAdj(this.seedNum, len);
+					 break;
+					
+			case 2:  mersenneTwisterFair(this.seedNum, len ); 
+//			         mersenneTwister(Integer.valueOf(dateToString(this.baseDate.minusDays(0))));
+					 break;
+					 
+			case 3:  mersenneTwister(this.seedNum, len); 
+			 		 break;					 
+					
+			case 4:  randLinearCongruential(this.seedNum, len );
+					 break;
+			
+			default: mersenneTwisterAdj(this.seedNum, len );
+					 break;
+		}		
+		        
+		log.info("{}, {}, {}, {}, {}, {}", this.randNum[0][0], this.randNum[0][this.scenNum-1], this.randNum[1][0], this.randNum[len-1][0], this.randNum[len-1][this.scenNum-1]);
+	}	
+
+	
+	protected void mersenneTwisterAdj(int seed, int len) {		
+		
+	    double JB_TEST_TOL = 5.0;
+	    double RUNS_TEST_TOL = 0.04; 
+	    
+		GaussianRandomGenerator grg = new GaussianRandomGenerator(new MersenneTwister(Long.valueOf(seed)));		
+		this.randNum = new double[len][this.scenNum];
+				
+
+		for(int i=0; i<len; i++) {
+			for(int j=0; j<this.scenNum; j++) {
+				this.randNum[i][j] = grg.nextNormalizedDouble();
+			}
+		}
+		for(int i=0; i<len; i++) {
+			this.randNum[i] = vecToZeroMean(this.randNum[i]);
+//			this.randNum[i] = vecToUnitVariance(this.randNum[i]);
+		}
+		
+		for(int k=0; k<1; k++) {
+			//TODO:JB Test and re-generation
+			for(int i=0; i<len; i++) {
+				if(vecJBtest(this.randNum[i]) > JB_TEST_TOL) {
+//					log.info("JB {}th, i={}th, {}", k+1, i, vecJBtest(this.randNum[i]));				
+					for(int j=0; j<len; j++) {
+						this.randNum[i][j] = grg.nextNormalizedDouble();
+					}
+			        this.randNum[i] = vecToZeroMean(this.randNum[i]);
+				}
+			}
+			
+			//Runs Test and re-generation
+			double[][] randNumT = matTranspose(this.randNum);		
+			for(int j=0; j<this.scenNum; j++) {		
+				if(runsTest(randNumT[j]) < RUNS_TEST_TOL) {
+//					log.info("Runs {}th, j={}th, {}", k+1, j+1, runsTest(randNumT[j]));
+					for(int i=0; i<len; i++) {
+						this.randNum[i][j] = grg.nextNormalizedDouble();
+					}
+				}
+			}			
+//			for(int i=0; i<this.prjMonth; i++) this.randNum[i] = vecToZeroMean(this.randNum[i]);  //too many adjusting to zero mean results in bad random set 
+		}
+		for(int i=0; i<len; i++) {			
+			this.randNum[i] = vecToZeroMean(this.randNum[i]);
+//			this.randNum[i] = vecToUnitVariance(this.randNum[i]);			
+		}
+		
+
+	}	
+		
+
+	protected void mersenneTwisterFair(int seed , int len) {		
+				
+		GaussianRandomGenerator grg = new GaussianRandomGenerator(new MersenneTwister(Long.valueOf(seed)));
+		
+		int scenNumGen = (this.scenNum + 1) / 2;
+		this.randNum   = new double[len][this.scenNum];
+		
+		for(int i=0; i<len; i++) {
+			for(int j=0; j<scenNumGen; j++) {			
+				
+				double random        = grg.nextNormalizedDouble();				
+				this.randNum[i][j*2] = +random;
+				if(this.scenNum > j*2 + 1) this.randNum[i][j*2 + 1] = -random;
+			}
+		}			
+	}
+	
+	
+	protected void mersenneTwister(int seed, int len) {		
+		;
+		GaussianRandomGenerator grg = new GaussianRandomGenerator(new MersenneTwister(Long.valueOf(seed)));		
+		this.randNum   = new double[len][this.scenNum];
+		
+		for(int i=0; i<len; i++) {
+			for(int j=0; j<this.scenNum; j++) {
+				this.randNum[i][j] = grg.nextNormalizedDouble();
+			}
+		}	
+		
+		for(int i=0; i<len; i++) this.randNum[i] = vecToZeroMean(this.randNum[i]);
+		
+	}	
+	
+	protected void randLinearCongruential(int seed, int len) {		
+
+//		double[] randNum = randLinearCongruentDbl((long) Math.pow(2, 31), 65539, 0, seed, this.prjMonth * this.scenNum);              // for cross-check with R or Excel (considering integer calculation accuracy)
+		double[] randNum = randLinearCongruentDbl((long) Math.pow(2, 31), 1103515245, 12345, 800000, len * this.scenNum);   // for more accurate method
+		
+		double[] randNumInvCdf = randNumInvCdf(randNum);
+//		log.info("Rands' Mean: {}, Rands' Sd: {}", vectMean(randNumInvCdf), vectSd(randNumInvCdf));
+		
+		this.randNum = new double[len][this.scenNum];
+		
+		for(int i=0; i<len; i++) {
+			for(int j=0; j<this.scenNum; j++) {
+				this.randNum[i][j] = randNumInvCdf[this.scenNum*i + j];
+			}				
+		}
+	}
+	
+	
 	
 }

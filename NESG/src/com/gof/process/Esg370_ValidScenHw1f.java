@@ -38,25 +38,35 @@ public class Esg370_ValidScenHw1f extends Process {
 	public static final Esg370_ValidScenHw1f INSTANCE = new Esg370_ValidScenHw1f();
 	public static final String jobId = INSTANCE.getClass().getSimpleName().toUpperCase().substring(0, ENTITY_LENGTH);
 	
-	public static Map<String, List<?>> createValidInputHw1f(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId, Integer irCurveSceNo, Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap, Map<String, IrParamModel> modelMstMap, Integer projectionYear, Double targetDuration) {
+	public static Map<String, List<?>> createValidInputHw1f
+	        ( String bssd
+			, EApplBizDv applBizDv
+			, IrParamModel modelMst
+			, Integer irCurveSceNo
+			, Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap
+			, Integer projectionYear
+			, Double targetDuration) 
+	{
 		
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
 		List<StdAsstIrSceSto> yldRst  = new ArrayList<StdAsstIrSceSto>();
 		
+		EIrModel irModelNm = modelMst.getIrModelNm();
+		String irCurveNm = modelMst.getIrCurveNm();
+		
 		for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
-			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;
 				
-				if(!irCurveNm.equals(irCurveId) || !swSce.getKey().equals(irCurveSceNo)) continue;				
+				if(!irCurveNm.equals(irCurveNm) || !swSce.getKey().getSceNo().equals(irCurveSceNo)) continue;				
 //				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", irCurveNm, swSce.getKey());
 				
-				if(!modelMstMap.containsKey(irCurveNm)) {
-					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
-					continue;
-				}
+//				if(!modelMstMap.containsKey(irCurveNm)) {
+//					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+//					continue;
+//				}
 				
 				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, swSce.getKey());				
 				if(adjSpotRate.isEmpty()) {
@@ -64,9 +74,9 @@ public class Esg370_ValidScenHw1f extends Process {
 					continue;
 				}				
 									
-				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelId, irCurveNm);					
+				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelNm, irCurveNm);					
 				if(paramHw.isEmpty()) {
-					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
+					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
 					continue;
 				}
 				List<Hw1fCalibParas> hwParasList = Hw1fCalibParas.convertFrom(paramHw);
@@ -80,18 +90,18 @@ public class Esg370_ValidScenHw1f extends Process {
 				
 				boolean priceAdj      = false;
 				int     randomGenType = 1;
-				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getTotalSceNo()), SCEN_NUM);						
-				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getRndSeed())   , RANDOM_SEED);
-				double  ltfr          = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfr()     , 0.0495);
-				int     ltfrCp        = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfrCp()   , 60);
+				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMst.getTotalSceNo()), SCEN_NUM);						
+				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMst.getRndSeed())   , RANDOM_SEED);
+				double  ltfr          = swSce.getValue().getLtfr();
+				int     ltfrCp        = swSce.getValue().getLtfrCp();
 				log.info("seedNum: {}, {}", seedNum, bssd);		
 
 				Hw1fSimulationKics hw1f = new Hw1fSimulationKics(bssd, adjSpotRate, hwParasList, alphaPiece, sigmaPiece, priceAdj, sceNum, ltfr, ltfrCp, projectionYear, randomGenType, seedNum);				
 				
 				List<IrModelSce>       hwResult    = hw1f.getIrModelHw1fList();
-				List<IrDcntSceStoBiz>  stoBizList  = hwResult.stream().map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey().getSceNo(), jobId)).collect(Collectors.toList());
+				List<IrDcntSceStoBiz>  stoBizList  = hwResult.stream().map(s -> s.convert(applBizDv, modelMst, swSce.getKey().getSceNo(), jobId)).collect(Collectors.toList());
 //				List<IrDcntSceStoBiz>  stoBizList  = hwResult.stream().filter(s -> !s.getSceNo().equals("0")).map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey(), jobId)).collect(Collectors.toList());
-				List<StdAsstIrSceSto>  stoYldList  = hw1f.getIrModelHw1fBondYield(hwResult, targetDuration).stream().map(s -> s.convert(applBizDv, irCurveId, irCurveSceNo, jobId)).collect(Collectors.toList());			
+				List<StdAsstIrSceSto>  stoYldList  = hw1f.getIrModelHw1fBondYield(hwResult, targetDuration).stream().map(s -> s.convert(applBizDv, irCurveNm, irCurveSceNo, jobId)).collect(Collectors.toList());			
 				
 				sceRst.addAll(stoBizList);
 				yldRst.addAll(stoYldList);
@@ -104,9 +114,19 @@ public class Esg370_ValidScenHw1f extends Process {
 	}
 	
 	
-	public static List<IrValidSceSto> testMarketConsistency(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, Integer irCurveSceNo, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap, TreeMap<Integer, TreeMap<Integer, Double>> stoYldMap, Double sigLevel) {		
+	public static List<IrValidSceSto> testMarketConsistency
+	        ( String bssd
+			, EApplBizDv applBizDv
+			, IrParamModel modelMst
+			, Integer irCurveSceNo
+			, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap
+			, TreeMap<Integer, TreeMap<Integer, Double>> stoYldMap
+			, Double sigLevel) 
+	{		
 		
 		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();		
+		EIrModel irModelNm = modelMst.getIrModelNm();
+		String irCurveNm = modelMst.getIrCurveNm();
 		
 		if(stoSceMap.isEmpty()) {			
 			log.warn("Martingale Test: No Stochastic Discount Rate Data of [{}] [BIZ: {}, ID: {}, SCE_NO: {}] for [{}]", irModelNm, applBizDv, irCurveNm, irCurveSceNo, bssd);
@@ -226,8 +246,8 @@ public class Esg370_ValidScenHw1f extends Process {
 			dcnt.setApplBizDv(applBizDv);
 			dcnt.setIrModelNm(irModelNm);
 			dcnt.setIrCurveNm(irCurveNm);
-//			dcnt.setIrParamModel(null);    // todo
-//			dcnt.setIrCurve(null);         // todo
+			dcnt.setIrParamModel(modelMst);                 // add
+			dcnt.setIrCurve(modelMst.getIrCurve());         // add
 			dcnt.setIrCurveSceNo(irCurveSceNo);
 			dcnt.setValidDv("DCNT_TEST");
 			
@@ -252,8 +272,8 @@ public class Esg370_ValidScenHw1f extends Process {
 			yld.setApplBizDv(applBizDv);
 			yld.setIrModelNm(irModelNm);
 			yld.setIrCurveNm(irCurveNm);
-//			yld.setIrParamModel(null);    // todo
-//			yld.setIrCurve(null);         // todo
+			yld.setIrParamModel(modelMst);                // add
+			yld.setIrCurve(modelMst.getIrCurve());        // add
 			yld.setIrCurveSceNo(irCurveSceNo);
 			yld.setValidDv("YIELD_TEST");
 			
@@ -278,8 +298,8 @@ public class Esg370_ValidScenHw1f extends Process {
 			fwd.setApplBizDv(applBizDv);
 			fwd.setIrModelNm(irModelNm);
 			fwd.setIrCurveNm(irCurveNm);
-//			fwd.setIrParamModel(null);    // todo
-//			fwd.setIrCurve(null);         // todo
+			fwd.setIrParamModel(modelMst);                 // add
+			fwd.setIrCurve(modelMst.getIrCurve());         // add
 			fwd.setIrCurveSceNo(irCurveSceNo);			
 			fwd.setValidDv("FWD_TEST");
 			

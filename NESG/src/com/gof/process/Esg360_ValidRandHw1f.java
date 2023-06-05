@@ -39,32 +39,32 @@ public class Esg360_ValidRandHw1f extends Process {
 	/**
 	 * @param*/
 	public static List<IrParamHwRnd> createValidInputHw1f(
-			String bssd
-		  , EApplBizDv applBizDv
-		  , EIrModel irModelId
-		  , String irCurveId
-		  , Integer irCurveSceNo
+			String       bssd
+		  , EApplBizDv   applBizDv
+		  , IrParamModel modelMst
+		  , Integer      irCurveSceNo
 		  , Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap
-		  , Map<String, IrParamModel> modelMstMap
-		  , Integer projectionYear
-		  , Double targetDuration) 
+		  , Integer      projectionYear
+		  , Double       targetDuration) 
 	{
 
+		EIrModel irModelNm = modelMst.getIrModelNm();
+		String irCurveNm = modelMst.getIrCurveNm();
+		
 		List<IrParamHwRnd> randRst = new ArrayList<IrParamHwRnd>();
 		
 		for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
-			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;
 				
-				if(!irCurveNm.equals(irCurveId) || !swSce.getKey().equals(irCurveSceNo)) continue;				
+				if(!irCurveNm.equals(irCurveNm) || !swSce.getKey().equals(irCurveSceNo)) continue;				
 //				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", irCurveNm, swSce.getKey());
 				
-				if(!modelMstMap.containsKey(irCurveNm)) {
-					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
-					continue;
-				}
+//				if(!modelMstMap.containsKey(irCurveNm)) {
+//					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+//					continue;
+//				}
 				
 				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, swSce.getKey());				
 				if(adjSpotRate.isEmpty()) {
@@ -72,9 +72,9 @@ public class Esg360_ValidRandHw1f extends Process {
 					continue;
 				}				
 									
-				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelId, irCurveNm);					
+				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelNm, irCurveNm);					
 				if(paramHw.isEmpty()) {
-					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
+					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
 					continue;
 				}
 				List<Hw1fCalibParas> hwParasList = Hw1fCalibParas.convertFrom(paramHw);
@@ -88,10 +88,10 @@ public class Esg360_ValidRandHw1f extends Process {
 				
 				boolean priceAdj      = false;
 				int     randomGenType = 1;
-				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getTotalSceNo()), SCEN_NUM);						
-				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getRndSeed())   , RANDOM_SEED);
-				double  ltfr          = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfr()    , 0.0495);
-				int     ltfrCp        = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfrCp()  , 60);
+				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMst.getTotalSceNo()), SCEN_NUM);						
+				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMst.getRndSeed())   , RANDOM_SEED);
+				double  ltfr          = swSce.getValue().getLtfr();
+				int     ltfrCp        = swSce.getValue().getLtfrCp();
 				log.info("seedNum: {}, {}", seedNum, bssd);		
 
 				Hw1fSimulationKics hw1f = new Hw1fSimulationKics(bssd, adjSpotRate, hwParasList, alphaPiece, sigmaPiece, priceAdj, sceNum, ltfr, ltfrCp, projectionYear, randomGenType, seedNum);
@@ -105,8 +105,14 @@ public class Esg360_ValidRandHw1f extends Process {
 	}		
 	
 	
-	public static List<IrValidRnd> testRandNormality(String bssd, EIrModel irModelNm, String irCurveNm, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap, Double sigLevel) {		
-		
+	public static List<IrValidRnd> testRandNormality
+	        ( String bssd
+	        , IrParamModel modelMst
+			, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap
+			, Double sigLevel) 
+	{		
+		EIrModel irModelNm = modelMst.getIrModelNm();
+		String irCurveNm = modelMst.getIrCurveNm();
 		List<IrValidRnd> rst = new ArrayList<IrValidRnd>();		
 		
 		if(randNumMap.isEmpty()) {
@@ -162,6 +168,8 @@ public class Esg360_ValidRandHw1f extends Process {
 			rnd.setBaseYymm(bssd);
 			rnd.setIrModelNm(irModelNm);
 			rnd.setIrCurveNm(irCurveNm);
+			rnd.setIrParamModel(modelMst);
+			rnd.setIrCurve(modelMst.getIrCurve());
 			rnd.setValidDv("JB_TEST");
 			
 			rnd.setValidSeq(Integer.valueOf(i+1));
@@ -199,8 +207,8 @@ public class Esg360_ValidRandHw1f extends Process {
 			rnd.setBaseYymm(bssd);
 			rnd.setIrModelNm(irModelNm);
 			rnd.setIrCurveNm(irCurveNm);			
-//			rnd.setIrParamModel(null)  // 객체를 가져와서 찍기 
-//			rnd.setIrCurve(irCurve);   // 객체를 가져와서 찍기 
+			rnd.setIrParamModel(modelMst);           // add
+			rnd.setIrCurve(modelMst.getIrCurve());   // add
 			rnd.setValidDv("KS_TEST");
 			
 			rnd.setValidSeq(Integer.valueOf(i+1));
@@ -223,12 +231,14 @@ public class Esg360_ValidRandHw1f extends Process {
 	//TODO: Runs Test
 	public static List<IrValidRnd> testRandIndependency(
 			  String bssd
-			, EIrModel irModelNm
-			, String irCurveNm
+			, IrParamModel modelMst
+//			, EIrModel irModelNm
+//			, String irCurveNm
 			, TreeMap<Integer, TreeMap<Integer, Double>> randNumMap
 			, Double sigLevel) 
 	{		
-		
+		EIrModel irModelNm = modelMst.getIrModelNm();
+		String irCurveNm = modelMst.getIrCurveNm();
 		List<IrValidRnd> rst = new ArrayList<IrValidRnd>();		
 		
 		if(randNumMap.isEmpty()) {
@@ -267,8 +277,8 @@ public class Esg360_ValidRandHw1f extends Process {
 			rnd.setBaseYymm(bssd);
 			rnd.setIrModelNm(irModelNm);
 			rnd.setIrCurveNm(irCurveNm);
-//			rnd.setIrParamModel(null);  // 객체 가져오기 
-//			rnd.setIrCurve(null);       // 객체 가져오기 
+			rnd.setIrParamModel(modelMst);                 // add
+			rnd.setIrCurve(modelMst.getIrCurve());         // add
 			rnd.setValidDv("RUNS_TEST");
 			
 			rnd.setValidSeq(Integer.valueOf(j+1));

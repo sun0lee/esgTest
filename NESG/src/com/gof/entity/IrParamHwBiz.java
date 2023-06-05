@@ -42,6 +42,7 @@ public class IrParamHwBiz extends BaseEntity implements Serializable, EntityIden
 	@Column (name = "SID")
 	@Id
 	private long id;
+	
 	private String baseYymm;
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;

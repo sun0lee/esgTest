@@ -38,6 +38,8 @@ public class IrDcntSceStoGnr extends BaseEntity implements Serializable, EntityI
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_DCNT_SCE_STO_GNR_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseYymm;
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;

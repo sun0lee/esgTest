@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -152,7 +153,7 @@ public class Main {
 		job330();       // job 330: Biz Applied HW1F Model Parameter
 	
 		job340();       // job 340: HW1F Discount Rate Scenario of Biz TermStructure
-//		job350();       // job 350: HW1F Bond Yield Scenario of Biz TermStructure
+		job350();       // job 350: HW1F Bond Yield Scenario of Biz TermStructure
 		job360();       // job 360: Validation for Random number of HW1F Scenario
 		job370();       // job 370: Validation for Market Consistency of HW1F Scenario		
 		
@@ -303,14 +304,14 @@ public class Main {
 //		jobList.add("310");
 //		jobList.add("320");
 //		jobList.add("330");
-		jobList.add("340");   //
+//		jobList.add("340");   //
 //		jobList.add("350");
 //		jobList.add("360");
 //		jobList.add("370");
 //		jobList.add("710");
 //		jobList.add("720");
 //		jobList.add("730");
-//		jobList.add("740");
+		jobList.add("740");
 //		
 		
 	}		
@@ -956,14 +957,15 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG310);
 			
-//			String irModelNm    = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();			
 			EIrModel irModelNm    = EIrModel.HW1F ;		
 			EIrModel irModelNmNsp = EIrModel.valueOf( irModelNm + "_NSP");
+			
 			EIrModel irModelNmSp  = EIrModel.valueOf( irModelNm + "_SP");
 			
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
-			log.info("IrParamModel: {}", modelMstMap.toString());
+//          1개의 job에서느 여러개의 금리모델을 사용하는 경우가 있을까? 모델정보는 단일객체로 받기 때문에 리스트로 정의하지 않아도 됨.  
+//			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
+			IrParamModel modelMst = IrParamModelDao.getParamModelList(irModelNm).get(0);
+			log.info("IrParamModel: {}", modelMst.toString());
 			
 			try {
 				
@@ -978,10 +980,10 @@ public class Main {
 						continue;
 					}
 					
-					if(!modelMstMap.containsKey(irCurveNm)) {
-						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
-						continue;
-					}
+//					if(!modelMstMap.containsKey(irCurveNm)) {
+//						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+//						continue;
+//					}
 					
 					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
 					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);					
@@ -1032,18 +1034,16 @@ public class Main {
 						continue;
 					}
 
-//					Integer freq = StringUtil.objectToPrimitive(irCurveSwMap.get(irCurveNm).getFreq(), 2);				
 					Integer freq = commIrParamSw.get(irCurveNm).getFreq();				
-					double errTol = modelMstMap.get(irCurveNm).getItrTol();
-					log.info("freq: {}, errTol: {}", freq, errTol);
+//					double errTol = modelMst.getItrTol();
+//					log.info("freq: {}, errTol: {}", freq, errTol);
+					log.info("freq: {}", freq);
 					
 					double[] hwInitParam  = new double[] {hw1fInitAlpha, hw1fInitAlpha, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma, hw1fInitSigma};
 //					double[] hwInitParam  = new double[] {0.03, 0.06, 0.007, 0.006, 0.005, 0.004, 0.005, 0.006};
 					
 					Map<String, List<?>> irParamHw1fNonSplitMap = new TreeMap<String, List<?>>();
-//					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, irCurveNm, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
-					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
-//					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, irCrv.getKey(), spotList, swpnVolList, hwInitParamNsp, freq, errTol, hwAlphaPieceNonSplit, hwSigmaPiece);
+					irParamHw1fNonSplitMap = Esg310_ParamHw1f.createParamHw1fNonSplitMap(bssd, irModelNmNsp, modelMst, spotList, swpnVolList, hwInitParam,freq, hwAlphaPieceNonSplit, hwSigmaPiece);
 				
 					for(Map.Entry<String, List<?>> rslt : irParamHw1fNonSplitMap.entrySet()) {												
 //						if(rslt.getKey().equals("VALID")) rslt.getValue().forEach(s -> session.save(s));
@@ -1053,8 +1053,7 @@ public class Main {
 					}					
 					
 					Map<String, List<?>> irParamHw1fSplitMap = new TreeMap<String, List<?>>();
-//					irParamHw1fSplitMap = Esg310_ParamHw1f.createParamHw1fSplitMap(bssd, irModelNmSp, irCurveNm, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceSplit, hwSigmaPiece);
-					irParamHw1fSplitMap = Esg310_ParamHw1f.createParamHw1fSplitMap(bssd, irModelNmSp, spotList, swpnVolList, hwInitParam, freq, errTol, hwAlphaPieceSplit, hwSigmaPiece);
+					irParamHw1fSplitMap = Esg310_ParamHw1f.createParamHw1fSplitMap(bssd, irModelNmSp, modelMst, spotList, swpnVolList, hwInitParam, freq, hwAlphaPieceSplit, hwSigmaPiece);
 				
 					for(Map.Entry<String, List<?>> rslt : irParamHw1fSplitMap.entrySet()) {
 						rslt.getValue().forEach(s -> session.save(s));
@@ -1079,13 +1078,12 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG320);
 			
-//			String irModelNm    = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();
 			EIrModel irModelNm   = EIrModel.HW1F ;
 			EIrModel irModelNmNsp = EIrModel.valueOf(irModelNm + "_NSP");
 			
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
-			log.info("IrParamModel: {}", modelMstMap.toString());
+//			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
+			IrParamModel modelMst = IrParamModelDao.getParamModelList(irModelNm).get(0);
+			log.info("IrParamModel: {}", modelMst.toString());
 			
 			try {
 				for (IrCurve irCurve :irCurveList) {
@@ -1099,10 +1097,10 @@ public class Main {
 						continue;
 					}				
 					
-					if(!modelMstMap.containsKey(irCurveNm)) {
-						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
-						continue;
-					}					
+//					if(!modelMstMap.containsKey(irCurveNm)) {
+//						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+//						continue;
+//					}					
 										
 //					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCrv.getKey(), irCurveSwMap.get(irCrv.getKey()).getLlp());
 					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
@@ -1142,9 +1140,7 @@ public class Main {
 					// 작업마다 default 를 다르게 정의하기도 할까 ?? 아님 다른 것과 동일하게 entity에서 읽어올 때 디폴트 처리를 하는것이 맞을까 ?
 //					Integer freq = StringUtil.objectToPrimitive(irCurveSwMap.get(irCurveNm).getFreq(), 2);				
 					Integer freq = commIrParamSw.get(irCurveNm).getFreq();
-					
-//					double errTol = StringUtil.objectToPrimitive(modelMstMap.get(irCurveNm).getItrTol(), 1E-8);
-					double errTol = modelMstMap.get(irCurveNm).getItrTol();
+					double errTol = modelMst.getItrTol();
 					log.info("freq: {}, errTol: {}", freq, errTol);
 			
 					//TODO: Initial Parameter(Sigma) Stability Test for SIGMA: [0.001, 0.010, 0.020, 0.030, 0.040, 0.050]
@@ -1164,6 +1160,7 @@ public class Main {
 								  bssd
 //								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(validSigma))
 								, EIrModel.valueOf( irModelNmNsp + "_INIT_" + String.valueOf(i)) //enum에 소수점을 넣을수가 없음 
+								, modelMst
 								, spotList
 								, swpnVolList
 								, hwInitParamSigma
@@ -1186,7 +1183,8 @@ public class Main {
 					
 					List<IrParamHwCalc> hwParamCalcSpotUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
-							, EIrModel.valueOf( irModelNmNsp + "_SPOT_UP") 
+							, EIrModel.valueOf( irModelNmNsp + "_SPOT_UP")
+							, modelMst
 //							, irCurveNm
 							, spotListUp
 							, swpnVolList
@@ -1207,6 +1205,7 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSpotDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SPOT_DN")
+							, modelMst
 							, spotListDn
 							, swpnVolList
 							, hwInitParamMkt
@@ -1223,6 +1222,7 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSwpnUp = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SWPN_UP")
+							, modelMst
 							, spotList
 							, swpnVolListUp
 							, hwInitParamMkt
@@ -1239,6 +1239,7 @@ public class Main {
 					List<IrParamHwCalc> hwParamCalcSwpnDn = Esg320_ParamHw1fStressTest.createParamHw1fNonSplitMapValid(
 							  bssd
 							, EIrModel.valueOf( irModelNmNsp + "_SWPN_DN")
+							, modelMst
 							, spotList
 							, swpnVolListDn
 							, hwInitParamMkt
@@ -1267,8 +1268,11 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG330);
 			
-//			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();
-			EIrModel irModelNm = EIrModel.valueOf( argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase());
+			EIrModel irModelNm   = EIrModel.HW1F ;
+			
+//			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
+			IrParamModel modelMst = IrParamModelDao.getParamModelList(irModelNm).get(0);
+			log.info("IrParamModel: {}", modelMst.toString());
 			
 			try {
 				for (IrCurve irCurve :irCurveList) {
@@ -1293,7 +1297,7 @@ public class Main {
 					String hwSigmaAvgMatCd = argInDBMap.getOrDefault("HW_SIGMA_AVG_MAT_CD", "M0120").trim().toUpperCase();					
 					
 					for(EApplBizDv biz : EApplBizDv.getUseBizList()) {
-						Esg330_BizParamHw1f.createBizHw1fParam(bssd, biz, irModelNm, irCurveNm, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));					
+						Esg330_BizParamHw1f.createBizHw1fParam(bssd, biz, modelMst, hwAlphaAvgNum, hwAlphaAvgMatCd, hwSigmaAvgNum, hwSigmaAvgMatCd).forEach(s -> session.save(s));					
 					}
 					session.flush();
 					session.clear();					
@@ -1317,9 +1321,9 @@ public class Main {
 			
 			EIrModel irModelNm   = EIrModel.HW1F ;
 			
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
-			log.info("IrParamModel: {}", modelMstMap.toString());			
+//			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
+			IrParamModel modelMst = IrParamModelDao.getParamModelList(irModelNm).get(0);
+			log.info("IrParamModel: {}", modelMst.toString());			
 						
 			Map<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> totalSwMap = new LinkedHashMap<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>>();
 			totalSwMap = bizIrParamSw ;
@@ -1361,18 +1365,28 @@ public class Main {
 
 				for(Map.Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
 					// biz별 작업구분해서 아래 작업을 반복 
+					EApplBizDv bizDv = biz.getKey();
+					if (bizDv ==EApplBizDv.IFRS) {
+						log.info(bizDv.name());
+					}
 					
 					for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : biz.getValue().entrySet()) {
 						// 금리커브 단위로 작업함. 
 						String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 						for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 							// 금리커브에 정의된 결정론 시나리오 단위로 반복 
-							Integer irCurveSceNo = swSce.getKey().getSceNo();
-
+							EDetSce detSceNo = swSce.getKey() ;
+							Integer irCurveSceNo = detSceNo.getSceNo();
 							
 //							if(!biz.getKey().equals("KICS") || !irCurveSceNo.equals(1)) continue;
-							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), biz.getKey(), irCurveNm, irCurveSceNo);
-							Map<String, List<?>> hw1fResult = Esg340_BizScenHw1f.createScenHw1f(bssd, biz.getKey(), irModelNm, irCurveNm, irCurveSceNo, biz.getValue(), modelMstMap, projectionYear);
+							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), bizDv, irCurveNm, irCurveSceNo);
+							Map<String, List<?>> hw1fResult = Esg340_BizScenHw1f.createScenHw1f
+									        ( bssd
+											, bizDv //KICS
+											, modelMst
+											, irCurveSceNo
+											, biz.getValue() //curveSwMap
+											, projectionYear);
 						
 							@SuppressWarnings("unchecked")
 							List<IrDcntSceStoBiz> stoSceList = (List<IrDcntSceStoBiz>) hw1fResult.get("SCE");				
@@ -1383,7 +1397,13 @@ public class Main {
 							stoSceMap = stoSceList.stream().collect(Collectors.groupingBy(s -> Integer.valueOf(s.getMatCd().substring(1))
 													               , TreeMap::new, Collectors.toMap(s -> Integer.valueOf(s.getSceNo()), IrDcntSceStoBiz::getFwdRate, (k, v) -> k, TreeMap::new)));
 							
-							Esg340_BizScenHw1f.createQuantileValue(bssd, biz.getKey(), irModelNm, irCurveNm, irCurveSceNo, stoSceMap).forEach(s -> session.save(s));							
+							Esg340_BizScenHw1f.createQuantileValue
+										( bssd
+										, bizDv
+										, modelMst
+										, irCurveSceNo
+										, stoSceMap
+										).forEach(s -> session.save(s));							
 							
 							int sceCnt = 1;
 							for (IrDcntSceStoBiz sce : stoSceList) {						
@@ -1393,12 +1413,12 @@ public class Main {
 									session.clear();
 								}
 								if (sceCnt % logSize == 0) {
-									log.info("Stochastic TermStructure of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, biz.getKey(), irCurveNm, irCurveSceNo, sceCnt, stoSceList.size(), jobLog.getJobId());
+									log.info("Stochastic TermStructure of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, bizDv, irCurveNm, irCurveSceNo, sceCnt, stoSceList.size(), jobLog.getJobId());
 								}
 								sceCnt++;
 							}					
 							
-							if(biz.getKey().equals(EApplBizDv.KICS)) {
+							if(bizDv.equals(EApplBizDv.KICS)) {
 								int rndCnt = 1;
 								for (IrParamHwRnd rnd : randHwList) {
 									session.save(rnd);
@@ -1407,7 +1427,7 @@ public class Main {
 										session.clear();
 									}
 									if (rndCnt % logSize == 0) {
-										log.info("Stochastic Random Number of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, biz.getKey(), irCurveSceNo, irCurveSceNo, rndCnt, randHwList.size(), jobLog.getJobId());
+										log.info("Stochastic Random Number of [{}] [BIZ: {}, ID: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, bizDv, irCurveSceNo, irCurveSceNo, rndCnt, randHwList.size(), jobLog.getJobId());
 									}
 									rndCnt++;
 								}
@@ -1435,12 +1455,10 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG350);			
 			
-//			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();
 			EIrModel irModelNm   = EIrModel.HW1F ;
-			
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
-			log.info("IrParamModel: {}", modelMstMap.toString());
+//			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
+			IrParamModel modelMst = IrParamModelDao.getParamModelList(irModelNm).get(0);
+			log.info("IrParamModel: {}", modelMst.toString());
 			
 			Map<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> totalSwMap = new LinkedHashMap<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>>();
 			totalSwMap = bizIrParamSw ;
@@ -1453,18 +1471,18 @@ public class Main {
 				log.info("[{}] has been Deleted in Job:[{}] [COUNT: {}]", Process.toPhysicalName(StdAsstIrSceSto.class.getSimpleName()), jobLog.getJobId(), delNum);
 
 				for(Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
+					EApplBizDv bizDv = biz.getKey();
 					
 					for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : biz.getValue().entrySet()) {
 						for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
-							
-							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), biz.getKey(), curveSwMap.getKey(), swSce.getKey());
-							List<StdAsstIrSceSto> bondYieldList = Esg350_BizBondYieldHw1f.createBondYieldHw1f(bssd
-									, biz.getKey()
-									, irModelNm
-									, curveSwMap.getKey().getIrCurveNm()
-									, swSce.getKey().getSceNo()
+							EDetSce detSceNo = swSce.getKey() ;
+							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), bizDv, curveSwMap.getKey().getIrCurveNm(), detSceNo);
+							List<StdAsstIrSceSto> bondYieldList = Esg350_BizBondYieldHw1f.createBondYieldHw1f
+									( bssd
+									, bizDv
+									, modelMst
+									, detSceNo
 									, biz.getValue()
-									, modelMstMap
 									, projectionYear
 									, targetDuration);									
 						
@@ -1476,7 +1494,7 @@ public class Main {
 									session.clear();
 								}
 								if (sceCnt % logSize == 0) {
-									log.info("Stochastic Bond Yield of [{}] [BIZ: {}, ASST: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, biz.getKey(), curveSwMap.getKey(), swSce.getKey(), sceCnt, bondYieldList.size(), jobLog.getJobId());
+									log.info("Stochastic Bond Yield of [{}] [BIZ: {}, ASST: {}, SCE: {}] is processed {}/{} in Job:[{}]", irModelNm, bizDv, curveSwMap.getKey(), detSceNo, sceCnt, bondYieldList.size(), jobLog.getJobId());
 								}
 								sceCnt++;
 							}							
@@ -1504,12 +1522,10 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG360);
 			
-//			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();		
 			EIrModel irModelNm   = EIrModel.HW1F ;
 			
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
-			log.info("IrParamModel: {}", modelMstMap.toString());
+			IrParamModel modelMst = IrParamModelDao.getParamModelList(irModelNm).get(0);
+			log.info("IrParamModel: {}", modelMst.toString());	
 			
 			Map<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> totalSwMap = new LinkedHashMap<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>>();
 			totalSwMap = bizIrParamSw; // 왜 kics 만 담았는지 확인하기 !!
@@ -1529,14 +1545,26 @@ public class Main {
 				
 				for(Map.Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
 					
+					EApplBizDv bizDv = biz.getKey();
+					
 					for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : biz.getValue().entrySet()) {
 						for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
 							
-							if(!biz.getKey().equals(EApplBizDv.KICS) || !swSce.getKey().equals(1)) continue;
+							EDetSce detSceNo = swSce.getKey() ;
+							
+							if(!bizDv.equals(EApplBizDv.KICS) || !detSceNo.equals(1)) continue;
 //							if(!curveSwMap.getKey().equals("1010000")) continue;
 							
-							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), biz.getKey(), curveSwMap.getKey(), swSce.getKey());
-							List<IrParamHwRnd> randHwList = Esg360_ValidRandHw1f.createValidInputHw1f(bssd, biz.getKey(), irModelNm, curveSwMap.getKey().getIrCurveNm(), swSce.getKey().getSceNo(), biz.getValue(), modelMstMap, projectionYear, targetDuration);
+							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), bizDv, curveSwMap.getKey(), detSceNo);
+							List<IrParamHwRnd> randHwList = Esg360_ValidRandHw1f.createValidInputHw1f
+									        ( bssd
+											, bizDv
+											, modelMst
+											, detSceNo.getSceNo()
+											, biz.getValue()
+											, projectionYear
+											, targetDuration
+											);
 							
 							TreeMap<Integer, TreeMap<Integer, Double>> randNumMap = new TreeMap<Integer, TreeMap<Integer, Double>>();							
 							randNumMap = randHwList.stream().collect(Collectors.groupingBy(s -> Integer.valueOf(s.getMatCd().substring(1))
@@ -1544,8 +1572,8 @@ public class Main {
 							
 //							log.info("rand: {}", randNumMap.firstEntry().getValue());							
 							
-							Esg360_ValidRandHw1f.testRandNormality    (bssd, irModelNm, curveSwMap.getKey().getIrCurveNm(), randNumMap, significanceLevel).forEach(s -> session.save(s));							
-							Esg360_ValidRandHw1f.testRandIndependency (bssd, irModelNm, curveSwMap.getKey().getIrCurveNm(), randNumMap, significanceLevel).forEach(s -> session.save(s));														
+							Esg360_ValidRandHw1f.testRandNormality    (bssd, modelMst, randNumMap, significanceLevel).forEach(s -> session.save(s));							
+							Esg360_ValidRandHw1f.testRandIndependency (bssd, modelMst, randNumMap, significanceLevel).forEach(s -> session.save(s));														
 							
 							session.flush();
 							session.clear();								
@@ -1570,12 +1598,10 @@ public class Main {
 			CoJobInfo jobLog = startJogLog(EJob.ESG370);
 			
 			EIrModel irModelNm   = EIrModel.HW1F ;
-//			String irModelNm = argInDBMap.getOrDefault("HW_MODE", "HW1F").trim().toUpperCase();		
 			
-			List<IrParamModel> modelMst = IrParamModelDao.getParamModelList(irModelNm);
-			Map<String, IrParamModel> modelMstMap = modelMst.stream().collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
-			log.info("IrParamModel: {}", modelMstMap.toString());			
-			
+			IrParamModel modelMst = IrParamModelDao.getParamModelList(irModelNm).get(0);
+			log.info("IrParamModel: {}", modelMst.toString());	
+					
 			Map<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> totalSwMap = new LinkedHashMap<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>>();
 			totalSwMap = bizIrParamSw; // 왜 kics 만 담았는지 확인하기 !!
 //			totalSwMap.put(EApplBizDv.KICS,  kicsSwMap);
@@ -1584,7 +1610,7 @@ public class Main {
 ////			totalSwMap.put(EApplBizDv.SAAS,  saasSwMap);
 										
 			try {				
-				int delNum = session.createQuery("delete IrValidSceSto a where baseYymm=:param1 and a.irModelNm=:param2 and a.lastModifiedBy=:param3")
+				int delNum = session.createQuery("delete IrValidSceSto a where baseYymm=:param1 and a.irModelNm=:param2 and a.modifiedBy=:param3")
 									.setParameter("param1", bssd) 
 									.setParameter("param2", irModelNm)
 									.setParameter("param3", jobLog.getJobId())
@@ -1593,21 +1619,25 @@ public class Main {
 				log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, COUNT: {}]", Process.toPhysicalName(IrValidSceSto.class.getSimpleName()), jobLog.getJobId(), irModelNm, delNum);
 				
 				for(Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
-					
+					EApplBizDv bizDv = biz.getKey();
 					for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : biz.getValue().entrySet()) {
-						for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {							
-//							if(!biz.getKey().equals("KICS") || !swSce.getKey().equals(1)) continue;
+						for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {				
+							
+							EDetSce detSceNo = swSce.getKey() ;
+							
+//							if(!bizDv.equals("KICS") || !detSceNo.equals(1)) continue;
 //							if(!curveSwMap.getKey().equals("1010000")) continue;
 							
-							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), biz.getKey(), curveSwMap.getKey(), swSce.getKey());
+							log.info("[{}] BIZ: [{}], IR_CURVE_NM: [{}], IR_CURVE_SCE_NO: [{}]", jobLog.getJobId(), bizDv, curveSwMap.getKey().getIrCurveNm() , detSceNo);
 							Map<String, List<?>> hw1fResult = Esg370_ValidScenHw1f.createValidInputHw1f(
 									bssd
-								  , biz.getKey()
-								  , irModelNm
-								  , curveSwMap.getKey().getIrCurveNm()
-								  , swSce.getKey().getSceNo()
+								  , bizDv
+//								  , irModelNm
+//								  , curveSwMap.getKey().getIrCurveNm()
+								  , modelMst
+								  , detSceNo.getSceNo()
 								  , biz.getValue()
-								  , modelMstMap
+//								  , modelMstMap
 								  , projectionYear
 								  , targetDuration);
 						
@@ -1629,10 +1659,11 @@ public class Main {
 							
 							Esg370_ValidScenHw1f.testMarketConsistency(
 									bssd
-								  , biz.getKey()
-								  , irModelNm
-								  , curveSwMap.getKey().getIrCurveNm()
-								  , swSce.getKey().getSceNo()
+								  , bizDv
+//								  , irModelNm
+//								  , curveSwMap.getKey().getIrCurveNm()
+								  , modelMst
+								  , detSceNo.getSceNo()
 								  , stoSceMap
 								  , stoYldMap
 								  , significanceLevel)

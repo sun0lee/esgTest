@@ -78,6 +78,8 @@ public class IrParamHwUsr extends BaseEntity implements Serializable, EntityIden
 		paramHwBiz.setApplBizDv(this.applBizDv);
 		paramHwBiz.setIrModelNm(this.irModelNm);
 		paramHwBiz.setIrCurveNm(this.irCurveNm);
+		paramHwBiz.setIrParamModel(this.irParamModel);
+		paramHwBiz.setIrCurve(this.irCurve);
 		paramHwBiz.setMatCd(this.matCd);
 		paramHwBiz.setParamTypCd(this.paramTypCd);
 		paramHwBiz.setParamVal(this.paramVal);

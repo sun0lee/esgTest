@@ -32,6 +32,8 @@ public class RcCorpPd extends BaseEntity implements Serializable, EntityIdentifi
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RC_CORP_PD_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseYymm;
 	private String crdEvalAgncyCd;
 	private String crdGrdCd;	

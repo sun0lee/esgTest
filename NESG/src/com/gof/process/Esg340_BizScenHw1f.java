@@ -40,45 +40,52 @@ public class Esg340_BizScenHw1f extends Process {
 
 	public static Map<String, List<?>> createScenHw1f(String bssd
 													, EApplBizDv applBizDv
-													, EIrModel irModelId
-													, String irCurveId
+													, IrParamModel modelMst
 													, Integer irCurveSceNo
 													, Map<IrCurve, Map<EDetSce, IrParamSw>> paramSwMap
-													, Map<String, IrParamModel> modelMstMap
+//													, Map<String, IrParamModel> modelMstMap
 													, Integer projectionYear) 
 	{
 		Map<String, List<?>>  rst     = new TreeMap<String, List<?>>();
 		List<IrDcntSceStoBiz> sceRst  = new ArrayList<IrDcntSceStoBiz>();
 		List<IrParamHwRnd>    randRst = new ArrayList<IrParamHwRnd>();
 		
+		EIrModel irModelNm = modelMst.getIrModelNm();
+		String irCurveNm = modelMst.getIrCurveNm();
+		
+		
 		for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : paramSwMap.entrySet()) {
-			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
+//			String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 			for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
+			// secnario 단위로 처리하는 경우 
+				EDetSce detSceNo = swSce.getKey() ;
 				
 //				
 				if(!StringUtil.objectToPrimitive(swSce.getValue().getStoSceGenYn(), "N").toUpperCase().equals("Y")) continue;				
-//				if(!applBizDv.equals("KICS") || !swSce.getKey().equals(1)) continue;
+//				if(!applBizDv.equals("KICS") || !detSceNo.equals(1)) continue;
 				
-				if(!irCurveNm.equals(irCurveId) || !swSce.getKey().getSceNo().equals(irCurveSceNo)) continue;				
-//				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", curveSwMap.getKey(), swSce.getKey());
+				if(!irCurveNm.equals(irCurveNm) || !detSceNo.getSceNo().equals(irCurveSceNo)) continue;		// 이걸 왜 체크 하는건지??		
+//				log.info("IR_CURVE_ID: [{}], IR_CURVE_SCE_NO: [{}]", curveSwMap.getKey(), detSceNo);
 				
-				if(!modelMstMap.containsKey(irCurveNm)) {
-					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
-					continue;
-				}
+//				if(!modelMstMap.containsKey(irCurveNm)) {
+//					log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+//					continue;
+//				}
 				
-				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, swSce.getKey());				
-//				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), swSce.getKey());     //Do Not USE this Huge Array(SW reslt itself). Its Accuracy also have problems.				
+				// 확률론 시나리오 생성에 사용할 기준시나리오 금리 커브 가져오기 
+				List<IRateInput> adjSpotRate = IrDcntRateDao.getIrDcntRateBuToAdjSpotList(bssd, applBizDv, irCurveNm, detSceNo);				
+//				List<IrCurveSpot> adjSpotRate = IrDcntRateDao.getIrDcntRateToAdjSpotList(bssd, applBizDv, curveSwMap.getKey(), detSceNo);     //Do Not USE this Huge Array(SW reslt itself). Its Accuracy also have problems.				
 //				adjSpotRate.stream().forEach(s -> log.info("{}", s));
 				
 				if(adjSpotRate.isEmpty()) {
-					log.warn("No Spot Rate Data [ID: {}, SCE_NO: {}] for [{}] in [{}] Table", irCurveNm, swSce.getKey(), bssd, Process.toPhysicalName(IrDcntRateBu.class.getSimpleName()));
+					log.warn("No Spot Rate Data [ID: {}, SCE_NO: {}] for [{}] in [{}] Table", irCurveNm, detSceNo, bssd, Process.toPhysicalName(IrDcntRateBu.class.getSimpleName()));
 					continue;
 				}				
 									
-				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelId, irCurveNm);					
+				// 시나리오 생성에 사용할 파라메타 가져오기 
+				List<IrParamHwBiz> paramHw = IrParamHwDao.getIrParamHwBizList(bssd, applBizDv, irModelNm, irCurveNm);					
 				if(paramHw.isEmpty()) {
-					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelId, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
+					log.warn("No HW1F Model Parameter exist in [MODEL: {}] [IR_CURVE_ID: {}] in [{}] Table", irModelNm, irCurveNm, Process.toPhysicalName(IrParamHwBiz.class.getSimpleName()));
 					continue;
 				}
 				
@@ -94,25 +101,25 @@ public class Esg340_BizScenHw1f extends Process {
 				
 				boolean priceAdj      = false;
 				int     randomGenType = 1;
-				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getTotalSceNo()), SCEN_NUM);						
-				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMstMap.get(irCurveNm).getRndSeed())   , RANDOM_SEED);
-				double  ltfr          = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfr()    , 0.0495);
-				int     ltfrCp        = StringUtil.objectToPrimitive(paramSwMap.get(irCurveNm).get(swSce.getKey()).getLtfrCp()  , 60);
+				int     sceNum        = StringUtil.objectToPrimitive(Integer.valueOf(modelMst.getTotalSceNo()), SCEN_NUM);						
+				int     seedNum       = StringUtil.objectToPrimitive(Integer.valueOf(modelMst.getRndSeed())   , RANDOM_SEED);
+				double  ltfr          = swSce.getValue().getLtfr();
+				int     ltfrCp        = swSce.getValue().getLtfrCp();
 				log.info("seedNum: {}, {}", seedNum, bssd);
 				
 				Hw1fSimulationKics hw1f = new Hw1fSimulationKics(bssd, adjSpotRate, hwParasList, alphaPiece, sigmaPiece, priceAdj, sceNum, ltfr, ltfrCp, projectionYear, randomGenType, seedNum);
-				List<IrDcntSceStoBiz> stoBizList  = hw1f.getIrModelHw1fList().stream().map(s -> s.convert(applBizDv, irModelId, irCurveNm, swSce.getKey().getSceNo(), jobId)).collect(Collectors.toList());
+				List<IrDcntSceStoBiz> stoBizList  = hw1f.getIrModelHw1fList().stream().map(s -> s.convert(applBizDv,modelMst , detSceNo.getSceNo(), jobId)).collect(Collectors.toList());
 				List<IrParamHwRnd>    randNumList = new ArrayList<IrParamHwRnd>();				
 				
 				//TODO:
-				if(applBizDv.equals("1KICS") && irCurveNm.equals("1010000") && swSce.getKey().equals(1)) {
+				if(applBizDv.equals("1KICS") && irCurveNm.equals("1010000") && detSceNo.equals(1)) {
 					
 //					String pathDir = "C:/Users/NHfire.DESKTOP-J5J0BJV/Desktop/";
 					String pathDir = "C:/Users/gof/Desktop/";
-					String path0 = pathDir + "SW_FWD_"        + irCurveNm + "_" + swSce.getKey() + ".csv";
-					String path1 = pathDir + "HW_FWD_DISC_"   + irCurveNm + "_" + swSce.getKey() + ".csv";
-					String path2 = pathDir + "HW_RANDOM_"     + irCurveNm + "_" + swSce.getKey() + ".csv";
-					String path3 = pathDir + "HW_YIELD_DISC_" + irCurveNm + "_" + swSce.getKey() + ".csv";
+					String path0 = pathDir + "SW_FWD_"        + irCurveNm + "_" + detSceNo + ".csv";
+					String path1 = pathDir + "HW_FWD_DISC_"   + irCurveNm + "_" + detSceNo + ".csv";
+					String path2 = pathDir + "HW_RANDOM_"     + irCurveNm + "_" + detSceNo + ".csv";
+					String path3 = pathDir + "HW_YIELD_DISC_" + irCurveNm + "_" + detSceNo + ".csv";
 					
 					try {
 						double[][] sw = new double[hw1f.getFwdDiscBase().length][3];
@@ -124,7 +131,7 @@ public class Esg340_BizScenHw1f extends Process {
 						writeArraytoCSV(sw, path0);  //matTranspose(sw)
 						writeArraytoCSV(hw1f.getFwdDiscScen(), path1);
 //						writeArraytoCSV(matTranspose(hw1f.getFwdDiscScen()), path1);
-						if(swSce.getKey().equals(1)) writeArraytoCSV(hw1f.getRandNum(), path2);
+						if(detSceNo.equals(1)) writeArraytoCSV(hw1f.getRandNum(), path2);
 						
 						hw1f.getIrModelHw1fBondYield(hw1f.getIrModelHw1fList(), 3.0);
 						writeArraytoCSV(hw1f.getBondYieldDisc(), path3);
@@ -134,8 +141,8 @@ public class Esg340_BizScenHw1f extends Process {
 					}					
 				}
 				
-				if(swSce.getKey().equals(1)) {
-					randNumList = hw1f.getRandomScenList().stream().map(s -> s.setKeys(irModelId, irCurveNm, jobId)).collect(Collectors.toList());	
+				if(detSceNo.equals(1)) {
+					randNumList = hw1f.getRandomScenList().stream().map(s -> s.setKeys(irModelNm, irCurveNm, jobId)).collect(Collectors.toList());	
 				}				
 				sceRst.addAll(stoBizList);
 				randRst.addAll(randNumList);
@@ -144,9 +151,9 @@ public class Esg340_BizScenHw1f extends Process {
 		rst.put("SCE", sceRst);
 		rst.put("RND", randRst);
 		
-		log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.get("SCE").size(), applBizDv, irCurveId, irCurveSceNo, toPhysicalName(IrDcntSceStoBiz.class.getSimpleName()));
+		log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.get("SCE").size(), applBizDv, irCurveNm, irCurveSceNo, toPhysicalName(IrDcntSceStoBiz.class.getSimpleName()));
 		if(applBizDv.equals(EApplBizDv.KICS) && rst.get("RND").size() > 0) {
-			log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.get("RND").size(), applBizDv, irCurveId, irCurveSceNo, toPhysicalName(IrParamHwRnd.class.getSimpleName()));	
+			log.info("{}({}) creates [{}] results of [{}] [ID: {}, SCE: {}]. They are inserted into [{}] Table", jobId, EJob.valueOf(jobId).getJobName(), rst.get("RND").size(), applBizDv, irCurveNm, irCurveSceNo, toPhysicalName(IrParamHwRnd.class.getSimpleName()));	
 		}
 		
 		return rst;		
@@ -156,12 +163,16 @@ public class Esg340_BizScenHw1f extends Process {
 	public static List<IrValidSceSto> createQuantileValue(
 			  String bssd
 			, EApplBizDv applBizDv
-			, EIrModel irModelNm
-			, String irCurveNm
+			, IrParamModel modelMst
+//			, EIrModel irModelNm
+//			, String irCurveNm
 			, Integer irCurveSceNo
 			, TreeMap<Integer, TreeMap<Integer, Double>> stoSceMap) {		
 		
-		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();		
+		List<IrValidSceSto> rst = new ArrayList<IrValidSceSto>();
+		
+		EIrModel irModelNm = modelMst.getIrModelNm();
+		String irCurveNm = modelMst.getIrCurveNm();
 		
 		if(stoSceMap.isEmpty()) {
 			log.warn("Quantile Value: No Stochastic Discount Rate Data of [{}] [BIZ: {}, ID: {}, SCE: {}] for [{}]", irModelNm, applBizDv, irCurveNm, irCurveSceNo, bssd);
@@ -237,6 +248,8 @@ public class Esg340_BizScenHw1f extends Process {
 			fwd.setBaseYymm(bssd);
 			fwd.setApplBizDv(applBizDv);
 			fwd.setIrModelNm(irModelNm);
+			fwd.setIrParamModel(modelMst);                   // add )
+			fwd.setIrCurve(modelMst.getIrCurve());           // add 
 			fwd.setIrCurveNm(irCurveNm);
 			fwd.setIrCurveSceNo(irCurveSceNo);			
 			fwd.setValidDv("FWD_QUANTILE");
@@ -278,8 +291,8 @@ public class Esg340_BizScenHw1f extends Process {
 			fwd.setApplBizDv(applBizDv);
 			fwd.setIrModelNm(irModelNm);
 			fwd.setIrCurveNm(irCurveNm);
-//			fwd.setIrParamModel(irParamModel); // 객체 가져와야함 
-//			fwd.setIrCurve(irCurve);           // 객체 가져와야함
+			fwd.setIrParamModel(modelMst);                   // add 
+			fwd.setIrCurve(modelMst.getIrCurve());           // add
 			fwd.setIrCurveSceNo(irCurveSceNo);			
 			fwd.setValidDv("FWD_QUANTILE2");
 			

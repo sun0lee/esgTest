@@ -31,7 +31,7 @@ public class IrParamHwDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrParamHwUsr> getIrParamHwUsrList(String bssd, EApplBizDv applBizDv, String irModelNm, String irCurveNm) {
+	public static List<IrParamHwUsr> getIrParamHwUsrList(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm) {
 		
 		String query = " select a from IrParamHwUsr a    "
 				 	 + "  where 1=1                      " 

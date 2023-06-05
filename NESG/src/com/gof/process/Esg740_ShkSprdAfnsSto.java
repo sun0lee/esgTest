@@ -45,7 +45,7 @@ public class Esg740_ShkSprdAfnsSto extends Process {
 		List<IrParamAfnsCalc> inOptLsc  = optInput.stream().filter(param -> param.getParamTypCd().getParamDv().equals("LSC"))
                 .collect(Collectors.toList());
 		
-		AFNelsonSiegel afns = new AFNelsonSiegel(bssd , inTenor, irModelMst,irModelNm, irParamSw, argInDBMap) ;
+		AFNelsonSiegel afns = new AFNelsonSiegel(bssd , inTenor, irModelMst,irModelNm, irParamSw, argInDBMap, 1 ,470) ;
 		
 		// tvog 생성용 시나리오 만들기 
 		afns.genAfnsStoShock(inOptParam , inOptLsc);

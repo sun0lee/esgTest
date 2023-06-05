@@ -34,6 +34,8 @@ public class StdAsst extends BaseEntity implements Serializable, EntityIdentifie
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STD_ASST_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String stdAsstCd;
 	
 	private String stdAsstNm;	

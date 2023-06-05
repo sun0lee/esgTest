@@ -40,7 +40,7 @@ public class IrModelBondYield implements Serializable {
 		
 		rst.setBaseYymm(this.baseDate.substring(0,6));
 		rst.setApplBizDv(applBizDv);
-		rst.setStdAsstCd(stdAsstCd);		
+		rst.setStdAsstCd(stdAsstCd);		//modelMst
 		rst.setSceTypCd(sceTypCd);
 		rst.setSceNo(this.sceNo);
 		rst.setMatCd(this.matCd);		

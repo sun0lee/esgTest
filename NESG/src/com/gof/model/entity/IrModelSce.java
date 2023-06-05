@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.gof.entity.IrDcntSceStoBiz;
+import com.gof.entity.IrParamModel;
 import com.gof.enums.EApplBizDv;
 import com.gof.enums.EIrModel;
 
@@ -37,13 +38,15 @@ public class IrModelSce implements Serializable {
 	private String lastModifiedBy;	
 	private LocalDateTime lastUpdateDate;	
 	
-	public IrDcntSceStoBiz convert(EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm, Integer irCurveSceNo, String jobId) {
+	public IrDcntSceStoBiz convert(EApplBizDv applBizDv, IrParamModel modelMst, Integer irCurveSceNo, String jobId) {
 		IrDcntSceStoBiz rst = new IrDcntSceStoBiz();
 		
 		rst.setBaseYymm(this.baseDate.substring(0,6));		
 		rst.setApplBizDv(applBizDv);
-		rst.setIrModelNm(irModelNm);
-		rst.setIrCurveNm(irCurveNm);
+		rst.setIrModelNm(modelMst.getIrModelNm());
+		rst.setIrCurveNm(modelMst.getIrCurveNm());
+		rst.setIrParamModel(modelMst);           // add
+		rst.setIrCurve(modelMst.getIrCurve());   // add
 		rst.setIrCurveSceNo(irCurveSceNo);
 		rst.setSceNo(this.sceNo);
 		rst.setMatCd(this.matCd);		

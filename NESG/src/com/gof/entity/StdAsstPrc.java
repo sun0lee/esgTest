@@ -30,6 +30,8 @@ public class StdAsstPrc extends BaseEntity implements Serializable, EntityIdenti
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STD_ASST_PRC_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseDate;
 	private String stdAsstCd;	
 

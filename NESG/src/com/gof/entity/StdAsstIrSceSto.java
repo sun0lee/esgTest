@@ -41,6 +41,8 @@ public class StdAsstIrSceSto implements Serializable, EntityIdentifier {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STD_ASST_IR_SCE_STO_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseYymm;
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;

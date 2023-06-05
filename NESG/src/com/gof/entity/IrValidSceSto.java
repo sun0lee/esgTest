@@ -38,6 +38,8 @@ public class IrValidSceSto extends BaseEntity implements Serializable, EntityIde
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_VALID_SCE_STO_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseYymm;
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;

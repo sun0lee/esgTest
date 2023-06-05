@@ -30,6 +30,8 @@ public class MvVol extends BaseEntity implements Serializable, EntityIdentifier 
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MV_VOL_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseDate;
 	private String volCalcId;
 	private String mvId;

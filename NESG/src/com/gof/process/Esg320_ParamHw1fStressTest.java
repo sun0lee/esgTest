@@ -29,6 +29,7 @@ public class Esg320_ParamHw1fStressTest extends Process {
 	public static List<IrParamHwCalc> createParamHw1fNonSplitMapValid(
 			  String bssd
 			, EIrModel irModelNm
+			, IrParamModel modelMst 
 //			, String irCurveNm
 			, List<IRateInput> spotList
 			, List<IrVolSwpn> swpnVolList
@@ -44,18 +45,13 @@ public class Esg320_ParamHw1fStressTest extends Process {
 		freq = Math.max(freq, 1);		
 		List<SwpnVolInfo> volInfo  = swpnVolList.stream().map(s-> SwpnVolInfo.convertFrom(s)).collect(toList());		
 		
-		// add 23.04.20 		
-		IrParamModel irModel  = IrParamModelDao.getParamModelList(irModelNm.getUpperIrModel()).get(0) ;
-		IrCurve      irCurve  = irModel.getIrCurve();
-		String     irCurveNm = irCurve.getIrCurveNm();
-		
 		Hw1fCalibrationKics calib = new Hw1fCalibrationKics(bssd, spotList, volInfo, alphaPiece, sigmaPiece, initParas, freq, errTol);
-		paramCalc                 = calib.getHw1fCalibrationResultList().stream().map(s -> s.convertNonSplit(irModelNm, irCurveNm))
+		paramCalc                 = calib.getHw1fCalibrationResultList().stream().map(s -> s.convertNonSplit(irModelNm, modelMst.getIrCurveNm()))
 																			     .flatMap(s-> s.stream())
 																			     .collect(toList());
 
-		paramCalc.stream().forEach(s -> s.setIrParamModel(irModel));
-		paramCalc.stream().forEach(s -> s.setIrCurve(irCurve));
+		paramCalc.stream().forEach(s -> s.setIrParamModel(modelMst));
+		paramCalc.stream().forEach(s -> s.setIrCurve(modelMst.getIrCurve()));
 		paramCalc.stream().forEach(s -> s.setModifiedBy(jobId));
 		paramCalc.stream().forEach(s -> s.setUpdateDate(LocalDateTime.now()));		
 

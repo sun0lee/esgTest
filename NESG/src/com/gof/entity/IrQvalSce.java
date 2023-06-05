@@ -38,6 +38,8 @@ public class IrQvalSce extends BaseEntity implements Serializable, EntityIdentif
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "IR_QVAL_SCE_SEQ_GEN")
 	@Column (name = "SID")
 	@Id
+	private long id;
+	
 	private String baseYymm;
 	@Enumerated(EnumType.STRING)
 	private EApplBizDv applBizDv;
