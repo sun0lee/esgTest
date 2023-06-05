@@ -39,6 +39,7 @@ public enum EJob {
 	, ESG710 ("finding AFNS initial parameters")
 	, ESG720 ("optimization AFNS parameters")
 	, ESG730 ("generate AFNS Shock Spread")
+	, ESG740 ("generate AFNS Shock Spread for TVOG")
 	
 	, ESG810 ("Set Transition Matrix")
 	, ESG820 ("Corporate PD from Transition Matrix")

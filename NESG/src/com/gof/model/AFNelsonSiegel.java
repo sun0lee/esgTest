@@ -99,11 +99,12 @@ public class AFNelsonSiegel extends IrModel {
 	
 	// 금리정보를 받아오는 경우.
 	public AFNelsonSiegel(String bssd, List<IRateInput> iRateHisList, List<IRateInput> iRateBaseList, IrParamModel irModelMst, IrParamSw irParamSw, Map<String, String> argInDBMap) {
-		this( bssd, iRateHisList, iRateBaseList, null , irModelMst,  irParamSw, argInDBMap);
+		this( bssd, iRateHisList, iRateBaseList, null , irModelMst , null,  irParamSw, argInDBMap);
 	}
 	// 금리 정보가 비어있는 경우. 사용할 테너정보를 받아야 함. 
-	public AFNelsonSiegel(String bssd, double[] inTenor , IrParamModel irModelMst, IrParamSw irParamSw, Map<String, String> argInDBMap) {
-		this( bssd, null, null , inTenor, irModelMst,  irParamSw, argInDBMap);
+	// irModelNm이 들어오는 경우 우선 사용. 
+	public AFNelsonSiegel(String bssd ,double[] inTenor , IrParamModel irModelMst, EIrModel irModelNm , IrParamSw irParamSw, Map<String, String> argInDBMap) {
+		this( bssd, null, null , inTenor, irModelMst, irModelNm,  irParamSw, argInDBMap);
 	}
 
 	
@@ -112,6 +113,7 @@ public class AFNelsonSiegel extends IrModel {
 					 	 , List<IRateInput> iRateBaseList // 기준일자 금리정보 
 					 	 , double[]     inTenor           // 금리내역이 없을때 기본적으로 정의할 테너 (개별job에서 정의)  
 					 	 , IrParamModel irModelMst 
+					 	 , EIrModel     irModelNm   // AFNS vs. AFNS_STO
 					 	 , IrParamSw    irParamSw  
 					 	 , Map<String, String>  argInDBMap ) 
 	
@@ -129,7 +131,8 @@ public class AFNelsonSiegel extends IrModel {
 		
 		
 		this.baseDate      =  IrModel.stringToDate(bssd);		
-		this.mode          =  irModelMst.getIrModelNm() ;
+//		this.mode          =  irModelMst.getIrModelNm() ;
+		this.mode = (irModelNm != null) ? irModelNm : irModelMst.getIrModelNm();
 		this.inputParas    =  null;
 		
 //		this.setTermStructureHis(iRateHisList, iRateBaseList);
@@ -397,6 +400,24 @@ public class AFNelsonSiegel extends IrModel {
 		afnsShockGenerating();	
 	}
 	
+	// 4. afns 충격시나리오 (1000개) 생성_TVOG 산출용  
+	public void genAfnsStoShock(List<IrParamAfnsCalc> inOptParam, List<IrParamAfnsCalc> inOptLsc) {
+		
+		
+//		// 최적화된 모수 읽어온 값 담기 
+		this.optParas = inOptParam.stream()
+			    .mapToDouble(param -> param.getParamVal())
+			    .toArray();        
+        
+        // L,S,C 담기 
+        this.optLSC = inOptLsc.stream()
+        	    .mapToDouble(param -> param.getParamVal())
+        	    .toArray();
+		
+        
+		// To set this.IntShock
+        afnsShockStoGenerating();	
+	}
 	
 	
 	public List<IrDcntSceDetBiz> getAfnsResultList() {
@@ -822,7 +843,65 @@ public class AFNelsonSiegel extends IrModel {
 //		this.IntShockName       = new String[] {"1", "2", "3", "4", "5", "6"};
 //		this.IntDetSceList       = new Integer[] {1, 2, 3, 4, 5, 6};
 	}		
-	
+
+	private void afnsShockStoGenerating() {
+		
+		// 시나리오 생성을 위한 준비 
+		double       Lambda     = this.optParas[0];
+		SimpleMatrix Theta      = new SimpleMatrix(vecToMat(new double[] {this.optParas[1], this.optParas[2], this.optParas[3]}));
+		SimpleMatrix Kappa      = new SimpleMatrix(toDiagMatrix(this.optParas[4], this.optParas[5], this.optParas[6]));
+		SimpleMatrix Sigma      = new SimpleMatrix(toLowerTriangular3(new double[] {this.optParas[7], this.optParas[8], this.optParas[9], this.optParas[10], this.optParas[11], this.optParas[12]}));
+		SimpleMatrix X0         = new SimpleMatrix(vecToMat(new double[] {this.optLSC[0], this.optLSC[1], this.optLSC[2]}));		
+		
+		
+		// AFNS factor loading matrix based on LLP weight
+		double[]     tenorLLP   = new double[(int) (Math.round(this.tenor[this.tenor.length-1]))];
+		for(int i=0; i<tenorLLP.length; i++) tenorLLP[i] = i+1;
+//		SimpleMatrix factorLLP  = new SimpleMatrix(factorLoad(Lambda, tenorLLP, true));
+
+		
+		// Declare M, N and Calculate NTN | eKappa ~ Kappa^-1 x (I-exp(-Kappa)) x Sigma  |  N ~ W.mat x M  |  NTN ~ t(N) x N
+		SimpleMatrix eKappa     = new SimpleMatrix(toDiagMatrix(Math.exp(-Kappa.get(0,0)), Math.exp(-Kappa.get(1,1)), Math.exp(-Kappa.get(2,2))));
+		
+//		2023.05.30 주석처리 : for 엑셀과 로직 맞추기 변동성 행렬 산출 시 주 요인만을 고려 (level, slope)
+		SimpleMatrix IminusK    = new SimpleMatrix(toIdentityMatrix(this.nf)).minus(eKappa);
+//		SimpleMatrix M          = Kappa.invert().mult(IminusK).mult(Sigma);		
+		
+	////// mu = (I -e-Kt) (θ - X0)
+		SimpleMatrix Mu          = IminusK.mult(Theta.minus(X0));
+		
+        ////////////////////////////////////////////////////////////////////////////////	
+//		2023.05.30 수정 : for 엑셀과 로직 맞추기 변동성 행렬 산출 시 모든 요인을 고려(level, slope, curvature)
+		
+		double[][] mTemp = new double[this.nf][this.nf];		
+		for(int i=0; i<mTemp.length; i++) {
+			for(int j=0; j<mTemp[i].length; j++) {
+				mTemp[i][j]     = (1.0 - eKappa.get(i,i) * eKappa.get(j,j)) / (Kappa.get(i,i) + Kappa.get(j,j));								
+			}
+		}	
+		SimpleMatrix M1         = Sigma.mult(Sigma.transpose()).elementMult(new SimpleMatrix(mTemp));
+		
+		CholeskyDecomposition_F64<DMatrixRMaj> chol = DecompositionFactory_DDRM.chol(true);
+		
+		if(!chol.decompose(M1.getDDRM())) {
+			log.error("Cholesky Decomposition is failed in AFNS Process!");
+			System.exit(0);
+		}
+	////// chol(v)
+		SimpleMatrix M          = new SimpleMatrix(chol.getT(M1.getDDRM()));  //for IAIS Modified after 2017		
+		for(int i=0; i<M.numRows(); i++) log.info("M matrix: {}, {}, {}", M.get(i,0),  M.get(i,1),  M.get(i,2));		
+		
+        ////////////////////////////////////////////////////////////////////////////////		
+		
+	////// H ; CoefInt
+		SimpleMatrix CoefInt    = new SimpleMatrix(factorLoad(Lambda, this.tenor, true));
+
+		SimpleMatrix BaseShock  = CoefInt.mult(new SimpleMatrix(vecToMat(new double[] {0.0, 0.0, 0.0})));
+			
+		// 여기에 충격 스프레드 결과 담기 
+		this.IntShock           = new SimpleMatrix(BaseShock);
+		
+	}
 @Deprecated
 	protected List<IrDcntSceDetBiz> applySmithWilsonInterpoloation(double ltfr, double liqPrem, String type) {
 

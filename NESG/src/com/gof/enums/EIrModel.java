@@ -11,6 +11,9 @@ public enum EIrModel {
 	, CIR_Y5 ()
 	, CIR_Y10 ()
 
+	/* 내부모형에서 TVOG 산출용 */
+	, AFNS_STO(EIrModel.AFNS)
+	
 	/* 민감도 분석용 */
 	, HW1F_NSP (EIrModel.HW1F) //
 	, HW1F_SP  (EIrModel.HW1F)  //
@@ -25,19 +28,17 @@ public enum EIrModel {
 	, HW1F_NSP_SWPN_DN (EIrModel.HW1F)
 	, HW1F_NSP_SWPN_UP (EIrModel.HW1F);
 
-	private final EIrModel upperIrModel ; 
-	
-	private EIrModel(EIrModel aa) {
-		this.upperIrModel = aa;
-	}
+	private EIrModel upperIrModel ; 
 	
 	private EIrModel() {
 		this.upperIrModel = null;
 	}
 	
-	// model id setting (HW1F_NSP, HW1F_SP) -> HW1F 
-	public EIrModel getIrModel(EIrModel inIrModel) {
-		return upperIrModel ;
+	private EIrModel(EIrModel upperIrModel) {
+		this.upperIrModel = upperIrModel;
 	}
 	
+	public EIrModel getIrModel() {
+		return upperIrModel ;
+	}	
 }

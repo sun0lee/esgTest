@@ -161,6 +161,8 @@ public class Main {
 		job710(); 
 		job720();
 		job730(); 
+		job740();  
+		
 // ****************************************************************** RC Job                              ********************************
 
 		job810();		// Job 810: Set Transition Matrix
@@ -286,7 +288,6 @@ public class Main {
 		}
 		
 		jobList.clear();
-//		jobList.add("110");
 //		jobList.add("120");
 //		jobList.add("130");		
 //		jobList.add("150");
@@ -302,14 +303,15 @@ public class Main {
 //		jobList.add("310");
 //		jobList.add("320");
 //		jobList.add("330");
-		jobList.add("340");
+		jobList.add("340");   //
 //		jobList.add("350");
 //		jobList.add("360");
 //		jobList.add("370");
 //		jobList.add("710");
 //		jobList.add("720");
 //		jobList.add("730");
-		
+//		jobList.add("740");
+//		
 		
 	}		
 	
@@ -1348,7 +1350,7 @@ public class Main {
 
 				log.info("[{}] has been Deleted in Job:[{}] [COUNT: {}]", Process.toPhysicalName(IrParamHwRnd.class.getSimpleName()), jobLog.getJobId(), delNum2);
 				
-				int delNum3 = session.createQuery("delete IrValidSceSto a where baseYymm=:param1 and a.irModelNm=:param2 and a.lastModifiedBy=:param3")
+				int delNum3 = session.createQuery("delete IrValidSceSto a where baseYymm=:param1 and a.irModelNm=:param2 and a.modifiedBy=:param3")
 									 .setParameter("param1", bssd) 
 									 .setParameter("param2", irModelNm)
 									 .setParameter("param3", jobLog.getJobId())
@@ -1358,11 +1360,13 @@ public class Main {
 				
 
 				for(Map.Entry<EApplBizDv, Map<IrCurve, Map<EDetSce, IrParamSw>>> biz : totalSwMap.entrySet()) {
+					// biz별 작업구분해서 아래 작업을 반복 
 					
 					for(Map.Entry<IrCurve, Map<EDetSce, IrParamSw>> curveSwMap : biz.getValue().entrySet()) {
+						// 금리커브 단위로 작업함. 
 						String irCurveNm = curveSwMap.getKey().getIrCurveNm();
 						for(Map.Entry<EDetSce, IrParamSw> swSce : curveSwMap.getValue().entrySet()) {
-							// 이미 시나리오 별로 가져오고 있음 !!
+							// 금리커브에 정의된 결정론 시나리오 단위로 반복 
 							Integer irCurveSceNo = swSce.getKey().getSceNo();
 
 							
@@ -1948,6 +1952,94 @@ public class Main {
 			session.getTransaction().commit();
 		}
 	}	
+	
+	private static void job740() {
+		if(jobList.contains("740")) {
+			session.beginTransaction();
+			CoJobInfo jobLog = startJogLog(EJob.ESG740);			
+
+			EIrModel irModelNm      = EIrModel.AFNS_STO;	  // IR_SPRD_AFNS_calc에 이 결과도 적재하기 위해 모델 이름 추가 (동일한 AFNS 모수를 사용함.) 				
+			EIrModel upperIrModelNm = irModelNm.getIrModel();	// AFNS 				
+			
+			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(upperIrModelNm);
+			Map<String, IrParamModel> irModelMstMap = modelMstList.stream()
+													.collect(Collectors.toMap(IrParamModel::getIrCurveNm, Function.identity()));
+			
+			log.info("IrParamModel: {}", irModelMstMap.toString());			
+			
+			try {
+				for (IrCurve irCurve :irCurveList) {
+				    	
+					    String        irCurveNm  = irCurve.getIrCurveNm() ;
+					    IrParamSw     irparamSw  = commIrParamSw.get(irCurveNm) ;
+					    IrParamModel  irModelMst = irModelMstMap.get(irCurveNm) ;
+					
+					    
+					if(!commIrParamSw.containsKey(irCurveNm)) {
+						log.warn("No Ir Curve Data [{}] in Smith-Wilson Map for [{}]", irCurveNm, bssd);
+						continue;
+					}					
+					
+					if(!irModelMstMap.containsKey(irCurveNm)) {
+						log.warn("No Model Attribute of [{}] for [{}] in [{}] Table", upperIrModelNm, irCurveNm, Process.toPhysicalName(IrParamModel.class.getSimpleName()));
+						continue;
+					}
+					
+					log.info("AFNS Shock Spread (Cont) for [{}({}, {})]", irCurveNm, irCurve.getIrCurveNm(), irCurve.getCurCd());
+
+					// 시나리오를 생성할 기본 테너 
+					List<String> tenorList = IrCurveSpotDao.getIrCurveTenorList(bssd, irCurveNm, Math.min(irparamSw.getLlp(), 20));
+
+					log.info("TenorList in [{}]: ID: [{}], llp: [{}], matCd: {}", jobLog.getJobId(), irCurveNm, Math.min(irparamSw.getLlp(), 20), tenorList);
+					if(tenorList.isEmpty()) {
+						log.warn("No Spot Rate Data [ID: {}] for [{}]", irCurveNm, bssd);
+						continue;
+					}
+					 double[] genTenor = EBaseTenor.getTenorArray(tenorList) ;
+					// 기본적으로 인풋에 사용되는 금리 정보를 바탕으로 그에 대응되는 테너를 사용하지만, 금리 모델에서 생성하고자 하는 경우 테너가 추가될수도, 제거될 수 있는 것임. 
+					// 필요한 경우에 목적에 맞는 tenor 를 irModel에 전해주기 
+
+					// 적재할 테이블 조건 추가하기 740에 해당하는 것만 지워야 함. AFNS_STO
+					int delNum2 = session.createQuery("delete IrSprdAfnsCalc a where baseYymm=:param1 and a.irModelNm=:param2 and a.irCurveNm=:param3 ")
+					                     .setParameter("param1", bssd) 
+								  		 .setParameter("param2", irModelNm) // AFNS_STO
+										 .setParameter("param3", irCurveNm)
+										 .executeUpdate();					
+
+					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
+
+					// pk 중복을 피하기 위해 모델명을 구분하였으나 (AFNS_STO) 모수는 동일하게 (AFNS) 모수를 사용함.  
+					List<IrParamAfnsCalc> optParam = IrParamAfnsDao.getIrParamAfnsCalcList(bssd, upperIrModelNm, irCurveNm).stream()
+                            .sorted(Comparator.comparingInt(p -> p.getParamTypCd().ordinal()))
+                            .collect(Collectors.toList());
+					
+					Map<String, List<?>> irShockSenario = new TreeMap<String, List<?>>();
+					irShockSenario = Esg740_ShkSprdAfnsSto.createAfnsShockScenario(FinUtils.toEndOfMonth(bssd)
+																			  , genTenor // add
+																			  , irModelMst 
+																			  , irparamSw   
+																			  , argInDBMap 
+																			  , optParam // add 
+																			  , irModelNm
+																			  );	
+											
+					for(Map.Entry<String, List<?>> rslt : irShockSenario.entrySet()) {						
+						rslt.getValue().forEach(s -> session.save(s));
+
+						session.flush();
+						session.clear();
+					}					
+				}
+				completeJob("SUCCESS", jobLog);
+				
+			} catch (Exception e) {
+				log.error("ERROR: {}", e);
+				completeJob("ERROR", jobLog);
+			}			
+			session.saveOrUpdate(jobLog);
+			session.getTransaction().commit();
+		}
+	}
 	
 	private static void job810() {
 		if(jobList.contains("810")) {

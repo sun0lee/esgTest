@@ -110,7 +110,6 @@ public class IrParamHwDao extends DaoUtil {
 					 + "   and a.baseYymm   > :stDate      "
 					 + "   and a.baseYymm  <= :endDate     "
 					 + "   and a.irModelNm  = :irModelNm   "
-//					 + "   and a.irModelId like :irModelId "
 					 + "   and a.irCurveNm  = :irCurveNm   "
 					 + "   and a.paramTypCd = :paramTypCd  "					 
 					 + "   and a.matCd      = :matCd       " 
@@ -128,21 +127,21 @@ public class IrParamHwDao extends DaoUtil {
 	}	
 	
 	
-	public static List<IrParamHwBiz> getIrParamHwBizList(String bssd, EApplBizDv applBizDv, EIrModel irModelId, String irCurveId) {
+	public static List<IrParamHwBiz> getIrParamHwBizList(String bssd, EApplBizDv applBizDv, EIrModel irModelNm, String irCurveNm) {
 		
 		String query = " select a from IrParamHwBiz a    "
 				 	 + "  where 1=1                      " 
 				 	 + "    and a.baseYymm  = :bssd      "
 				 	 + "    and a.applBizDv = :applBizDv "
-				 	 + "    and a.irModelId = :irModelId "
-				 	 + "    and a.irCurveId = :irCurveId "				 	 
+				 	 + "    and a.irModelNm = :irModelNm "
+				 	 + "    and a.irCurveNm = :irCurveNm "				 	 
 				 	 ;		
 		
 		return session.createQuery(query, IrParamHwBiz.class)
 				      .setParameter("bssd", bssd)
 				      .setParameter("applBizDv", applBizDv)
-				      .setParameter("irModelId", irModelId)
-				      .setParameter("irCurveId", irCurveId)
+				      .setParameter("irModelNm", irModelNm)
+				      .setParameter("irCurveNm", irCurveNm)
 				      .getResultList();
 	}
 	
