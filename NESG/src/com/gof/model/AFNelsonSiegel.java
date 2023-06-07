@@ -101,7 +101,7 @@ public class AFNelsonSiegel extends IrModel {
 	protected int           scenNum = 1000 ;
 	protected int           randomGenType = 1;
 	protected int           seedNum = 470 ;
-	protected double[][]    randNum; // [this.scenNum]
+	protected double[][]    randNum; // [number of factors][this.scenNum]
 	
 	protected List<IrDcntSceDetBiz> rsltList = new ArrayList<IrDcntSceDetBiz>();
 	
@@ -122,7 +122,7 @@ public class AFNelsonSiegel extends IrModel {
 		// 23.06.05 add for 내부모형 stoScen
 		this.randomGenType = randomGenType;
 		this.seedNum = seedNum;
-		this.randomNumberGaussian(); // 난수 생성 
+		this.randomNumberGaussian(3); // 난수 생성 (nf = 3)
 	}
 
 	// 초기화 
@@ -351,8 +351,8 @@ public class AFNelsonSiegel extends IrModel {
         
 		if(this.IntShock != null) {			
 			
-			for(int i=0; i<this.IntShock.numCols(); i++) {
-				for(int j=0; j<this.IntShock.numRows(); j++) {
+			for(int i=0; i<this.IntShock.numCols(); i++) { // scen
+				for(int j=0; j<this.IntShock.numRows(); j++) { // tenor
 					
 					IrSprdAfnsCalc shock = new IrSprdAfnsCalc();
 					shock.setBaseYymm(dateToString(this.baseDate).substring(0,6));
@@ -870,7 +870,8 @@ public class AFNelsonSiegel extends IrModel {
 		SimpleMatrix Theta      = new SimpleMatrix(vecToMat(new double[] {this.optParas[1], this.optParas[2], this.optParas[3]}));
 		SimpleMatrix Kappa      = new SimpleMatrix(toDiagMatrix(this.optParas[4], this.optParas[5], this.optParas[6]));
 		SimpleMatrix Sigma      = new SimpleMatrix(toLowerTriangular3(new double[] {this.optParas[7], this.optParas[8], this.optParas[9], this.optParas[10], this.optParas[11], this.optParas[12]}));
-		SimpleMatrix X0         = new SimpleMatrix(vecToMat(new double[] {this.optLSC[0], this.optLSC[1], this.optLSC[2]}));		
+		SimpleMatrix X0         = new SimpleMatrix(vecToMat(new double[] {this.optLSC[0], this.optLSC[1], this.optLSC[2]}));	
+		this.epsilon            = this.optParas[13];
 		
 		
 		// AFNS factor loading matrix based on LLP weight
@@ -883,11 +884,9 @@ public class AFNelsonSiegel extends IrModel {
 		SimpleMatrix eKappa     = new SimpleMatrix(toDiagMatrix(Math.exp(-Kappa.get(0,0)), Math.exp(-Kappa.get(1,1)), Math.exp(-Kappa.get(2,2))));
 		
 //		2023.05.30 주석처리 : for 엑셀과 로직 맞추기 변동성 행렬 산출 시 주 요인만을 고려 (level, slope)
-		SimpleMatrix IminusK    = new SimpleMatrix(toIdentityMatrix(this.nf)).minus(eKappa);
+//		SimpleMatrix IminusK    = new SimpleMatrix(toIdentityMatrix(this.nf)).minus(eKappa);
 //		SimpleMatrix M          = Kappa.invert().mult(IminusK).mult(Sigma);		
-		
-	////// mu = (I -e-Kt) (θ - X0)
-		SimpleMatrix Mu          = IminusK.mult(Theta.minus(X0));
+				
         ////////////////////////////////////////////////////////////////////////////////	
 //		2023.05.30 수정 : for 엑셀과 로직 맞추기 변동성 행렬 산출 시 모든 요인을 고려(level, slope, curvature)
 		
@@ -914,18 +913,30 @@ public class AFNelsonSiegel extends IrModel {
 	////// H ; CoefInt
 		SimpleMatrix CoefInt    = new SimpleMatrix(factorLoad(Lambda, this.tenor, true));
 
+// 23.06.07 평균회귀 특성을 이용해서 1000개 시나리오 스프레드 생성 (위의 로직은 결정론 시나리오생성 작업과 중복됨.)
+	////// mu = (I -e-Kt) (θ - X0) ; MeanR 
+		SimpleMatrix Mu         = new SimpleMatrix(toIdentityMatrix(this.nf)).minus(eKappa).mult(Theta.minus(X0)); 
+		             Mu         = new SimpleMatrix(toDiagMatrix(Mu.get(0,0), Mu.get(1,0), Mu.get(2,0))); // 대각행렬로 변환 
+		SimpleMatrix aa         = new SimpleMatrix(3, scenNum);
+		             aa.fill(1.0);
+		             Mu         = Mu.mult(aa);	// 3*1000 행렬로 변환 			
 		
+		SimpleMatrix rand  = new SimpleMatrix(this.randNum) ;
+		SimpleMatrix stoShock = CoefInt.mult((M.mult(rand)).plus(Mu));
 		
-	// 1000개 시나리오 스프레드 생성
+//		엑셀에서 오차항의 처리 
+//		double prob = 0.282511297341565;  // 엑셀은 이 확률을 상수로 썼는데 의미가 뭘까?? => 사용자의 실수인 듯. 
+//		double err = this.epsilon / 100  * new NormalDistribution().inverseCumulativeProbability(prob);
 		
-		SimpleMatrix rand  = new SimpleMatrix(this.randNum).transpose() ;
-		// todo : 여기부터 이어서~~~
-//		SimpleMatrix stoShock = rand.mult(M.transpose());
-			
+		// 오차항의 난수 생성. [tenor.lengh][scen#]
+		this.randomNumberGaussian(this.tenor.length);
+		SimpleMatrix err  = new SimpleMatrix(this.randNum).scale(this.epsilon) ;
+
+		stoShock = stoShock.plus(err);
+		
 
 		// 여기에 충격 스프레드 결과 담기 
-		SimpleMatrix BaseShock  = CoefInt.mult(new SimpleMatrix(vecToMat(new double[] {0.0, 0.0, 0.0})));
-		this.IntShock           = new SimpleMatrix(BaseShock);
+		this.IntShock           = new SimpleMatrix(stoShock);
 		
 	}
 @Deprecated
@@ -1090,9 +1101,9 @@ public class AFNelsonSiegel extends IrModel {
 	
 	
 // X ~ Z(0,1) 표준 정규분포를 따르는 난수를 반환
-	private void randomNumberGaussian() {
+	private void randomNumberGaussian(int len) {
 		
-		int len = 3 ; // ;this.optLSC.length ;
+//		int len = 3 ; // ;this.optLSC.length ;
 		switch(this.randomGenType) {
 			
 			case 1:  mersenneTwisterAdj(this.seedNum, len);
