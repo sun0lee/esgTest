@@ -84,47 +84,9 @@ public class IrCurveYtmDao extends DaoUtil {
 		return curveRst;
 	}
 	
-	@Deprecated
-	public static List<IrCurveYtm> getIrCurveYtm(String bssd, String irCurveNm, List<String> tenorList) {
-		
-		String query = "select a from IrCurveYtm a "
-					 + " where 1=1 "
-					 + "   and a.irCurveNm = :irCurveNm "
-					 + "   and a.baseDate  = :bssd	    "
-					 + "   and a.ytm is not null        "
-					 + "   and a.matCd in (:matCdList)  "
-					 + " order by a.matCd               "
-					 ;
-		
-		List<IrCurveYtm> curveRst = session.createQuery(query, IrCurveYtm.class)
-										   .setParameter("irCurveNm", irCurveNm)
-										   .setParameter("bssd", getMaxBaseDate(bssd, irCurveNm))
-										   .setParameterList("matCdList", tenorList)
-										   .getResultList();		
 
-		return curveRst;
-	}	
 	
-	@Deprecated
-	public static List<IrCurveYtm> getIrCurveYtmHis(String bssd, String irCurveNm, int monthNum, String matCd) {
-		
-		String query = "select a from IrCurveYtm a                    "
-					 + " where 1=1                                    "
-					 + "   and substr(a.baseDate, 1, 6) >  :stYymm    "
-					 + "   and substr(a.baseDate, 1, 6) <= :endYymm   "
-					 + "   and a.irCurveNm               = :irCurveNm "					 
-					 + "   and a.matCd                   = :matCd     "
-					 + " order by a.baseDate                          " 
-					 ;
-		
-		return session.createQuery(query, IrCurveYtm.class)
-					  .setParameter("stYymm", FinUtils.addMonth(bssd, monthNum))
-					  .setParameter("endYymm", bssd)
-					  .setParameter("irCurveNm", irCurveNm)
-					  .setParameter("matCd", matCd)
-					  .getResultList();
-	}		
-	
+
 	
 	public static List<IrCurveYtm> getIrCurveYtmMonth(String bssd, String irCurveNm) {
 		

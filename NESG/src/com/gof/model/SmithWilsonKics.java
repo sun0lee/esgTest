@@ -251,29 +251,37 @@ public class SmithWilsonKics extends IrModel {
 				if(Math.abs(Math.exp(this.ltfrCont) - Math.exp(this.alphaFwd)) < ltfrEpsilon) {
 					break;
 				}
-				else if(this.alphaFwd > this.ltfrCont) {
-					this.alphaFwdT = Math.log(Math.exp(this.ltfrCont) + ltfrEpsilon);
-				}
-				else {
-					this.alphaFwdT = Math.log(Math.exp(this.ltfrCont) - ltfrEpsilon);
-				}
+				// 23.07.20 수렴조건 수정 : FSS 수렴조건체크와 동일하도록 수정.
+//				else if(this.alphaFwd > this.ltfrCont) {
+//					this.alphaFwdT = Math.log(Math.exp(this.ltfrCont) + ltfrEpsilon);
+//				}
+//				else {
+//					this.alphaFwdT = Math.log(Math.exp(this.ltfrCont) - ltfrEpsilon);
+//				}
 			}
 			else {
-				if(this.alphaFwdT < this.ltfrCont) {
-					if(this.alphaFwd < this.alphaFwdT) {
-						this.alphaApplied = this.alphaApplied + this.alphaDApplied;
-					}
-					else {
-						this.alphaApplied = this.alphaApplied - this.alphaDApplied;
-					}					
+//				if(this.alphaFwdT < this.ltfrCont) {
+//					if(this.alphaFwd < this.alphaFwdT) {
+//						this.alphaApplied = this.alphaApplied + this.alphaDApplied;
+//					}
+//					else {
+//						this.alphaApplied = this.alphaApplied - this.alphaDApplied;
+//					}					
+//				}
+//				else {
+//					if(this.alphaFwd < this.alphaFwdT) {
+//						this.alphaApplied = this.alphaApplied - this.alphaDApplied;
+//					}
+//					else {
+//						this.alphaApplied = this.alphaApplied + this.alphaDApplied;
+//					}					
+//				}
+				// 23.07.20 수렴조건 수정 : FSS 수렴조건체크와 동일하도록 수정.
+				if(Math.abs(Math.exp(this.alphaFwd) - Math.exp(this.ltfrCont)) > ltfrEpsilon) {
+					this.alphaApplied = this.alphaApplied + this.alphaDApplied;
 				}
 				else {
-					if(this.alphaFwd < this.alphaFwdT) {
-						this.alphaApplied = this.alphaApplied - this.alphaDApplied;
-					}
-					else {
-						this.alphaApplied = this.alphaApplied + this.alphaDApplied;
-					}					
+					this.alphaApplied = this.alphaApplied - this.alphaDApplied;
 				}
 				this.alphaDApplied *= 0.5;	
 			}			

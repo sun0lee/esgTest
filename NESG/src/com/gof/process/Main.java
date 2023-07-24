@@ -299,8 +299,8 @@ public class Main {
 //		jobList.add("240");
 //		jobList.add("250");
 //		jobList.add("260");
-//		jobList.add("270");
-//		jobList.add("280");
+		jobList.add("270");
+		jobList.add("280");
 //		jobList.add("310");
 //		jobList.add("320");
 //		jobList.add("330");
@@ -308,10 +308,11 @@ public class Main {
 //		jobList.add("350");
 //		jobList.add("360");
 //		jobList.add("370");
+		
 //		jobList.add("710");
 //		jobList.add("720");
-//		jobList.add("730");
-		jobList.add("740");
+//		jobList.add("730"); 
+//		jobList.add("740");
 //		
 		
 	}		
@@ -1693,7 +1694,7 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG710);			
 
-			EIrModel irModelNm     = EIrModel.AFNS;						
+			EIrModel irModelNm     = EIrModel.AFNS_IM;						
 			int    weekDay         = Integer.valueOf((String) argInDBMap.getOrDefault("AFNS_WEEK_DAY"        , "5")); //금욜 
 			
 			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(irModelNm);
@@ -1798,7 +1799,7 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG720);			
 
-			EIrModel irModelNm     = EIrModel.AFNS;						
+			EIrModel irModelNm     = EIrModel.AFNS_IM;						
 			int    weekDay         = Integer.valueOf((String) argInDBMap.getOrDefault("AFNS_WEEK_DAY"        , "5")); //금욜 
 			
 			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(irModelNm);
@@ -1865,7 +1866,7 @@ public class Main {
 					}					
 					
 					// enum에 정의된 순서로 정렬해서 받음 =>  모수는 enum에 정의한 순서대로 다른 의미를 갖는 값이기 때문에 순서가 중요함.  
-					List<IrParamAfnsCalc> initParam = IrParamAfnsDao.getIrParamAfnsCalcInitList(bssd, EIrModel.AFNS, irCurveNm).stream()
+					List<IrParamAfnsCalc> initParam = IrParamAfnsDao.getIrParamAfnsCalcInitList(bssd, EIrModel.AFNS_IM, irCurveNm).stream()
 						                                            .sorted(Comparator.comparingInt(p -> p.getParamTypCd().ordinal()))
 						                                            .collect(Collectors.toList());
 					
@@ -1903,7 +1904,7 @@ public class Main {
 			session.beginTransaction();
 			CoJobInfo jobLog = startJogLog(EJob.ESG730);			
 
-			EIrModel irModelNm     = EIrModel.AFNS;					
+			EIrModel irModelNm     = EIrModel.AFNS_IM;					
 			
 			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(irModelNm);
 			Map<String, IrParamModel> irModelMstMap = modelMstList.stream()
@@ -1953,7 +1954,7 @@ public class Main {
 					log.info("[{}] has been Deleted in Job:[{}] [IR_MODEL_NM: {}, IR_CURVE_NM: {}, COUNT: {}]", Process.toPhysicalName(IrSprdAfnsCalc.class.getSimpleName()), jobLog.getJobId(), irModelNm, irCurveNm, delNum2);
 					
 					
-					List<IrParamAfnsCalc> optParam = IrParamAfnsDao.getIrParamAfnsCalcList(bssd, EIrModel.AFNS, irCurveNm).stream()
+					List<IrParamAfnsCalc> optParam = IrParamAfnsDao.getIrParamAfnsCalcList(bssd, EIrModel.AFNS_IM, irCurveNm).stream()
                             .sorted(Comparator.comparingInt(p -> p.getParamTypCd().ordinal()))
                             .collect(Collectors.toList());
 					
@@ -1990,7 +1991,7 @@ public class Main {
 			CoJobInfo jobLog = startJogLog(EJob.ESG740);			
 
 			EIrModel irModelNm      = EIrModel.AFNS_STO;	  // IR_SPRD_AFNS_calc에 이 결과도 적재하기 위해 모델 이름 추가 (동일한 AFNS 모수를 사용함.) 				
-			EIrModel upperIrModelNm = irModelNm.getIrModel();	// AFNS 				
+			EIrModel upperIrModelNm = irModelNm.getIrModel();	// AFNS_IM 				
 			
 			List<IrParamModel> modelMstList = IrParamModelDao.getParamModelList(upperIrModelNm);
 			Map<String, IrParamModel> irModelMstMap = modelMstList.stream()

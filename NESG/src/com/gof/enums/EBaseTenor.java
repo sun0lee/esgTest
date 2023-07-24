@@ -15,10 +15,14 @@ public enum EBaseTenor {
     M0036(3),
     M0048(4),
     M0060(5),
+    M0072(6),
     M0084(7),
+    M0096(8),    
+    M0108(9),    
     M0120(10),
     M0180(15),
     M0240(20);
+	
 
     private final double yearFrac;
 

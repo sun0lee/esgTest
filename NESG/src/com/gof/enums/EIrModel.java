@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum EIrModel {
 	  AFNS ()
+	, AFNS_IM ()
 	, DNS  ()
 	, HW1F ()
 	, CIR  ()
@@ -12,7 +13,7 @@ public enum EIrModel {
 	, CIR_Y10 ()
 
 	/* 내부모형에서 TVOG 산출용 */
-	, AFNS_STO(EIrModel.AFNS)
+	, AFNS_STO(EIrModel.AFNS_IM)
 	
 	/* 민감도 분석용 */
 	, HW1F_NSP (EIrModel.HW1F) //

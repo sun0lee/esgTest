@@ -96,11 +96,14 @@ public class Esg270_IrDcntRate extends Process {
 				TreeSet<Double> tenorList = adjRateList.stream().map(s -> Double.valueOf(1.0 * Integer.valueOf(s.getMatCd().substring(1)) / MONTH_IN_YEAR)).collect(Collectors.toCollection(TreeSet::new));
 				double[] prjTenor = tenorList.stream().mapToDouble(Double::doubleValue).toArray();				
 				
-				if(applBizDv==EApplBizDv.KICS) {
+				// 23.07.24 KICS 여부와 관계없이 동일한 로직으로 처리되는지 확인 
+//				if(applBizDv==EApplBizDv.KICS) {
 					
 	  // KICS 기준시나리오 1 or 기타 별도 정의 6,7,8,9 
 //					if( irCurveSce.getSceNo()==EDetSce.SCE01.getSceNo() || irCurveSce.getSceNo() >EDetSce.SCE06.getSceNo()) {
-					if( irCurveSce==EDetSce.SCE01 || irCurveSce.compareTo(EDetSce.SCE06) > 0) {
+//					if( irCurveSce==EDetSce.SCE01 || irCurveSce.compareTo(EDetSce.SCE06) > 0) {
+	  // 기준시나리오 
+					if( irCurveSce==EDetSce.SCE01 ) {
 						adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));										
 						
 //						List<IrCurveYtm> ytmList = IrCurveYtmDao.getIrCurveYtm(bssd, curveSwMap.getKey());
@@ -131,7 +134,9 @@ public class Esg270_IrDcntRate extends Process {
 	 // KICS 결정론적 시나리오 2~5 				
 					//for KICS: Asset Discount Rate Scenario after scen#1 is generated from Above Insurance Discount Rate + Difference Rate of Insurance - Asset at SCE#1
 //					else if(irCurveSce.getSceNo() <= EDetSce.SCE06.getSceNo()) {
-					else if (irCurveSce.compareTo(EDetSce.SCE06) <= 0) {
+//					else if (irCurveSce.compareTo(EDetSce.SCE06) <= 0) {
+	  // 기준 시나리오 외 
+					else  { 
 						TreeMap<String, Double> spotRateMap = new TreeMap<String, Double>();
 						TreeMap<String, Double> fwdRateMap  = new TreeMap<String, Double>();
 						
@@ -144,7 +149,7 @@ public class Esg270_IrDcntRate extends Process {
 							double adjDiff = baseRateSce1Map.get(matCd).getSpotDisc() - adjRateSce1Map.get(matCd).getAdjSpotRate();
 							
 							// 기본 충격후 : = (기본 충격전) + (조정 충격후 - 조정 충격전) => 엑셀 로직 (기본금리커브 + (충격 스프레드))
-							// 기본 충격후 : = (조정 충격후) + (기본 충격전 - 조정 충격전) => 코드 로직  
+							// 기본 충격후 : = (조정 충격후) + (기본 충격전 - 조정 충격전) => 코드 로직 
 							rslt.setSpotRate(adjRate + adjDiff);						
 							spotRateMap.put(matCd, adjRate + adjDiff);
 						}	
@@ -156,37 +161,37 @@ public class Esg270_IrDcntRate extends Process {
 						}		
 					}
 					
-				}
+//				}
 	//KICS 외 			
-//				else if(!applBizDv.equals("KICS")) {
-				else  {
-					// 부채평가용 (조정 할인율 커브 :연속복리 spot rate사용 )
-					adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));		
-					
-					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, irCurveNm, irCurveSce)
-											  .stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
-					if(ytmList.size()==0) {
-						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, irCurveSce.getSceNo() , toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
-						continue;
-					}
-					
-					// 자산평가용 (기본 할인율 커브 : YTM 사용 ) 
-					SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
-							 									 .baseDate(baseDate)					
-							 									 .ytmCurveHisList(ytmList)
-							 									 .alphaApplied(irParamSw.getSwAlphaYtm())													 
-							 									 .freq(0)
-							 									 .build();						
-
-//				    swBts.getSmithWilsonResultList(prjTenor).stream().filter(s -> Double.parseDouble(s.getMatCd().substring(1, 5)) <= 240).forEach(s -> log.info("{}, {}, {}", s.getMatCd(), s.getSpotDisc(), s.getFwdDisc()));
-					// 자산평가용 (기본 할인율 커브 : YTM 사용 ) 
-					baseRateSce1Map = swBts.getSmithWilsonResultList(prjTenor).stream().collect(Collectors.toMap(SmithWilsonRslt::getMatCd, Function.identity()));
-
-					for(IrDcntRate rslt : adjRateList) {						
-						rslt.setSpotRate(baseRateSce1Map.get(rslt.getMatCd()).getSpotDisc());
-						rslt.setFwdRate (baseRateSce1Map.get(rslt.getMatCd()).getFwdDisc());
-					}					
-				}
+////				else if(!applBizDv.equals("KICS")) {
+//				else  {
+//					// 부채평가용 (조정 할인율 커브 :연속복리 spot rate사용 )
+//					adjRateSce1Map = adjRateList.stream().collect(Collectors.toMap(IrDcntRate::getMatCd, Function.identity(), (k, v) -> k, TreeMap::new));		
+//					
+//					List<IRateInput> ytmList = IrDcntRateDao.getIrDcntRateBuToBaseSpotList(bssd, applBizDv, irCurveNm, irCurveSce)
+//											  .stream().map(s -> s.convertSimpleYtm()).collect(Collectors.toList());					
+//					if(ytmList.size()==0) {
+//						log.warn("No IR Dcnt Rate Data [BIZ: {}, IR_CURVE_NM: {}, IR_CURVE_SCE_NO: {}] in [{}] for [{}]", applBizDv, irCurveNm, irCurveSce.getSceNo() , toPhysicalName(IrDcntRateBu.class.getSimpleName()), bssd);
+//						continue;
+//					}
+//					
+//					// 자산평가용 (기본 할인율 커브 : YTM 사용 ) 
+//					SmithWilsonKicsBts swBts = SmithWilsonKicsBts.of()
+//							 									 .baseDate(baseDate)					
+//							 									 .ytmCurveHisList(ytmList)
+//							 									 .alphaApplied(irParamSw.getSwAlphaYtm())													 
+//							 									 .freq(0)
+//							 									 .build();						
+//
+////				    swBts.getSmithWilsonResultList(prjTenor).stream().filter(s -> Double.parseDouble(s.getMatCd().substring(1, 5)) <= 240).forEach(s -> log.info("{}, {}, {}", s.getMatCd(), s.getSpotDisc(), s.getFwdDisc()));
+//					// 자산평가용 (기본 할인율 커브 : YTM 사용 ) 
+//					baseRateSce1Map = swBts.getSmithWilsonResultList(prjTenor).stream().collect(Collectors.toMap(SmithWilsonRslt::getMatCd, Function.identity()));
+//
+//					for(IrDcntRate rslt : adjRateList) {						
+//						rslt.setSpotRate(baseRateSce1Map.get(rslt.getMatCd()).getSpotDisc());
+//						rslt.setFwdRate (baseRateSce1Map.get(rslt.getMatCd()).getFwdDisc());
+//					}					
+//				}
 
 				for(IrDcntRate rslt : adjRateList) {
 					rslt.setBaseYymm(bssd);
